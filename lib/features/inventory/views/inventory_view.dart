@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wms_new/features/inventory/models/inventory_item_model.dart';
 
 import '../../settings/viewmodels/theme_view_model.dart';
+import '../models/inventory_item_model.dart';
 import '../viewmodels/inventory_view_model.dart';
 import '../../../core/utils/base_view_model.dart';
 import '../widgets/inventory_widgets.dart';
