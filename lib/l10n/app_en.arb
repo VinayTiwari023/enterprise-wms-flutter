@@ -1,0 +1,20 @@
+{
+  "dashboard": "Dashboard",
+  "inbound": "Inbound",
+  "outbound": "Outbound",
+  "inventory": "Inventory",
+  "profile": "Profile",
+  "hello": "Hello, {name}!",
+  "@hello": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "todayStatus": "Here is what's happening today.",
+  "pending": "Pending",
+  "completed": "Completed",
+  "inProgress": "In Progress",
+  "alerts": "Alerts"
+}

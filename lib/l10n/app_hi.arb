@@ -1,0 +1,13 @@
+{
+  "dashboard": "डैशबोर्ड",
+  "inbound": "इनबाउंड",
+  "outbound": "आउटबाउंड",
+  "inventory": "इन्वेंटरी",
+  "profile": "प्रोफ़ाइल",
+  "hello": "नमस्ते, {name}!",
+  "todayStatus": "यहाँ आज क्या हो रहा है।",
+  "pending": "लंबित",
+  "completed": "पूरा हुआ",
+  "inProgress": "प्रगति पर है",
+  "alerts": "अलर्ट"
+}
