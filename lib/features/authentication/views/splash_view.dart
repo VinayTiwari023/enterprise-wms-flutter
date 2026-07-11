@@ -26,12 +26,12 @@ class _SplashViewState extends ConsumerState<SplashView> with SingleTickerProvid
     _navigateToLogin();
   }
 
-  _navigateToLogin() async {
+  Future<void> _navigateToLogin() async {
     await Future.delayed(const Duration(seconds: 3));
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const LoginView()),
+        MaterialPageRoute(builder: (BuildContext context) => const LoginView()),
       );
     }
   }
@@ -56,7 +56,7 @@ class _SplashViewState extends ConsumerState<SplashView> with SingleTickerProvid
             end: Alignment.bottomCenter,
             colors: [
               primaryColor,
-              primaryColor.withOpacity(0.7),
+              primaryColor.withValues(alpha: 0.7),
             ],
           ),
         ),

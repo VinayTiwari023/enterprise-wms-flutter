@@ -144,7 +144,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: _filters.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           bool isSelected = _selectedFilterIndex == index;
           return GestureDetector(
@@ -155,7 +155,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
                 color: isSelected ? primaryColor : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? primaryColor : Colors.grey.withOpacity(0.2),
+                  color: isSelected ? primaryColor : Colors.grey.withValues(alpha: 0.2),
                 ),
               ),
               alignment: Alignment.center,

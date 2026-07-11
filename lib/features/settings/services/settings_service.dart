@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class SettingsService {
   // To be implemented with Hive or SharedPreferences
   Future<void> saveThemeMode(bool isDark) async {}

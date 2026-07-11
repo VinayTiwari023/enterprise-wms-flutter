@@ -128,7 +128,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: primaryColor.withOpacity(0.3),
+                                      color: primaryColor.withValues(alpha: 0.3),
                                       blurRadius: 20,
                                       offset: const Offset(0, 10),
                                     ),
@@ -136,32 +136,31 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 ),
                                 child: ElevatedButton(
                                   onPressed: () async {
+                                    final scaffoldMessenger = ScaffoldMessenger.of(context);
+                                    final navigator = Navigator.of(context);
+
                                     UserModel? user = await viewModel.login(
                                       _emailController.text,
                                       _passwordController.text,
                                     );
-                                    if (viewModel.status == ViewStatus.success && user != null) {
-                                      if (mounted) {
-                                        // Save user to session
-                                        ref.read(userViewModelProvider).setUser(user);
 
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Login Successful')),
-                                        );
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(builder: (_) => const HomeView()),
-                                        );
-                                      }
+                                    if (viewModel.status == ViewStatus.success && user != null) {
+                                      // Save user to session
+                                      ref.read(userViewModelProvider).setUser(user);
+
+                                      scaffoldMessenger.showSnackBar(
+                                        const SnackBar(content: Text('Login Successful')),
+                                      );
+                                      navigator.pushReplacement(
+                                        MaterialPageRoute(builder: (_) => const HomeView()),
+                                      );
                                     } else if (viewModel.status == ViewStatus.error) {
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(viewModel.errorMessage ?? 'Login Failed'),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      }
+                                      scaffoldMessenger.showSnackBar(
+                                        SnackBar(
+                                          content: Text(viewModel.errorMessage ?? 'Login Failed'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(

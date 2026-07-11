@@ -24,7 +24,7 @@ class MainDrawer extends ConsumerWidget {
             padding: const EdgeInsets.only(top: 60, left: 24, bottom: 24, right: 24),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.4),
+              color: primaryColor.withValues(alpha: 0.4),
               borderRadius: const BorderRadius.only(bottomRight: Radius.circular(50)),
             ),
             child: Column(
@@ -101,7 +101,7 @@ class MainDrawer extends ConsumerWidget {
                   onChanged: (val) => themeVM.toggleTheme(),
                   title: const Text("Dark Mode", style: TextStyle(fontSize: 14)),
                   secondary: Icon(themeVM.isDarkMode ? Icons.dark_mode : Icons.light_mode, size: 20),
-                  activeColor: primaryColor,
+                  activeThumbColor: primaryColor,
                 ),
                 
                 const Padding(
@@ -154,7 +154,7 @@ class MainDrawer extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        color: isSelected ? (color ?? Colors.blue).withOpacity(0.15) : Colors.transparent,
+        color: isSelected ? (color ?? Colors.blue).withValues(alpha: 0.15) : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
@@ -162,7 +162,7 @@ class MainDrawer extends ConsumerWidget {
         title: Text(
           title,
           style: TextStyle(
-            color: isSelected ? color : (textColor ?? null),
+            color: isSelected ? color : textColor,
             fontSize: 15,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
           ),

@@ -24,7 +24,7 @@ class StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -61,7 +61,7 @@ class PerformanceChart extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -102,7 +102,7 @@ class StockDistributionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -128,7 +128,7 @@ class StockDistributionCard extends StatelessWidget {
                           sections: [
                             PieChartSectionData(color: primaryColor, value: 60, radius: 12, showTitle: true, title: '60%', titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
                             PieChartSectionData(color: Colors.grey.shade400, value: 25, radius: 12, showTitle: true, title: '25%', titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
-                            PieChartSectionData(color: Colors.red.withOpacity(0.6), value: 15, radius: 12, showTitle: true, title: '15%', titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
+                            PieChartSectionData(color: Colors.red.withValues(alpha: 0.6), value: 15, radius: 12, showTitle: true, title: '15%', titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
                           ],
                         ),
                       ),
@@ -155,7 +155,7 @@ class StockDistributionCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     DistributionLegendItem(color: Colors.grey.shade400, label: "Reserved", value: "25%"),
                     const SizedBox(height: 8),
-                    DistributionLegendItem(color: Colors.red.withOpacity(0.6), label: "Damaged", value: "15%"),
+                    DistributionLegendItem(color: Colors.red.withValues(alpha: 0.6), label: "Damaged", value: "15%"),
                   ],
                 ),
               ),
@@ -207,7 +207,7 @@ class ActivityTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -218,7 +218,7 @@ class ActivityTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
+              color: primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(15),
             ),
             child: Icon(Icons.inventory_2_outlined, color: primaryColor, size: 22),
@@ -257,7 +257,7 @@ class QuickActionItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
+              color: color.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color, size: 28),
@@ -283,7 +283,7 @@ class BarChartSample extends StatelessWidget {
         barTouchData: BarTouchData(
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (group) => primaryColor.withOpacity(0.15),
+            getTooltipColor: (group) => primaryColor.withValues(alpha: 0.15),
             tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             tooltipMargin: 8,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -335,13 +335,13 @@ class BarChartSample extends StatelessWidget {
       barRods: [
         BarChartRodData(
           toY: y,
-          color: color.withOpacity(0.8),
+          color: color.withValues(alpha: 0.8),
           width: 12,
           borderRadius: BorderRadius.circular(6),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 20,
-            color: color.withOpacity(0.05),
+            color: color.withValues(alpha: 0.05),
           ),
         ),
       ],

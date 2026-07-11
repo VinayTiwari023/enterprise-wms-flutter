@@ -63,7 +63,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05), width: 0.5)),
+            border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5)),
           ),
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
@@ -111,7 +111,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       decoration: BoxDecoration(
-        color: isSelected ? primaryColor.withOpacity(0.15) : Colors.transparent,
+        color: isSelected ? primaryColor.withValues(alpha: 0.15) : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Icon(

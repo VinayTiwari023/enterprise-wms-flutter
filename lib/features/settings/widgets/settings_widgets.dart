@@ -20,7 +20,7 @@ class ProfileInfo extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 45,
-          backgroundColor: primaryColor.withOpacity(0.4),
+          backgroundColor: primaryColor.withValues(alpha: 0.4),
           child: Text(
             initial,
             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
@@ -108,7 +108,7 @@ class SettingToggle extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: primaryColor,
+            activeThumbColor: primaryColor,
           ),
         ],
       ),
@@ -162,7 +162,7 @@ class LogoutButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red.withOpacity(0.3),
+          backgroundColor: Colors.red.withValues(alpha: 0.3),
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

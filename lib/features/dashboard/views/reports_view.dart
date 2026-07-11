@@ -58,7 +58,7 @@ class ReportsView extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.1),
+        color: primaryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -105,10 +105,10 @@ class ReportsView extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
         boxShadow: isDark ? [] : [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -124,7 +124,7 @@ class ReportsView extends ConsumerWidget {
             horizontalInterval: 0.5,
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+                color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
                 strokeWidth: 1,
                 dashArray: [5, 5],
               );
@@ -194,8 +194,8 @@ class ReportsView extends ConsumerWidget {
                 show: true,
                 gradient: LinearGradient(
                   colors: [
-                    primaryColor.withOpacity(0.3),
-                    primaryColor.withOpacity(0.0),
+                    primaryColor.withValues(alpha: 0.3),
+                    primaryColor.withValues(alpha: 0.0),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -250,7 +250,7 @@ class ReportsView extends ConsumerWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.1),
+          color: Colors.red.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: const Icon(Icons.picture_as_pdf_outlined, color: Colors.redAccent, size: 24),
