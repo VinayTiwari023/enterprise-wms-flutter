@@ -7,6 +7,14 @@ import '../network/network_api_service.dart';
 import '../storage/storage_service.dart';
 import '../storage/secure_storage_service.dart';
 
+import '../../features/authentication/repositories/auth_repository.dart';
+import '../../features/authentication/repositories/auth_repository_impl.dart';
+import '../../features/authentication/services/auth_mock_service.dart';
+
+import '../../features/inventory/repositories/inventory_repository.dart';
+import '../../features/inventory/repositories/inventory_repository_impl.dart';
+import '../../features/inventory/services/inventory_mock_service.dart';
+
 final locator = GetIt.instance;
 
 void setupLocator() {
@@ -22,6 +30,30 @@ void setupLocator() {
   locator.registerLazySingleton<StorageService>(
         () => SecureStorageService(
       locator<FlutterSecureStorage>(),
+    ),
+  );
+
+  // Services
+  locator.registerLazySingleton<AuthMockService>(
+        () => AuthMockService(),
+  );
+
+  locator.registerLazySingleton<InventoryMockService>(
+        () => InventoryMockService(),
+  );
+
+  // Repositories
+  locator.registerLazySingleton<AuthRepository>(
+        () => AuthRepositoryImpl(
+      apiService: locator<BaseApiService>(),
+      mockService: locator<AuthMockService>(),
+    ),
+  );
+
+  locator.registerLazySingleton<InventoryRepository>(
+        () => InventoryRepositoryImpl(
+      apiService: locator<BaseApiService>(),
+      mockService: locator<InventoryMockService>(),
     ),
   );
 }

@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'base_api_service.dart';
+import '../di/locator.dart';
 
-final apiServiceProvider = Provider<BaseApiService>((ref) => NetworkApiService());
+final apiServiceProvider = Provider<BaseApiService>((ref) => locator<BaseApiService>());
 
 class NetworkApiService extends BaseApiService {
   @override
