@@ -1,18 +1,26 @@
 import 'package:enterprise_wms/core/utils/base_view_model.dart';
+import 'package:enterprise_wms/features/authentication/data/models/login_request.dart';
+import 'package:enterprise_wms/features/authentication/data/models/login_response.dart';
 import 'package:enterprise_wms/features/authentication/repositories/auth_repository.dart';
 import 'package:enterprise_wms/features/authentication/viewmodels/login_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 // Manual Mock
 class MockAuthRepository extends Mock implements AuthRepository {
   @override
-  Future<Map<String, dynamic>> mockLogin(String? email, String? password) =>
+  Future<LoginResponse> login(LoginRequest? request) async =>
       super.noSuchMethod(
-        Invocation.method(#mockLogin, [email, password]),
-        returnValue: Future.value(<String, dynamic>{}),
+        Invocation.method(#login, [request]),
+        returnValue: Future.value(const LoginResponse()),
+      );
+
+  @override
+  Future<LoginResponse> mockLogin(LoginRequest? request) =>
+      super.noSuchMethod(
+        Invocation.method(#mockLogin, [request]),
+        returnValue: Future.value(const LoginResponse()),
       );
 }
 
@@ -49,25 +57,25 @@ void main() {
 
     test('successful login updates status and returns user', () async {
       final viewModel = container.read(loginViewModelProvider);
-      final userData = {
-        'token': 'test_token',
-        'email': 'admin@wms.com',
-        'name': 'Test User'
-      };
+      const response = LoginResponse(
+        token: 'test_token',
+        userName: 'Test User',
+      );
 
-      when(mockRepo.mockLogin('admin@wms.com', 'admin123'))
-          .thenAnswer((_) async => userData);
+      when(mockRepo.mockLogin(any))
+          .thenAnswer((_) async => response);
 
       final result = await viewModel.login('admin@wms.com', 'admin123');
 
       expect(result, isNotNull);
       expect(result!.email, 'admin@wms.com');
+      expect(result.name, 'Test User');
       expect(viewModel.status, ViewStatus.success);
     });
 
     test('failed login sets error message', () async {
       final viewModel = container.read(loginViewModelProvider);
-      when(mockRepo.mockLogin('wrong@wms.com', 'wrong'))
+      when(mockRepo.mockLogin(any))
           .thenThrow(Exception('Invalid email or password'));
 
       final result = await viewModel.login('wrong@wms.com', 'wrong');

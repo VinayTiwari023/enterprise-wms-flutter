@@ -4,8 +4,9 @@ class AuthMockService {
     if (email == "admin@wms.com" && password == "admin123") {
       return {
         "token": "static_token_123",
-        "email": email,
-        "name": "Vinay Admin",
+        "userId": "1",
+        "userName": "Vinay Admin",
+        "role": "admin",
       };
     } else {
       throw Exception("Invalid email or password");

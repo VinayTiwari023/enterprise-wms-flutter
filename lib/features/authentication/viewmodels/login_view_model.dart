@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../data/models/login_request.dart';
 import '../repositories/auth_repository.dart';
 import '../../../shared/models/user_model.dart';
 import '../../../core/utils/base_view_model.dart';
@@ -30,9 +31,19 @@ class LoginViewModel extends BaseViewModel {
     setStatus(ViewStatus.loading);
     
     try {
-      final response = await _authRepo.mockLogin(email, password);
+      // Using the new LoginRequest DTO for the repository call
+      final response = await _authRepo.mockLogin(
+        LoginRequest(email: email, password: password),
+      );
+      
       setStatus(ViewStatus.success);
-      return UserModel.fromJson(response);
+      
+      // Mapping the LoginResponse DTO to the app's UserModel
+      return UserModel(
+        token: response.token,
+        email: email, // Email from request since response might not have it
+        name: response.userName ?? 'User',
+      );
     } catch (e) {
       setError(e.toString().replaceAll('Exception: ', ''));
       return null;
