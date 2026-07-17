@@ -29,24 +29,24 @@ class LoginViewModel extends BaseViewModel {
     }
 
     setStatus(ViewStatus.loading);
-    
-    try {
-      // Using the new LoginRequest DTO for the repository call
-      final response = await _authRepo.mockLogin(
-        LoginRequest(email: email, password: password),
-      );
-      
-      setStatus(ViewStatus.success);
-      
-      // Mapping the LoginResponse DTO to the app's UserModel
-      return UserModel(
-        token: response.token,
-        email: email, // Email from request since response might not have it
-        name: response.userName ?? 'User',
-      );
-    } catch (e) {
-      setError(e.toString().replaceAll('Exception: ', ''));
-      return null;
-    }
+
+    final result = await _authRepo.mockLogin(
+      LoginRequest(email: email, password: password),
+    );
+
+    return result.when(
+      onSuccess: (response) {
+        setStatus(ViewStatus.success);
+        return UserModel(
+          token: response.token,
+          email: email,
+          name: response.userName ?? 'User',
+        );
+      },
+      onFailure: (failure) {
+        setError(failure.message);
+        return null;
+      },
+    );
   }
 }

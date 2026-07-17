@@ -47,6 +47,7 @@ void setupLocator() {
         () => AuthRepositoryImpl(
       apiService: locator<BaseApiService>(),
       mockService: locator<AuthMockService>(),
+      storageService: locator<StorageService>(),
     ),
   );
 

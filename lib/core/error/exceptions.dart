@@ -1,4 +1,4 @@
-// [Exception]s belong to the Data Layer.
+// [Excep+ tion]s belong to the Data Layer.
 //
 // These are low-level errors thrown by data sources (APIs, Databases, Device Sensors).
 // In a Clean Architecture flow:
