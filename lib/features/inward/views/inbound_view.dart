@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/inbound_view_model.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
+import '../../../shared/widgets/custom_sliver_delegate.dart';
 import '../widgets/inward_widgets.dart';
 import 'po_details_view.dart';
 
@@ -34,11 +35,11 @@ class _InboundViewState extends ConsumerState<InboundView> {
 
   @override
   Widget build(BuildContext context) {
-    final themeVM = ref.watch(themeViewModelProvider);
-    final viewModel = ref.watch(inboundViewModelProvider);
-    final primaryColor = themeVM.currentThemeColor;
+    final themeState = ref.watch(themeViewModelProvider);
+    final inboundState = ref.watch(inboundViewModelProvider);
+    final primaryColor = themeState.currentThemeColor;
 
-    final filteredList = viewModel.purchaseOrders.where((po) {
+    final filteredList = inboundState.purchaseOrders.where((po) {
       String query = _searchController.text.toLowerCase();
       String filter = _filters[_selectedFilterIndex];
       bool matchesFilter = filter == "All" || po.status == filter;
@@ -58,8 +59,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 pinned: true,
-                floating: true,
-                snap: true,
+                centerTitle: true,
                 leading: IconButton(
                   onPressed: widget.onBack ?? () {},
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -68,7 +68,6 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   "Inbound Operations",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                centerTitle: true,
                 actions: [
                   IconButton(
                     onPressed: () {},
@@ -76,21 +75,33 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   ),
                 ],
               ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                sliver: SliverToBoxAdapter(
-                  child: _buildSearchBar(context),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentHeaderDelegate(
+                  minHeight: 70,
+                  maxHeight: 70,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: _buildSearchBar(context),
+                  ),
+                ),
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentHeaderDelegate(
+                  minHeight: 60,
+                  maxHeight: 60,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: _buildFilterChips(primaryColor),
+                  ),
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                sliver: SliverToBoxAdapter(
-                  child: _buildFilterChips(primaryColor),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                sliver: viewModel.status == ViewStatus.loading
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: inboundState.status == ViewStatus.loading
                     ? const SliverToBoxAdapter(
                         child: Center(child: CircularProgressIndicator()),
                       )
@@ -114,8 +125,8 @@ class _InboundViewState extends ConsumerState<InboundView> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              PODetailsView(poNumber: po.poNumber)),
+                                        builder: (context) => PODetailsView(poNumber: po.poNumber),
+                                      ),
                                     );
                                   },
                                 );

@@ -1,6 +1,6 @@
 import 'package:enterprise_wms/core/error/failures.dart';
 import 'package:enterprise_wms/core/result/result.dart';
-import 'package:enterprise_wms/core/utils/base_view_model.dart';
+import 'package:enterprise_wms/core/enums/view_status.dart';
 import 'package:enterprise_wms/features/authentication/data/models/login_request.dart';
 import 'package:enterprise_wms/features/authentication/data/models/login_response.dart';
 import 'package:enterprise_wms/features/authentication/repositories/auth_repository.dart';
@@ -38,20 +38,23 @@ void main() {
     });
 
     test('Initial status should be idle', () {
-      final viewModel = container.read(loginViewModelProvider);
-      expect(viewModel.status, ViewStatus.idle);
+      final state = container.read(loginViewModelProvider);
+      expect(state.status, ViewStatus.idle);
     });
 
     test('login with empty fields sets error', () async {
-      final viewModel = container.read(loginViewModelProvider);
-      final result = await viewModel.login('', '');
+      final notifier = container.read(loginViewModelProvider.notifier);
+      
+      final result = await notifier.login('', '');
+      
+      final state = container.read(loginViewModelProvider);
       expect(result, isNull);
-      expect(viewModel.status, ViewStatus.error);
-      expect(viewModel.errorMessage, 'Please fill all fields');
+      expect(state.status, ViewStatus.error);
+      expect(state.errorMessage, 'Please fill all fields');
     });
 
     test('successful login updates status and returns user', () async {
-      final viewModel = container.read(loginViewModelProvider);
+      final notifier = container.read(loginViewModelProvider.notifier);
       const response = LoginResponse(
         token: 'test_token',
         userName: 'Test User',
@@ -60,24 +63,26 @@ void main() {
       when(() => mockRepo.mockLogin(any()))
           .thenAnswer((_) async => Result.success(response));
 
-      final result = await viewModel.login('admin@wms.com', 'admin123');
+      final result = await notifier.login('admin@wms.com', 'admin123');
 
+      final state = container.read(loginViewModelProvider);
       expect(result, isNotNull);
       expect(result!.email, 'admin@wms.com');
       expect(result.name, 'Test User');
-      expect(viewModel.status, ViewStatus.success);
+      expect(state.status, ViewStatus.success);
     });
 
     test('failed login sets error message', () async {
-      final viewModel = container.read(loginViewModelProvider);
+      final notifier = container.read(loginViewModelProvider.notifier);
       when(() => mockRepo.mockLogin(any()))
           .thenAnswer((_) async => Result.failure(const UnauthorizedFailure('Invalid email or password')));
 
-      final result = await viewModel.login('wrong@wms.com', 'wrong');
+      final result = await notifier.login('wrong@wms.com', 'wrong');
 
+      final state = container.read(loginViewModelProvider);
       expect(result, isNull);
-      expect(viewModel.status, ViewStatus.error);
-      expect(viewModel.errorMessage, 'Invalid email or password');
+      expect(state.status, ViewStatus.error);
+      expect(state.errorMessage, 'Invalid email or password');
     });
   });
 }

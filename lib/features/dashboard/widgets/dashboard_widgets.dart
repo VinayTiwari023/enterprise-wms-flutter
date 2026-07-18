@@ -22,6 +22,7 @@ class StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -59,6 +60,7 @@ class PerformanceChart extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -100,6 +102,7 @@ class StockDistributionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -118,26 +121,56 @@ class StockDistributionCard extends StatelessWidget {
               Expanded(
                 flex: 4,
                 child: SizedBox(
-                  height: 150,
+                  height: 180,
                   child: Stack(
                     children: [
                       PieChart(
                         PieChartData(
-                          sectionsSpace: 4,
-                          centerSpaceRadius: 35,
+                          sectionsSpace: 6,
+                          centerSpaceRadius: 40,
                           sections: [
-                            PieChartSectionData(color: primaryColor, value: 60, radius: 12, showTitle: true, title: '60%', titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
-                            PieChartSectionData(color: Colors.grey.shade400, value: 25, radius: 12, showTitle: true, title: '25%', titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
-                            PieChartSectionData(color: Colors.red.withValues(alpha: 0.6), value: 15, radius: 12, showTitle: true, title: '15%', titleStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
+                            PieChartSectionData(
+                              color: primaryColor.withValues(alpha: 0.85), 
+                              value: 60, 
+                              radius: 25, 
+                              showTitle: false,
+                              badgeWidget: _buildBadge("60%", context),
+                              badgePositionPercentageOffset: 1.15,
+                            ),
+                            PieChartSectionData(
+                              color: const Color(0xFF4A4E69), 
+                              value: 25, 
+                              radius: 25, 
+                              showTitle: false,
+                              badgeWidget: _buildBadge("25%", context),
+                              badgePositionPercentageOffset: 1.15,
+                            ),
+                            PieChartSectionData(
+                              color: const Color(0xFF9A4C55), 
+                              value: 15, 
+                              radius: 25, 
+                              showTitle: false,
+                              badgeWidget: _buildBadge("15%", context),
+                              badgePositionPercentageOffset: 1.15,
+                            ),
                           ],
                         ),
                       ),
-                      const Center(
+                      Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("1.2k", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text("Total", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                            Text("1.2k", style: TextStyle(
+                              fontSize: 26, 
+                              fontWeight: FontWeight.bold,
+                              color: primaryColor,
+                              height: 1.1,
+                            )),
+                            const Text("Total", style: TextStyle(
+                              fontSize: 12, 
+                              color: Colors.grey, 
+                              fontWeight: FontWeight.w500,
+                            )),
                           ],
                         ),
                       ),
@@ -151,17 +184,48 @@ class StockDistributionCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DistributionLegendItem(color: primaryColor, label: "In Stock", value: "60%"),
-                    const SizedBox(height: 8),
-                    DistributionLegendItem(color: Colors.grey.shade400, label: "Reserved", value: "25%"),
-                    const SizedBox(height: 8),
-                    DistributionLegendItem(color: Colors.red.withValues(alpha: 0.6), label: "Damaged", value: "15%"),
+                    DistributionLegendItem(color: primaryColor.withValues(alpha: 0.85), label: "In Stock", value: "60%"),
+                    const SizedBox(height: 15),
+                    DistributionLegendItem(color: const Color(0xFF4A4E69), label: "Reserved", value: "25%"),
+                    const SizedBox(height: 15),
+                    DistributionLegendItem(color: const Color(0xFF9A4C55), label: "Damaged", value: "15%"),
                   ],
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+  Widget _buildBadge(String text, BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2D2D3A) : Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          color: isDark ? Colors.white : Colors.black87,
+        ),
       ),
     );
   }
@@ -177,13 +241,13 @@ class DistributionLegendItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-        const SizedBox(width: 10),
+        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-            Text(value, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+            Text(value, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
       ],
@@ -205,6 +269,7 @@ class ActivityTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),

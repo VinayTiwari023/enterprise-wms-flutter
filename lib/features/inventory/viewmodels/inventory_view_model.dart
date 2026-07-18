@@ -1,30 +1,64 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/inventory_repository.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
 import '../models/inventory_item_model.dart';
 
-final inventoryViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
-  final repository = ref.watch(inventoryRepositoryProvider);
-  return InventoryViewModel(repository: repository);
-});
+/// Immutable state for the Inventory screen.
+class InventoryState {
+  final List<InventoryItemModel> items;
+  final ViewStatus status;
+  final String? errorMessage;
 
-class InventoryViewModel extends BaseViewModel {
-  final InventoryRepository _repository;
-  List<InventoryItemModel> _items = [];
+  const InventoryState({
+    this.items = const [],
+    this.status = ViewStatus.idle,
+    this.errorMessage,
+  });
 
-  InventoryViewModel({required InventoryRepository repository}) : _repository = repository {
-    fetchItems();
+  InventoryState copyWith({
+    List<InventoryItemModel>? items,
+    ViewStatus? status,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return InventoryState(
+      items: items ?? this.items,
+      status: status ?? this.status,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
+}
+
+/// Notifier-based ViewModel for Inventory management.
+/// Using Notifier to maintain the inventory list in memory while navigating.
+class InventoryViewModel extends Notifier<InventoryState> {
+  @override
+  InventoryState build() {
+    Future.microtask(() => fetchItems());
+    return const InventoryState();
   }
 
-  List<InventoryItemModel> get items => _items;
+  InventoryRepository get _repository => ref.read(inventoryRepositoryProvider);
 
   Future<void> fetchItems() async {
-    setStatus(ViewStatus.loading);
+    state = state.copyWith(status: ViewStatus.loading, clearError: true);
+    
     try {
-      _items = await _repository.fetchInventoryItems();
-      setStatus(ViewStatus.success);
+      final items = await _repository.fetchInventoryItems();
+      state = state.copyWith(
+        items: items,
+        status: ViewStatus.success,
+      );
     } catch (e) {
-      setError(e.toString());
+      state = state.copyWith(
+        status: ViewStatus.error,
+        errorMessage: e.toString(),
+      );
     }
   }
 }
+
+/// Provider for the InventoryViewModel.
+final inventoryViewModelProvider = NotifierProvider<InventoryViewModel, InventoryState>(() {
+  return InventoryViewModel();
+});

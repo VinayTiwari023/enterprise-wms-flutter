@@ -15,7 +15,7 @@ class _SplashViewState extends ConsumerState<SplashView> {
     super.initState();
     // Use addPostFrameCallback to ensure context is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(userViewModelProvider).checkAuthStatus();
+      ref.read(userViewModelProvider.notifier).checkAuthStatus();
     });
   }
 

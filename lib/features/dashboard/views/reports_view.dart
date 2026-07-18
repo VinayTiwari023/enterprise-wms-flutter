@@ -3,16 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/reports_view_model.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
 
 class ReportsView extends ConsumerWidget {
   const ReportsView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeVM = ref.watch(themeViewModelProvider);
-    final viewModel = ref.watch(reportsViewModelProvider);
-    final primaryColor = themeVM.currentThemeColor;
+    final themeState = ref.watch(themeViewModelProvider);
+    final reportsState = ref.watch(reportsViewModelProvider);
+    final primaryColor = themeState.currentThemeColor;
 
     return Scaffold(
       body: CustomScrollView(
@@ -32,7 +32,7 @@ class ReportsView extends ConsumerWidget {
             actions: [
               IconButton(onPressed: () {}, icon: const Icon(Icons.tune_rounded)),
               IconButton(
-                  onPressed: () {},
+                  onPressed: () => ref.read(reportsViewModelProvider.notifier).fetchReports(),
                   icon: const Icon(Icons.file_download_outlined)),
             ],
           ),
@@ -63,18 +63,18 @@ class ReportsView extends ConsumerWidget {
           ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: viewModel.status == ViewStatus.loading
+            sliver: reportsState.status == ViewStatus.loading
                 ? const SliverToBoxAdapter(
                     child: Center(child: CircularProgressIndicator()),
                   )
                 : SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        final report = viewModel.recentReports[index];
+                        final report = reportsState.recentReports[index];
                         return _buildReportTile(
                             context, report['title']!, report['date']!);
                       },
-                      childCount: viewModel.recentReports.length,
+                      childCount: reportsState.recentReports.length,
                     ),
                   ),
           ),

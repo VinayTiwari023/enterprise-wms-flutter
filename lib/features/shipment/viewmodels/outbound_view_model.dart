@@ -1,30 +1,63 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/shipment_repository.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
 import '../models/outbound_order_model.dart';
 
-final outboundViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
-  final repository = ref.watch(shipmentRepositoryProvider);
-  return OutboundViewModel(repository: repository);
-});
+/// Immutable state for Outbound operations.
+class OutboundState {
+  final List<OutboundOrderModel> orders;
+  final ViewStatus status;
+  final String? errorMessage;
 
-class OutboundViewModel extends BaseViewModel {
-  final ShipmentRepository _repository;
-  List<OutboundOrderModel> _orders = [];
+  const OutboundState({
+    this.orders = const [],
+    this.status = ViewStatus.idle,
+    this.errorMessage,
+  });
 
-  OutboundViewModel({required ShipmentRepository repository}) : _repository = repository {
-    fetchOrders();
+  OutboundState copyWith({
+    List<OutboundOrderModel>? orders,
+    ViewStatus? status,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return OutboundState(
+      orders: orders ?? this.orders,
+      status: status ?? this.status,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
+}
+
+/// Notifier-based ViewModel for Outbound (Shipment) operations.
+class OutboundViewModel extends Notifier<OutboundState> {
+  @override
+  OutboundState build() {
+    Future.microtask(() => fetchOrders());
+    return const OutboundState();
   }
 
-  List<OutboundOrderModel> get orders => _orders;
+  ShipmentRepository get _repository => ref.read(shipmentRepositoryProvider);
 
   Future<void> fetchOrders() async {
-    setStatus(ViewStatus.loading);
+    state = state.copyWith(status: ViewStatus.loading, clearError: true);
+    
     try {
-      _orders = await _repository.fetchOutboundOrders();
-      setStatus(ViewStatus.success);
+      final orders = await _repository.fetchOutboundOrders();
+      state = state.copyWith(
+        orders: orders,
+        status: ViewStatus.success,
+      );
     } catch (e) {
-      setError(e.toString());
+      state = state.copyWith(
+        status: ViewStatus.error,
+        errorMessage: e.toString(),
+      );
     }
   }
 }
+
+/// Provider for the OutboundViewModel.
+final outboundViewModelProvider = NotifierProvider<OutboundViewModel, OutboundState>(() {
+  return OutboundViewModel();
+});

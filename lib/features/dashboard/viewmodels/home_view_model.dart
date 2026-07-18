@@ -1,32 +1,76 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
 import '../repositories/dashboard_repository.dart';
 import '../models/dashboard_stats.dart';
 import '../models/activity_model.dart';
 
-final homeViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
-  final repository = ref.watch(dashboardRepositoryProvider);
-  return HomeViewModel(repository: repository);
-});
+/// Immutable state for the Dashboard/Home screen.
+class HomeState {
+  final DashboardStats? stats;
+  final List<ActivityModel> recentActivities;
+  final ViewStatus status;
+  final String? errorMessage;
 
-class HomeViewModel extends BaseViewModel {
-  final DashboardRepository _repository;
+  const HomeState({
+    this.stats,
+    this.recentActivities = const [],
+    this.status = ViewStatus.idle,
+    this.errorMessage,
+  });
 
-  DashboardStats? stats;
-  List<ActivityModel> recentActivities = [];
+  HomeState copyWith({
+    DashboardStats? stats,
+    List<ActivityModel>? recentActivities,
+    ViewStatus? status,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return HomeState(
+      stats: stats ?? this.stats,
+      recentActivities: recentActivities ?? this.recentActivities,
+      status: status ?? this.status,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
+}
 
-  HomeViewModel({required DashboardRepository repository}) : _repository = repository {
-    refreshData();
+/// Notifier-based ViewModel for the Home Dashboard.
+/// We use Notifier instead of AutoDisposeNotifier because this is a primary landing screen.
+class HomeViewModel extends Notifier<HomeState> {
+  @override
+  HomeState build() {
+    // Trigger initial data fetch on initialization
+    Future.microtask(() => refreshData());
+    return const HomeState();
   }
 
+  DashboardRepository get _repository => ref.read(dashboardRepositoryProvider);
+
   Future<void> refreshData() async {
-    setStatus(ViewStatus.loading);
+    state = state.copyWith(status: ViewStatus.loading, clearError: true);
+    
     try {
-      stats = await _repository.fetchStats();
-      recentActivities = await _repository.fetchActivities();
-      setStatus(ViewStatus.success);
+      // Parallel fetch for better performance
+      final results = await Future.wait([
+        _repository.fetchStats(),
+        _repository.fetchActivities(),
+      ]);
+
+      state = state.copyWith(
+        stats: results[0] as DashboardStats,
+        recentActivities: results[1] as List<ActivityModel>,
+        status: ViewStatus.success,
+      );
     } catch (e) {
-      setError(e.toString());
+      state = state.copyWith(
+        status: ViewStatus.error,
+        errorMessage: e.toString(),
+      );
     }
   }
 }
+
+/// Provider for the HomeViewModel.
+final homeViewModelProvider = NotifierProvider<HomeViewModel, HomeState>(() {
+  return HomeViewModel();
+});

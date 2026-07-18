@@ -122,15 +122,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Widget _buildDashboardSliver(HomeViewModel viewModel, ThemeViewModel themeVM, BuildContext context) {
+  Widget _buildDashboardSliver(HomeState viewModel, ThemeState themeVM, BuildContext context) {
     final primaryColor = themeVM.currentThemeColor;
     final userVM = ref.watch(userViewModelProvider);
 
     return CustomScrollView(
       slivers: [
         SliverAppBar(
-          floating: true,
-          snap: true,
+          pinned: true,
           title: Text(AppLocalizations.of(context)!.dashboard,
             style: TextStyle(
               fontWeight: FontWeight.w600,
@@ -139,7 +138,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: () => themeVM.toggleTheme(), icon: Icon(themeVM.isDarkMode ? Icons.light_mode : Icons.dark_mode)),
+            IconButton(onPressed: () => ref.read(themeViewModelProvider.notifier).toggleTheme(), icon: Icon(themeVM.isDarkMode ? Icons.light_mode : Icons.dark_mode)),
             IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none_rounded)),
           ],
         ),
@@ -164,7 +163,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     fontWeight: FontWeight.w400,
                   )
                 ),
-                const SizedBox(height: 25),
+                const SizedBox(height: 15),
+                const Divider(),
+                const SizedBox(height: 15),
               ],
             ),
           ),
@@ -193,6 +194,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Divider(),
+                const SizedBox(height: 25),
                 const Text("Performance Overview", 
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),
@@ -200,6 +203,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 PerformanceChart(primaryColor: primaryColor),
                 const SizedBox(height: 25),
                 StockDistributionCard(primaryColor: primaryColor),
+                const SizedBox(height: 25),
+                const Divider(),
                 const SizedBox(height: 25),
                 const Text("Recent Activities", 
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
@@ -230,6 +235,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Divider(),
+                const SizedBox(height: 25),
                 const Text("Quick Actions", 
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),

@@ -1,27 +1,63 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
 import '../repositories/dashboard_repository.dart';
 
-final reportsViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
-  final repository = ref.watch(dashboardRepositoryProvider);
-  return ReportsViewModel(repository: repository);
-});
+/// Immutable state for the Reports screen.
+class ReportsState {
+  final List<Map<String, String>> recentReports;
+  final ViewStatus status;
+  final String? errorMessage;
 
-class ReportsViewModel extends BaseViewModel {
-  final DashboardRepository _repository;
-  List<Map<String, String>> recentReports = [];
+  const ReportsState({
+    this.recentReports = const [],
+    this.status = ViewStatus.idle,
+    this.errorMessage,
+  });
 
-  ReportsViewModel({required DashboardRepository repository}) : _repository = repository {
-    fetchReports();
+  ReportsState copyWith({
+    List<Map<String, String>>? recentReports,
+    ViewStatus? status,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return ReportsState(
+      recentReports: recentReports ?? this.recentReports,
+      status: status ?? this.status,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
+}
+
+/// AutoDisposeNotifier for the Reports screen.
+/// Auto-disposed when the user leaves the screen to free up memory.
+class ReportsViewModel extends AutoDisposeNotifier<ReportsState> {
+  @override
+  ReportsState build() {
+    Future.microtask(() => fetchReports());
+    return const ReportsState();
   }
 
+  DashboardRepository get _repository => ref.read(dashboardRepositoryProvider);
+
   Future<void> fetchReports() async {
-    setStatus(ViewStatus.loading);
+    state = state.copyWith(status: ViewStatus.loading, clearError: true);
+    
     try {
-      recentReports = await _repository.fetchReports();
-      setStatus(ViewStatus.success);
+      final reports = await _repository.fetchReports();
+      state = state.copyWith(
+        recentReports: reports,
+        status: ViewStatus.success,
+      );
     } catch (e) {
-      setError(e.toString());
+      state = state.copyWith(
+        status: ViewStatus.error,
+        errorMessage: e.toString(),
+      );
     }
   }
 }
+
+/// Provider for the ReportsViewModel.
+final reportsViewModelProvider = AutoDisposeNotifierProvider<ReportsViewModel, ReportsState>(() {
+  return ReportsViewModel();
+});

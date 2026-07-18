@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../viewmodels/theme_view_model.dart';
 import '../../authentication/viewmodels/user_view_model.dart';
 import '../widgets/settings_widgets.dart';
+import '../../../shared/dialogs/logout_dialog.dart';
 
 class ProfileView extends ConsumerWidget {
   final VoidCallback? onBack;
@@ -61,7 +62,9 @@ class ProfileView extends ConsumerWidget {
                       icon: Icons.phone_outlined,
                       label: "Phone",
                       value: "+91 9876543210"),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 20),
                   _buildSectionTitle("Warehouse Details"),
                   const SizedBox(height: 10),
                   const InfoCard(
@@ -72,14 +75,16 @@ class ProfileView extends ConsumerWidget {
                       icon: Icons.grid_view_rounded,
                       label: "Zone Assignment",
                       value: "Zone A, Zone B"),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 20),
                   _buildSectionTitle("Settings"),
                   const SizedBox(height: 10),
                   SettingToggle(
                     icon: Icons.wb_sunny_outlined,
                     title: "Dark Mode",
                     value: themeVM.isDarkMode,
-                    onChanged: (val) => themeVM.toggleTheme(),
+                    onChanged: (val) => ref.read(themeViewModelProvider.notifier).toggleTheme(),
                     primaryColor: primaryColor,
                   ),
                   SettingLink(
@@ -105,13 +110,18 @@ class ProfileView extends ConsumerWidget {
                       ],
                       onChanged: (String? code) {
                         if (code != null) {
-                          themeVM.setLocale(Locale(code));
+                          ref.read(themeViewModelProvider.notifier).setLocale(Locale(code));
                         }
                       },
                     ),
                   ),
                   const SizedBox(height: 30),
-                  LogoutButton(onTap: () {}),
+                  LogoutButton(onTap: () async {
+                    final confirmed = await showLogoutDialog(context);
+                    if (confirmed == true) {
+                      ref.read(userViewModelProvider.notifier).logout();
+                    }
+                  }),
                   const SizedBox(height: 100),
                 ],
               ),

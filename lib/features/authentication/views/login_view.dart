@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/helpers/responsive_helper.dart';
 import '../viewmodels/login_view_model.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/user_view_model.dart';
 import '../../../shared/models/user_model.dart';
@@ -23,7 +23,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
   @override
   Widget build(BuildContext context) {
     final themeVM = ref.watch(themeViewModelProvider);
-    final viewModel = ref.watch(loginViewModelProvider);
+    final loginState = ref.watch(loginViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
     final isDark = themeVM.isDarkMode;
 
@@ -112,8 +112,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
                             hint: "Password",
                             icon: Icons.lock_outline_rounded,
                             isPassword: true,
-                            isPasswordVisible: viewModel.isPasswordVisible,
-                            onToggleVisibility: viewModel.togglePasswordVisibility,
+                            isPasswordVisible: loginState.isPasswordVisible,
+                            onToggleVisibility: () => ref.read(loginViewModelProvider.notifier).togglePasswordVisibility(),
                             isDark: isDark,
                             primaryColor: primaryColor,
                           ),
@@ -121,7 +121,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
                           SizedBox(height: ResponsiveHelper.responsiveSpacing(context) * 4),
                           
                           // Login Button
-                          viewModel.status == ViewStatus.loading
+                          loginState.status == ViewStatus.loading
                             ? CircularProgressIndicator(color: primaryColor)
                             : Container(
                                 decoration: BoxDecoration(
@@ -139,14 +139,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                     final scaffoldMessenger = ScaffoldMessenger.of(context);
                                     final navigator = Navigator.of(context);
 
-                                    UserModel? user = await viewModel.login(
+                                    UserModel? user = await ref.read(loginViewModelProvider.notifier).login(
                                       _emailController.text,
                                       _passwordController.text,
                                     );
 
-                                    if (viewModel.status == ViewStatus.success && user != null) {
+                                    if (loginState.status == ViewStatus.success && user != null) {
                                       // Save user to session
-                                      ref.read(userViewModelProvider).setUser(user);
+                                      ref.read(userViewModelProvider.notifier).setUser(user);
 
                                       scaffoldMessenger.showSnackBar(
                                         const SnackBar(content: Text('Login Successful')),
@@ -154,10 +154,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       navigator.pushReplacement(
                                         MaterialPageRoute(builder: (_) => const HomeView()),
                                       );
-                                    } else if (viewModel.status == ViewStatus.error) {
+                                    } else if (loginState.status == ViewStatus.error) {
                                       scaffoldMessenger.showSnackBar(
                                         SnackBar(
-                                          content: Text(viewModel.errorMessage ?? 'Login Failed'),
+                                          content: Text(loginState.errorMessage ?? 'Login Failed'),
                                           backgroundColor: Colors.red,
                                         ),
                                       );

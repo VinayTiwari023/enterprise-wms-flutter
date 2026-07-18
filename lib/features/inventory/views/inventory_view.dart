@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../models/inventory_item_model.dart';
 import '../viewmodels/inventory_view_model.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
+import '../../../shared/widgets/custom_sliver_delegate.dart';
 import '../widgets/inventory_widgets.dart';
 
 class InventoryView extends ConsumerStatefulWidget {
@@ -32,11 +33,11 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
 
   @override
   Widget build(BuildContext context) {
-    final themeVM = ref.watch(themeViewModelProvider);
-    final viewModel = ref.watch(inventoryViewModelProvider);
-    final primaryColor = themeVM.currentThemeColor;
+    final themeState = ref.watch(themeViewModelProvider);
+    final inventoryState = ref.watch(inventoryViewModelProvider);
+    final primaryColor = themeState.currentThemeColor;
 
-    List<InventoryItemModel> filteredList = viewModel.items.where((item) {
+    List<InventoryItemModel> filteredList = inventoryState.items.where((item) {
       String query = _searchController.text.toLowerCase();
       return item.name.toLowerCase().contains(query) || 
              item.sku.toLowerCase().contains(query) ||
@@ -54,8 +55,6 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 pinned: true,
-                floating: true,
-                snap: true,
                 leading: IconButton(
                   onPressed: widget.onBack ?? () {},
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -76,16 +75,22 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                   ),
                 ],
               ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                sliver: SliverToBoxAdapter(
-                  child: _buildSearchBar(context),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentHeaderDelegate(
+                  minHeight: 70,
+                  maxHeight: 70,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: _buildSearchBar(context),
+                  ),
                 ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 10)),
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: viewModel.status == ViewStatus.loading
+                sliver: inventoryState.status == ViewStatus.loading
                     ? const SliverToBoxAdapter(
                         child: Center(child: CircularProgressIndicator()),
                       )

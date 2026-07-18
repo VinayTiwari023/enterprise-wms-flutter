@@ -1,30 +1,63 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/inward_repository.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
 import '../models/purchase_order_model.dart';
 
-final inboundViewModelProvider = ChangeNotifierProvider.autoDispose((ref) {
-  final repository = ref.watch(inwardRepositoryProvider);
-  return InboundViewModel(repository: repository);
-});
+/// Immutable state for Inbound operations.
+class InboundState {
+  final List<PurchaseOrderModel> purchaseOrders;
+  final ViewStatus status;
+  final String? errorMessage;
 
-class InboundViewModel extends BaseViewModel {
-  final InwardRepository _repository;
-  List<PurchaseOrderModel> _purchaseOrders = [];
+  const InboundState({
+    this.purchaseOrders = const [],
+    this.status = ViewStatus.idle,
+    this.errorMessage,
+  });
 
-  InboundViewModel({required InwardRepository repository}) : _repository = repository {
-    fetchPOs();
+  InboundState copyWith({
+    List<PurchaseOrderModel>? purchaseOrders,
+    ViewStatus? status,
+    String? errorMessage,
+    bool clearError = false,
+  }) {
+    return InboundState(
+      purchaseOrders: purchaseOrders ?? this.purchaseOrders,
+      status: status ?? this.status,
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+    );
+  }
+}
+
+/// Notifier-based ViewModel for Inbound operations.
+class InboundViewModel extends Notifier<InboundState> {
+  @override
+  InboundState build() {
+    Future.microtask(() => fetchPOs());
+    return const InboundState();
   }
 
-  List<PurchaseOrderModel> get purchaseOrders => _purchaseOrders;
+  InwardRepository get _repository => ref.read(inwardRepositoryProvider);
 
   Future<void> fetchPOs() async {
-    setStatus(ViewStatus.loading);
+    state = state.copyWith(status: ViewStatus.loading, clearError: true);
+    
     try {
-      _purchaseOrders = await _repository.fetchPurchaseOrders();
-      setStatus(ViewStatus.success);
+      final pos = await _repository.fetchPurchaseOrders();
+      state = state.copyWith(
+        purchaseOrders: pos,
+        status: ViewStatus.success,
+      );
     } catch (e) {
-      setError(e.toString());
+      state = state.copyWith(
+        status: ViewStatus.error,
+        errorMessage: e.toString(),
+      );
     }
   }
 }
+
+/// Provider for the InboundViewModel.
+final inboundViewModelProvider = NotifierProvider<InboundViewModel, InboundState>(() {
+  return InboundViewModel();
+});

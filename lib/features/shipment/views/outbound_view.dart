@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/outbound_view_model.dart';
-import '../../../core/utils/base_view_model.dart';
+import '../../../core/enums/view_status.dart';
+import '../../../shared/widgets/custom_sliver_delegate.dart';
 import '../widgets/shipment_widgets.dart';
 
 class OutboundView extends ConsumerStatefulWidget {
@@ -33,11 +34,11 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
 
   @override
   Widget build(BuildContext context) {
-    final themeVM = ref.watch(themeViewModelProvider);
-    final viewModel = ref.watch(outboundViewModelProvider);
-    final primaryColor = themeVM.currentThemeColor;
+    final themeState = ref.watch(themeViewModelProvider);
+    final outboundState = ref.watch(outboundViewModelProvider);
+    final primaryColor = themeState.currentThemeColor;
 
-    final filteredList = viewModel.orders.where((order) {
+    final filteredList = outboundState.orders.where((order) {
       String query = _searchController.text.toLowerCase();
       String filter = _filters[_selectedFilterIndex];
       bool matchesFilter = filter == "All" || order.status == filter;
@@ -57,8 +58,6 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 pinned: true,
-                floating: true,
-                snap: true,
                 leading: IconButton(
                   onPressed: widget.onBack ?? () {},
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -75,21 +74,33 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
                   ),
                 ],
               ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                sliver: SliverToBoxAdapter(
-                  child: _buildSearchBar(context),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentHeaderDelegate(
+                  minHeight: 70,
+                  maxHeight: 70,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: _buildSearchBar(context),
+                  ),
+                ),
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: PersistentHeaderDelegate(
+                  minHeight: 60,
+                  maxHeight: 60,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: _buildFilterChips(primaryColor),
+                  ),
                 ),
               ),
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                sliver: SliverToBoxAdapter(
-                  child: _buildFilterChips(primaryColor),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                sliver: viewModel.status == ViewStatus.loading
+                sliver: outboundState.status == ViewStatus.loading
                     ? const SliverToBoxAdapter(
                         child: Center(child: CircularProgressIndicator()),
                       )

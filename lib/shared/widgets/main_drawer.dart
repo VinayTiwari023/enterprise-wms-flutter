@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/authentication/viewmodels/user_view_model.dart';
 import '../../features/settings/viewmodels/theme_view_model.dart';
+import '../../features/tasks/views/task_queue_view.dart';
+import '../../features/dashboard/views/reports_view.dart';
+import '../../features/settings/views/profile_view.dart';
+import '../dialogs/logout_dialog.dart';
 
 
 class MainDrawer extends ConsumerWidget {
@@ -60,7 +64,17 @@ class MainDrawer extends ConsumerWidget {
                   color: primaryColor,
                   onTap: () => onIndexSelected(0),
                 ),
-                _drawerItem(Icons.assignment_outlined, "My Task Queue", onTap: () {}),
+                _drawerItem(
+                  Icons.assignment_outlined, 
+                  "My Task Queue", 
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const TaskQueueView()),
+                    );
+                  },
+                ),
                 _drawerItem(
                   Icons.inventory_2_outlined, 
                   "Inventory Management", 
@@ -90,15 +104,31 @@ class MainDrawer extends ConsumerWidget {
                   onTap: () => onIndexSelected(4),
                 ),
                 
-                const SizedBox(height: 20),
-                _sectionTitle("INSIGHTS"),
-                _drawerItem(Icons.bar_chart_rounded, "Reports & Analytics", onTap: () {}),
+                const SizedBox(height: 12),
+                const Divider(),
+                const SizedBox(height: 12),
                 
-                const SizedBox(height: 20),
+                _sectionTitle("INSIGHTS"),
+                _drawerItem(
+                  Icons.bar_chart_rounded, 
+                  "Reports & Analytics", 
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ReportsView()),
+                    );
+                  },
+                ),
+                
+                const SizedBox(height: 12),
+                const Divider(),
+                const SizedBox(height: 12),
+                
                 _sectionTitle("PERSONALIZATION"),
                 SwitchListTile(
                   value: themeVM.isDarkMode,
-                  onChanged: (val) => themeVM.toggleTheme(),
+                  onChanged: (val) => ref.read(themeViewModelProvider.notifier).toggleTheme(),
                   title: const Text("Dark Mode", style: TextStyle(fontSize: 14)),
                   secondary: Icon(themeVM.isDarkMode ? Icons.dark_mode : Icons.light_mode, size: 20),
                   activeThumbColor: primaryColor,
@@ -114,26 +144,47 @@ class MainDrawer extends ConsumerWidget {
                     spacing: 12,
                     runSpacing: 12,
                     children: [
-                      _colorOption(context, const Color(0xFF635BFF), themeVM), // Indigo
-                      _colorOption(context, const Color(0xFF007BFF), themeVM), // Blue
-                      _colorOption(context, const Color(0xFF00A86B), themeVM), // Green
-                      _colorOption(context, const Color(0xFFD81B60), themeVM), // Pink
-                      _colorOption(context, const Color(0xFFFF9800), themeVM), // Orange
-                      _colorOption(context, const Color(0xFF9C27B0), themeVM), // Purple
-                      _colorOption(context, const Color(0xFF00BCD4), themeVM), // Cyan
-                      _colorOption(context, const Color(0xFF607D8B), themeVM), // Blue Grey
+                      _colorOption(context, const Color(0xFF635BFF), themeVM, ref), // Indigo
+                      _colorOption(context, const Color(0xFF007BFF), themeVM, ref), // Blue
+                      _colorOption(context, const Color(0xFF00A86B), themeVM, ref), // Green
+                      _colorOption(context, const Color(0xFFD81B60), themeVM, ref), // Pink
+                      _colorOption(context, const Color(0xFFFF9800), themeVM, ref), // Orange
+                      _colorOption(context, const Color(0xFF9C27B0), themeVM, ref), // Purple
+                      _colorOption(context, const Color(0xFF00BCD4), themeVM, ref), // Cyan
+                      _colorOption(context, const Color(0xFF607D8B), themeVM, ref), // Blue Grey
                     ],
                   ),
                 ),
                 
                 const SizedBox(height: 10),
-                _drawerItem(Icons.settings_outlined, "Settings", onTap: () {}),
+                _drawerItem(
+                  Icons.settings_outlined, 
+                  "Settings", 
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProfileView(onBack: () => Navigator.pop(context))),
+                    );
+                  },
+                ),
               ],
             ),
           ),
           
           const Divider(height: 1),
-          _drawerItem(Icons.logout_rounded, "Sign Out", textColor: Colors.redAccent, iconColor: Colors.redAccent, onTap: () {}),
+          _drawerItem(
+            Icons.logout_rounded, 
+            "Sign Out", 
+            textColor: Colors.redAccent, 
+            iconColor: Colors.redAccent, 
+            onTap: () async {
+              final confirmed = await showLogoutDialog(context);
+              if (confirmed == true) {
+                ref.read(userViewModelProvider.notifier).logout();
+              }
+            },
+          ),
           const SizedBox(height: 10),
         ],
       ),
@@ -173,10 +224,10 @@ class MainDrawer extends ConsumerWidget {
     );
   }
 
-  Widget _colorOption(BuildContext context, Color color, ThemeViewModel vm) {
-    bool isSelected = vm.currentThemeColor == color;
+  Widget _colorOption(BuildContext context, Color color, ThemeState state, WidgetRef ref) {
+    bool isSelected = state.currentThemeColor == color;
     return GestureDetector(
-      onTap: () => vm.setThemeColor(color),
+      onTap: () => ref.read(themeViewModelProvider.notifier).setThemeColor(color),
       child: Container(
         width: 30,
         height: 30,
