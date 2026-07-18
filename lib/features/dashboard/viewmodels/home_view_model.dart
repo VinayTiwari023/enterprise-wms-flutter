@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/enums/view_status.dart';
+import '../../../core/error/exceptions.dart';
+import '../../authentication/viewmodels/user_view_model.dart';
 import '../repositories/dashboard_repository.dart';
 import '../models/dashboard_stats.dart';
 import '../models/activity_model.dart';
@@ -61,11 +63,19 @@ class HomeViewModel extends Notifier<HomeState> {
         recentActivities: results[1] as List<ActivityModel>,
         status: ViewStatus.success,
       );
+    } on UnauthorizedException {
+      // Auto-logout on session expiry
+      ref.read(userViewModelProvider.notifier).logout();
     } catch (e) {
-      state = state.copyWith(
-        status: ViewStatus.error,
-        errorMessage: e.toString(),
-      );
+      final errorMsg = e.toString();
+      if (errorMsg.contains('Unauthorized')) {
+        ref.read(userViewModelProvider.notifier).logout();
+      } else {
+        state = state.copyWith(
+          status: ViewStatus.error,
+          errorMessage: errorMsg,
+        );
+      }
     }
   }
 }

@@ -18,18 +18,20 @@ import '../../features/inventory/services/inventory_mock_service.dart';
 final locator = GetIt.instance;
 
 void setupLocator() {
-  // Infrastructure only
-  locator.registerLazySingleton<BaseApiService>(
-        () => NetworkApiService(),
-  );
-
+  // Infrastructure
   locator.registerLazySingleton<FlutterSecureStorage>(
-        () => const FlutterSecureStorage(),
+    () => const FlutterSecureStorage(),
   );
 
   locator.registerLazySingleton<StorageService>(
-        () => SecureStorageService(
+    () => SecureStorageService(
       locator<FlutterSecureStorage>(),
+    ),
+  );
+
+  locator.registerLazySingleton<BaseApiService>(
+    () => NetworkApiService(
+      locator<StorageService>(),
     ),
   );
 

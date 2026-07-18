@@ -4,15 +4,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'base_api_service.dart';
 import '../di/locator.dart';
+import '../storage/storage_service.dart';
+import '../storage/storage_keys.dart';
+import '../error/exceptions.dart';
 
 final apiServiceProvider = Provider<BaseApiService>((ref) => locator<BaseApiService>());
 
 class NetworkApiService extends BaseApiService {
+  final StorageService _storageService;
+
+  NetworkApiService(this._storageService);
+
   @override
   Future getApiResponse(String url) async {
     dynamic responseJson;
     try {
-      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 10));
+      final headers = await _getHeaders();
+      final response = await http
+          .get(Uri.parse(url), headers: headers)
+          .timeout(const Duration(seconds: 10));
       responseJson = returnResponse(response);
     } on SocketException {
       throw Exception('No Internet Connection');
@@ -24,10 +34,11 @@ class NetworkApiService extends BaseApiService {
   Future postApiResponse(String url, dynamic data) async {
     dynamic responseJson;
     try {
+      final headers = await _getHeaders();
       final response = await http
           .post(
             Uri.parse(url),
-            headers: {'Content-Type': 'application/json'},
+            headers: headers,
             body: jsonEncode(data),
           )
           .timeout(const Duration(seconds: 10));
@@ -38,6 +49,15 @@ class NetworkApiService extends BaseApiService {
     return responseJson;
   }
 
+  Future<Map<String, String>> _getHeaders() async {
+    final headers = {'Content-Type': 'application/json'};
+    final token = await _storageService.read(StorageKeys.accessToken);
+    if (token != null && token.toString().isNotEmpty) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    return headers;
+  }
+
   dynamic returnResponse(http.Response response) {
     switch (response.statusCode) {
       case 200:
@@ -46,7 +66,7 @@ class NetworkApiService extends BaseApiService {
         final error = jsonDecode(response.body);
         throw Exception(error['error'] ?? 'Bad Request');
       case 401:
-        throw Exception('Unauthorized: Please check your credentials');
+        throw const UnauthorizedException('Unauthorized: Please login again');
       case 404:
         throw Exception('Not Found: Server endpoint not found');
       case 500:

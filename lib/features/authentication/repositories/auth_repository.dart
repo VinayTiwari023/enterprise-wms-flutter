@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/di/locator.dart';
 import '../../../core/result/result.dart';
+import '../../../shared/models/user_model.dart';
 import '../data/models/login_request.dart';
 import '../data/models/login_response.dart';
 
@@ -16,8 +17,8 @@ abstract class AuthRepository {
   Future<Result<LoginResponse>> mockLogin(LoginRequest request);
 
   /// Checks if there's a valid session stored locally.
-  /// Returns `true` if a session exists, `false` otherwise.
-  Future<Result<bool>> checkAuthStatus();
+  /// Returns a `UserModel` if a session exists, `null` otherwise.
+  Future<Result<UserModel?>> checkAuthStatus();
 
   /// Clears the local session and performs any remote cleanup.
   Future<Result<void>> logout();

@@ -12,4 +12,13 @@ final class StorageKeys {
 
   /// Key for storing the token used to obtain a new access token.
   static const String refreshToken = 'refresh_token';
+
+  /// Key for storing the user's ID.
+  static const String userId = 'user_id';
+
+  /// Key for storing the user's full name.
+  static const String userName = 'user_name';
+
+  /// Key for storing the user's email.
+  static const String userEmail = 'user_email';
 }

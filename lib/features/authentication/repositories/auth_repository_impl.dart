@@ -7,6 +7,7 @@ import '../../../core/network/base_api_service.dart';
 import '../../../core/storage/storage_service.dart';
 import '../../../core/storage/storage_keys.dart';
 import '../../../app/config/env.dart';
+import '../../../shared/models/user_model.dart';
 import '../data/models/login_request.dart';
 import '../data/models/login_response.dart';
 import '../services/auth_mock_service.dart';
@@ -34,8 +35,7 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final data = LoginResponse.fromJson(response as Map<String, dynamic>);
       
-      // Persist the token
-      await _storageService.save(StorageKeys.accessToken, data.token);
+      await _saveSession(data, request.email);
       
       return Result.success(data);
     } on UnauthorizedException catch (e) {
@@ -55,8 +55,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final response = await _mockService.login(request.email, request.password);
       final data = LoginResponse.fromJson(response);
       
-      // Persist the token
-      await _storageService.save(StorageKeys.accessToken, data.token);
+      await _saveSession(data, request.email);
       
       return Result.success(data);
     } catch (e) {
@@ -64,13 +63,30 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  Future<void> _saveSession(LoginResponse data, String email) async {
+    await _storageService.save(StorageKeys.accessToken, data.token ?? '');
+    await _storageService.save(StorageKeys.userId, data.userId ?? '');
+    await _storageService.save(StorageKeys.userName, data.userName ?? '');
+    await _storageService.save(StorageKeys.userEmail, email);
+  }
+
   @override
-  Future<Result<bool>> checkAuthStatus() async {
+  Future<Result<UserModel?>> checkAuthStatus() async {
     try {
       final token = await _storageService.read(StorageKeys.accessToken);
       
-      final exists = token != null && token.toString().isNotEmpty;
-      return Result.success(exists);
+      if (token == null || token.toString().isEmpty) {
+        return Result.success(null);
+      }
+
+      final name = await _storageService.read(StorageKeys.userName);
+      final email = await _storageService.read(StorageKeys.userEmail);
+
+      return Result.success(UserModel(
+        token: token.toString(),
+        name: name?.toString() ?? 'User',
+        email: email?.toString() ?? '',
+      ));
     } catch (e) {
       return Result.failure(UnknownFailure(e.toString()));
     }
@@ -80,6 +96,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<void>> logout() async {
     try {
       await _storageService.remove(StorageKeys.accessToken);
+      await _storageService.remove(StorageKeys.userId);
+      await _storageService.remove(StorageKeys.userName);
+      await _storageService.remove(StorageKeys.userEmail);
       return Result.success(null);
     } catch (e) {
       return Result.failure(UnknownFailure(e.toString()));

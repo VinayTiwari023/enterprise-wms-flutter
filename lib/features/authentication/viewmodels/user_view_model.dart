@@ -45,7 +45,7 @@ class UserViewModel extends Notifier<UserState> {
     final result = await _authRepo.checkAuthStatus();
 
     final user = switch (result) {
-      Success(value: true) => UserModel(token: '', email: '', name: 'Authenticated User'),
+      Success(value: final userModel) => userModel,
       _ => null,
     };
 
