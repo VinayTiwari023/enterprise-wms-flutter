@@ -15,41 +15,71 @@ class ReportsView extends ConsumerWidget {
     final primaryColor = themeVM.currentThemeColor;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text("Reports & Analytics", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.tune_rounded)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.file_download_outlined)),
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            floating: true,
+            snap: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: const Text("Reports & Analytics",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            centerTitle: true,
+            actions: [
+              IconButton(onPressed: () {}, icon: const Icon(Icons.tune_rounded)),
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.file_download_outlined)),
+            ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(20),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildMonthlyOverview(context, primaryColor),
+                  const SizedBox(height: 30),
+                  const Text("Inventory Turnover",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 15),
+                  _buildTurnoverChart(context, primaryColor),
+                  const SizedBox(height: 30),
+                  const Text("Key Performance Indicators",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 15),
+                  _buildKPIGrid(context),
+                  const SizedBox(height: 30),
+                  const Text("Recent Reports",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 15),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            sliver: viewModel.status == ViewStatus.loading
+                ? const SliverToBoxAdapter(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final report = viewModel.recentReports[index];
+                        return _buildReportTile(
+                            context, report['title']!, report['date']!);
+                      },
+                      childCount: viewModel.recentReports.length,
+                    ),
+                  ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildMonthlyOverview(context, primaryColor),
-            const SizedBox(height: 30),
-            const Text("Inventory Turnover", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 15),
-            _buildTurnoverChart(context, primaryColor),
-            const SizedBox(height: 30),
-            const Text("Key Performance Indicators", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 15),
-            _buildKPIGrid(context),
-            const SizedBox(height: 30),
-            const Text("Recent Reports", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 15),
-            viewModel.status == ViewStatus.loading
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
-                  children: viewModel.recentReports.map((report) => _buildReportTile(context, report['title']!, report['date']!)).toList(),
-                ),
-          ],
-        ),
       ),
     );
   }

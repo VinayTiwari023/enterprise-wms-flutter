@@ -50,37 +50,73 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                _buildHeader(context),
-                const SizedBox(height: 20),
-                _buildSearchBar(context),
-                const SizedBox(height: 20),
-                _buildFilterChips(primaryColor),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: viewModel.status == ViewStatus.loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : filteredList.isEmpty 
-                      ? const Center(child: Text("No orders found"))
-                      : ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 100),
-                          itemCount: filteredList.length,
-                          itemBuilder: (context, index) {
-                            final order = filteredList[index];
-                            return OrderCard(
-                              order: order,
-                              primaryColor: primaryColor,
-                            );
-                          },
-                        ),
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                pinned: true,
+                floating: true,
+                snap: true,
+                leading: IconButton(
+                  onPressed: widget.onBack ?? () {},
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                 ),
-              ],
-            ),
+                title: const Text(
+                  "Outbound Shipping",
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                centerTitle: true,
+                actions: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.tune_rounded),
+                  ),
+                ],
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                sliver: SliverToBoxAdapter(
+                  child: _buildSearchBar(context),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                sliver: SliverToBoxAdapter(
+                  child: _buildFilterChips(primaryColor),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                sliver: viewModel.status == ViewStatus.loading
+                    ? const SliverToBoxAdapter(
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : filteredList.isEmpty
+                        ? const SliverToBoxAdapter(
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 100),
+                                child: Text("No orders found"),
+                              ),
+                            ),
+                          )
+                        : SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final order = filteredList[index];
+                                return OrderCard(
+                                  order: order,
+                                  primaryColor: primaryColor,
+                                );
+                              },
+                              childCount: filteredList.length,
+                            ),
+                          ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            ],
           ),
           Positioned(
             bottom: 20,
@@ -89,26 +125,6 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-          onPressed: widget.onBack ?? () {},
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-        ),
-        const Text(
-          "Outbound Shipping",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.tune_rounded),
-        ),
-      ],
     );
   }
 

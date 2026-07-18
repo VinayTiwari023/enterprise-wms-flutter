@@ -18,7 +18,7 @@ class FakeLoginRequest extends Fake implements LoginRequest {}
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeLoginRequest());
-  });
+  }); 
 
   group('LoginViewModel Tests -', () {
     late ProviderContainer container;

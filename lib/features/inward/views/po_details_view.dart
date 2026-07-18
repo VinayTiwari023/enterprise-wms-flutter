@@ -13,39 +13,82 @@ class PODetailsView extends ConsumerWidget {
     final primaryColor = themeVM.currentThemeColor;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text("PO Details: $poNumber", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        centerTitle: false,
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SupplierCard(),
-                  const SizedBox(height: 30),
-                  const Text(
-                    "Items to Receive",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 15),
-                  ItemReceiveTile(title: "SKU Item #1000", required: "20", received: "0", onAdd: () {}),
-                  ItemReceiveTile(title: "SKU Item #1001", required: "20", received: "0", onAdd: () {}),
-                  ItemReceiveTile(title: "SKU Item #1002", required: "20", received: "0", onAdd: () {}),
-                  ItemReceiveTile(title: "SKU Item #1003", required: "20", received: "0", onAdd: () {}),
-                  ItemReceiveTile(title: "SKU Item #1004", required: "20", received: "0", onAdd: () {}),
-                ],
+          CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                floating: true,
+                snap: true,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                title: Text("PO Details: $poNumber",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18)),
+                centerTitle: false,
               ),
-            ),
+              SliverPadding(
+                padding: const EdgeInsets.all(20),
+                sliver: SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SupplierCard(),
+                      const SizedBox(height: 30),
+                      const Text(
+                        "Items to Receive",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 15),
+                    ],
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    ItemReceiveTile(
+                        title: "SKU Item #1000",
+                        required: "20",
+                        received: "0",
+                        onAdd: () {}),
+                    ItemReceiveTile(
+                        title: "SKU Item #1001",
+                        required: "20",
+                        received: "0",
+                        onAdd: () {}),
+                    ItemReceiveTile(
+                        title: "SKU Item #1002",
+                        required: "20",
+                        received: "0",
+                        onAdd: () {}),
+                    ItemReceiveTile(
+                        title: "SKU Item #1003",
+                        required: "20",
+                        received: "0",
+                        onAdd: () {}),
+                    ItemReceiveTile(
+                        title: "SKU Item #1004",
+                        required: "20",
+                        received: "0",
+                        onAdd: () {}),
+                  ]),
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            ],
           ),
-          StartReceivingButton(primaryColor: primaryColor, onTap: () {}),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: StartReceivingButton(primaryColor: primaryColor, onTap: () {}),
+          ),
         ],
       ),
     );
