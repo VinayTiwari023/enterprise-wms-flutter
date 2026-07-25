@@ -62,3 +62,21 @@ class InventoryViewModel extends Notifier<InventoryState> {
 final inventoryViewModelProvider = NotifierProvider<InventoryViewModel, InventoryState>(() {
   return InventoryViewModel();
 });
+
+/// Provider for the search query to isolate search state.
+final inventorySearchQueryProvider = StateProvider<String>((ref) => "");
+
+/// Optimized provider for filtered inventory.
+/// This moves the filtering logic out of the build() method and caches the result.
+final filteredInventoryProvider = Provider<List<InventoryItemModel>>((ref) {
+  final query = ref.watch(inventorySearchQueryProvider).toLowerCase();
+  final items = ref.watch(inventoryViewModelProvider.select((s) => s.items));
+  
+  if (query.isEmpty) return items;
+  
+  return items.where((item) {
+    return item.name.toLowerCase().contains(query) || 
+           item.sku.toLowerCase().contains(query) ||
+           item.location.toLowerCase().contains(query);
+  }).toList();
+});

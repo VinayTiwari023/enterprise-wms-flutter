@@ -1,10 +1,13 @@
+import 'purchase_order_item_model.dart';
+
 class PurchaseOrderModel {
   final String poNumber;
   final String supplier;
-  final String items;
+  final String items; // Keeping for backward compat or summary
   final String date;
   final String status;
   final double progress;
+  final List<PurchaseOrderItemModel> itemsList;
 
   PurchaseOrderModel({
     required this.poNumber,
@@ -13,6 +16,7 @@ class PurchaseOrderModel {
     required this.date,
     required this.status,
     required this.progress,
+    this.itemsList = const [],
   });
 
   factory PurchaseOrderModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,10 @@ class PurchaseOrderModel {
       date: json['date'] ?? '',
       status: json['status'] ?? '',
       progress: (json['progress'] ?? 0.0).toDouble(),
+      itemsList: (json['itemsList'] as List?)
+              ?.map((e) => PurchaseOrderItemModel.fromJson(e))
+              .toList() ??
+          [],
     );
   }
 
@@ -34,6 +42,24 @@ class PurchaseOrderModel {
       'date': date,
       'status': status,
       'progress': progress,
+      'itemsList': itemsList.map((e) => e.toJson()).toList(),
     };
+  }
+
+  PurchaseOrderModel copyWith({
+    String? items,
+    String? status,
+    double? progress,
+    List<PurchaseOrderItemModel>? itemsList,
+  }) {
+    return PurchaseOrderModel(
+      poNumber: poNumber,
+      supplier: supplier,
+      items: items ?? this.items,
+      date: date,
+      status: status ?? this.status,
+      progress: progress ?? this.progress,
+      itemsList: itemsList ?? this.itemsList,
+    );
   }
 }

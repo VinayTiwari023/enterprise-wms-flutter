@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../settings/viewmodels/theme_view_model.dart';
-import '../models/inventory_item_model.dart';
 import '../viewmodels/inventory_view_model.dart';
 import '../../../core/enums/view_status.dart';
 import '../../../shared/widgets/custom_sliver_delegate.dart';
@@ -22,7 +21,6 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() => setState(() {}));
   }
 
   @override
@@ -34,15 +32,9 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
   @override
   Widget build(BuildContext context) {
     final themeState = ref.watch(themeViewModelProvider);
-    final inventoryState = ref.watch(inventoryViewModelProvider);
+    final status = ref.watch(inventoryViewModelProvider.select((s) => s.status));
+    final filteredList = ref.watch(filteredInventoryProvider);
     final primaryColor = themeState.currentThemeColor;
-
-    List<InventoryItemModel> filteredList = inventoryState.items.where((item) {
-      String query = _searchController.text.toLowerCase();
-      return item.name.toLowerCase().contains(query) || 
-             item.sku.toLowerCase().contains(query) ||
-             item.location.toLowerCase().contains(query);
-    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -90,7 +82,7 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
               const SliverToBoxAdapter(child: SizedBox(height: 10)),
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: inventoryState.status == ViewStatus.loading
+                sliver: status == ViewStatus.loading
                     ? const SliverToBoxAdapter(
                         child: Center(child: CircularProgressIndicator()),
                       )
@@ -134,6 +126,7 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
       ),
       child: TextField(
         controller: _searchController,
+        onChanged: (value) => ref.read(inventorySearchQueryProvider.notifier).state = value,
         decoration: InputDecoration(
           hintText: "Search items, SKU, category...",
           hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),

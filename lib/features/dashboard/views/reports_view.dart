@@ -52,7 +52,31 @@ class ReportsView extends ConsumerWidget {
                   const Text("Key Performance Indicators",
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 15),
-                  _buildKPIGrid(context),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            sliver: SliverGrid.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 15,
+              childAspectRatio: 1.3,
+              children: [
+                _buildKPICard(context, Icons.check_circle_outline, "99.2%", "Pick Accuracy", Colors.blue),
+                _buildKPICard(context, Icons.inventory_2_outlined, "45/hr", "Pack Rate", Colors.orange),
+                _buildKPICard(context, Icons.timer_outlined, "2.4 hrs", "Dock to Stock", Colors.purple),
+                _buildKPICard(context, Icons.sync_rounded, "1.5 days", "Order Cycle", Colors.teal),
+              ],
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(20),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   const SizedBox(height: 30),
                   const Text("Recent Reports",
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
@@ -235,23 +259,6 @@ class ReportsView extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildKPIGrid(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 15,
-      crossAxisSpacing: 15,
-      childAspectRatio: 1.3,
-      children: [
-        _buildKPICard(context, Icons.check_circle_outline, "99.2%", "Pick Accuracy", Colors.blue),
-        _buildKPICard(context, Icons.inventory_2_outlined, "45/hr", "Pack Rate", Colors.orange),
-        _buildKPICard(context, Icons.timer_outlined, "2.4 hrs", "Dock to Stock", Colors.purple),
-        _buildKPICard(context, Icons.sync_rounded, "1.5 days", "Order Cycle", Colors.teal),
-      ],
     );
   }
 

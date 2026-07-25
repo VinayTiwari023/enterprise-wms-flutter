@@ -6,7 +6,9 @@ import '../viewmodels/inbound_view_model.dart';
 import '../../../core/enums/view_status.dart';
 import '../../../shared/widgets/custom_sliver_delegate.dart';
 import '../widgets/inward_widgets.dart';
-import 'po_details_view.dart';
+import '../../purchase_order/views/po_details_view.dart';
+import '../../purchase_order/views/add_po_view.dart';
+import '../../barcode/views/po_scan_view.dart';
 
 class InboundView extends ConsumerStatefulWidget {
   final VoidCallback? onBack;
@@ -18,14 +20,6 @@ class InboundView extends ConsumerStatefulWidget {
 
 class _InboundViewState extends ConsumerState<InboundView> {
   final TextEditingController _searchController = TextEditingController();
-  int _selectedFilterIndex = 0;
-  final List<String> _filters = ["All", "Pending", "Partial", "Completed"];
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(() => setState(() {}));
-  }
 
   @override
   void dispose() {
@@ -36,17 +30,9 @@ class _InboundViewState extends ConsumerState<InboundView> {
   @override
   Widget build(BuildContext context) {
     final themeState = ref.watch(themeViewModelProvider);
-    final inboundState = ref.watch(inboundViewModelProvider);
+    final status = ref.watch(inboundViewModelProvider.select((s) => s.status));
+    final filteredList = ref.watch(filteredPurchaseOrdersProvider);
     final primaryColor = themeState.currentThemeColor;
-
-    final filteredList = inboundState.purchaseOrders.where((po) {
-      String query = _searchController.text.toLowerCase();
-      String filter = _filters[_selectedFilterIndex];
-      bool matchesFilter = filter == "All" || po.status == filter;
-      bool matchesSearch = po.poNumber.toLowerCase().contains(query) || 
-                          po.supplier.toLowerCase().contains(query);
-      return matchesFilter && matchesSearch;
-    }).toList();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -69,6 +55,22 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AddPOView()),
+                        );
+                      },
+                      style: IconButton.styleFrom(
+                        backgroundColor: primaryColor.withValues(alpha: 0.1),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      icon: Icon(Icons.add_rounded, color: primaryColor, size: 24),
+                    ),
+                  ),
                   IconButton(
                     onPressed: () {},
                     icon: const Icon(Icons.filter_list_rounded),
@@ -83,7 +85,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: _buildSearchBar(context),
+                    child: InboundSearchBar(controller: _searchController),
                   ),
                 ),
               ),
@@ -95,13 +97,13 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: _buildFilterChips(primaryColor),
+                    child: const InboundFilterChips(),
                   ),
                 ),
               ),
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: inboundState.status == ViewStatus.loading
+                sliver: status == ViewStatus.loading
                     ? const SliverToBoxAdapter(
                         child: Center(child: CircularProgressIndicator()),
                       )
@@ -141,21 +143,36 @@ class _InboundViewState extends ConsumerState<InboundView> {
           Positioned(
             bottom: 20,
             right: 20,
-            child: InboundScanButton(primaryColor: primaryColor, onTap: () {}),
+            child: InboundScanButton(
+              primaryColor: primaryColor, 
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const POScanView()),
+                );
+              },
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildSearchBar(BuildContext context) {
+class InboundSearchBar extends ConsumerWidget {
+  final TextEditingController controller;
+  const InboundSearchBar({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(30),
       ),
       child: TextField(
-        controller: _searchController,
+        controller: controller,
+        onChanged: (value) => ref.read(inboundSearchQueryProvider.notifier).state = value,
         decoration: InputDecoration(
           hintText: "Search PO or Supplier...",
           hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
@@ -166,18 +183,27 @@ class _InboundViewState extends ConsumerState<InboundView> {
       ),
     );
   }
+}
 
-  Widget _buildFilterChips(Color primaryColor) {
+class InboundFilterChips extends ConsumerWidget {
+  const InboundFilterChips({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedFilterIndex = ref.watch(inboundFilterIndexProvider);
+    final primaryColor = ref.watch(themeViewModelProvider.select((s) => s.currentThemeColor));
+    final filters = ["All", "Pending", "Partial", "Completed"];
+
     return SizedBox(
       height: 40,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: _filters.length,
+        itemCount: filters.length,
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          bool isSelected = _selectedFilterIndex == index;
+          bool isSelected = selectedFilterIndex == index;
           return GestureDetector(
-            onTap: () => setState(() => _selectedFilterIndex = index),
+            onTap: () => ref.read(inboundFilterIndexProvider.notifier).state = index,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
@@ -189,7 +215,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
               ),
               alignment: Alignment.center,
               child: Text(
-                _filters[index],
+                filters[index],
                 style: TextStyle(
                   color: isSelected ? Colors.white : Colors.grey,
                   fontWeight: FontWeight.w600,

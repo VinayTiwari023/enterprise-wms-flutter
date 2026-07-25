@@ -44,6 +44,9 @@ dependencies:
   # Charts
   fl_chart: ^1.2.0
 
+  # Barcode Scanning
+  mobile_scanner: ^5.1.0
+
   # Serialization
   json_annotation: ^4.9.0
 

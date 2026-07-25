@@ -15,6 +15,8 @@ import '../../inward/views/inbound_view.dart';
 import '../../shipment/views/outbound_view.dart';
 import '../../inventory/views/inventory_view.dart';
 import '../../settings/views/profile_view.dart';
+import '../../purchase_order/views/add_po_view.dart';
+import '../../barcode/views/po_scan_view.dart';
 import 'reports_view.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -30,7 +32,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     final themeVM = ref.watch(themeViewModelProvider);
-    final viewModel = ref.watch(homeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
 
     return PopScope(
@@ -50,16 +51,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           },
         ),
         body: SafeArea(
-          child: IndexedStack(
-            index: _currentIndex,
-            children: [
-              _buildDashboardSliver(viewModel, themeVM, context),
-              InboundView(onBack: () => setState(() => _currentIndex = 0)),
-              OutboundView(onBack: () => setState(() => _currentIndex = 0)),
-              InventoryView(onBack: () => setState(() => _currentIndex = 0)),
-              ProfileView(onBack: () => setState(() => _currentIndex = 0)),
-            ],
-          ),
+          child: _buildBody(),
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
@@ -105,6 +97,23 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
+  Widget _buildBody() {
+    switch (_currentIndex) {
+      case 0:
+        return DashboardView(onInventoryTap: () => setState(() => _currentIndex = 3));
+      case 1:
+        return InboundView(onBack: () => setState(() => _currentIndex = 0));
+      case 2:
+        return OutboundView(onBack: () => setState(() => _currentIndex = 0));
+      case 3:
+        return InventoryView(onBack: () => setState(() => _currentIndex = 0));
+      case 4:
+        return ProfileView(onBack: () => setState(() => _currentIndex = 0));
+      default:
+        return const DashboardView();
+    }
+  }
+
   Widget _buildNavIcon(IconData icon, int index, Color primaryColor) {
     bool isSelected = _currentIndex == index;
     return Container(
@@ -121,8 +130,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ),
     );
   }
+}
 
-  Widget _buildDashboardSliver(HomeState viewModel, ThemeState themeVM, BuildContext context) {
+class DashboardView extends ConsumerWidget {
+  final VoidCallback? onInventoryTap;
+  const DashboardView({super.key, this.onInventoryTap});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(homeViewModelProvider);
+    final themeVM = ref.watch(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
     final userVM = ref.watch(userViewModelProvider);
 
@@ -257,10 +274,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
               childAspectRatio: 0.85,
             ),
             delegate: SliverChildListDelegate([
-              QuickActionItem(icon: Icons.qr_code_scanner_rounded, label: "Scan", color: primaryColor, onTap: () {}),
-              QuickActionItem(icon: Icons.add_box_outlined, label: "Add", color: primaryColor, onTap: () {}),
+              QuickActionItem(icon: Icons.qr_code_scanner_rounded, label: "Scan", color: primaryColor, onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const POScanView()));
+              }),
+              QuickActionItem(icon: Icons.add_box_outlined, label: "Add", color: primaryColor, onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPOView()));
+              }),
               QuickActionItem(icon: Icons.local_shipping_outlined, label: "Ship", color: primaryColor, onTap: () {}),
-              QuickActionItem(icon: Icons.inventory_2_outlined, label: "Inventory", color: primaryColor, onTap: () => setState(() => _currentIndex = 3)),
+              QuickActionItem(icon: Icons.inventory_2_outlined, label: "Inventory", color: primaryColor, onTap: () {
+                onInventoryTap?.call();
+              }),
               QuickActionItem(icon: Icons.bar_chart_rounded, label: "Reports", color: primaryColor, onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportsView()));
               }),

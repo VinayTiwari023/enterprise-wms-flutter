@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/purchase_order_model.dart';
+import '../../purchase_order/models/purchase_order_model.dart';
 
 class POCard extends StatelessWidget {
   final PurchaseOrderModel po;
@@ -247,8 +247,14 @@ class ItemReceiveTile extends StatelessWidget {
 class StartReceivingButton extends StatelessWidget {
   final Color primaryColor;
   final VoidCallback onTap;
+  final String text;
 
-  const StartReceivingButton({super.key, required this.primaryColor, required this.onTap});
+  const StartReceivingButton({
+    super.key, 
+    required this.primaryColor, 
+    required this.onTap,
+    this.text = "Start Receiving",
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -265,9 +271,9 @@ class StartReceivingButton extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             elevation: 0,
           ),
-          child: const Text(
-            "Start Receiving",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
       ),

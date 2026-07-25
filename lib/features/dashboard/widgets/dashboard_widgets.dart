@@ -55,36 +55,38 @@ class PerformanceChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Theme.of(context).colorScheme.outline),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text("Weekly Throughput", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-              Icon(Icons.trending_up_rounded, color: primaryColor, size: 20),
-            ],
-          ),
-          const SizedBox(height: 25),
-          const SizedBox(
-            height: 180,
-            child: BarChartSample(),
-          ),
-        ],
+    return RepaintBoundary(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 15,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Weekly Throughput", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                Icon(Icons.trending_up_rounded, color: primaryColor, size: 20),
+              ],
+            ),
+            const SizedBox(height: 25),
+            const SizedBox(
+              height: 180,
+              child: BarChartSample(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -97,104 +99,106 @@ class StockDistributionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Theme.of(context).colorScheme.outline),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Stock Distribution", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                flex: 4,
-                child: SizedBox(
-                  height: 180,
-                  child: Stack(
+    return RepaintBoundary(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 15,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Stock Distribution", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: SizedBox(
+                    height: 180,
+                    child: Stack(
+                      children: [
+                        PieChart(
+                          PieChartData(
+                            sectionsSpace: 6,
+                            centerSpaceRadius: 40,
+                            sections: [
+                              PieChartSectionData(
+                                color: primaryColor.withValues(alpha: 0.85),
+                                value: 60,
+                                radius: 25,
+                                showTitle: false,
+                                badgeWidget: _buildBadge("60%", context),
+                                badgePositionPercentageOffset: 1.15,
+                              ),
+                              PieChartSectionData(
+                                color: const Color(0xFF4A4E69),
+                                value: 25,
+                                radius: 25,
+                                showTitle: false,
+                                badgeWidget: _buildBadge("25%", context),
+                                badgePositionPercentageOffset: 1.15,
+                              ),
+                              PieChartSectionData(
+                                color: const Color(0xFF9A4C55),
+                                value: 15,
+                                radius: 25,
+                                showTitle: false,
+                                badgeWidget: _buildBadge("15%", context),
+                                badgePositionPercentageOffset: 1.15,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("1.2k", style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: primaryColor,
+                                height: 1.1,
+                              )),
+                              const Text("Total", style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                              )),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PieChart(
-                        PieChartData(
-                          sectionsSpace: 6,
-                          centerSpaceRadius: 40,
-                          sections: [
-                            PieChartSectionData(
-                              color: primaryColor.withValues(alpha: 0.85), 
-                              value: 60, 
-                              radius: 25, 
-                              showTitle: false,
-                              badgeWidget: _buildBadge("60%", context),
-                              badgePositionPercentageOffset: 1.15,
-                            ),
-                            PieChartSectionData(
-                              color: const Color(0xFF4A4E69), 
-                              value: 25, 
-                              radius: 25, 
-                              showTitle: false,
-                              badgeWidget: _buildBadge("25%", context),
-                              badgePositionPercentageOffset: 1.15,
-                            ),
-                            PieChartSectionData(
-                              color: const Color(0xFF9A4C55), 
-                              value: 15, 
-                              radius: 25, 
-                              showTitle: false,
-                              badgeWidget: _buildBadge("15%", context),
-                              badgePositionPercentageOffset: 1.15,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("1.2k", style: TextStyle(
-                              fontSize: 26, 
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor,
-                              height: 1.1,
-                            )),
-                            const Text("Total", style: TextStyle(
-                              fontSize: 12, 
-                              color: Colors.grey, 
-                              fontWeight: FontWeight.w500,
-                            )),
-                          ],
-                        ),
-                      ),
+                      DistributionLegendItem(color: primaryColor.withValues(alpha: 0.85), label: "In Stock", value: "60%"),
+                      const SizedBox(height: 15),
+                      DistributionLegendItem(color: const Color(0xFF4A4E69), label: "Reserved", value: "25%"),
+                      const SizedBox(height: 15),
+                      DistributionLegendItem(color: const Color(0xFF9A4C55), label: "Damaged", value: "15%"),
                     ],
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DistributionLegendItem(color: primaryColor.withValues(alpha: 0.85), label: "In Stock", value: "60%"),
-                    const SizedBox(height: 15),
-                    DistributionLegendItem(color: const Color(0xFF4A4E69), label: "Reserved", value: "25%"),
-                    const SizedBox(height: 15),
-                    DistributionLegendItem(color: const Color(0xFF9A4C55), label: "Damaged", value: "15%"),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
