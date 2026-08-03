@@ -47,6 +47,10 @@ dependencies:
   # Barcode Scanning
   mobile_scanner: ^5.1.0
 
+  # PDF and Printing
+  pdf: ^3.11.1
+  printing: ^5.13.2
+
   # Serialization
   json_annotation: ^4.9.0
 
@@ -57,7 +61,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  
+
   # Generation
   build_runner: ^2.4.8
   json_serializable: ^6.8.0
