@@ -116,8 +116,7 @@ class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
                                       backgroundColor: Colors.green,
                                     ),
                                   );
-                                  Navigator.pop(context);
-                                  Navigator.pop(context); // Go back to PO list
+                                  Navigator.pop(context); // Return to Inbound operations list
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(

@@ -40,21 +40,31 @@ class HomeState {
 class HomeViewModel extends Notifier<HomeState> {
   @override
   HomeState build() {
-    // Watch relevant providers to trigger re-calculation when data changes
-    final inboundState = ref.watch(inboundViewModelProvider);
-    final inventoryState = ref.watch(inventoryViewModelProvider);
+    // Listen to relevant providers to update state without re-running build()
+    // This preserves internal state like 'recentActivities' when dependencies change.
+    ref.listen(inboundViewModelProvider, (prev, next) {
+      _updateDynamicStats();
+    });
+    ref.listen(inventoryViewModelProvider, (prev, next) {
+      _updateDynamicStats();
+    });
 
     // Initial load of repository data
     Future.microtask(() => _fetchInitialData());
 
-    return _calculateDynamicState(inboundState, inventoryState);
+    // Calculate initial stats from current dependency states
+    final inbound = ref.read(inboundViewModelProvider);
+    final inventory = ref.read(inventoryViewModelProvider);
+
+    return HomeState(
+      stats: _computeStats(inbound, inventory),
+      status: ViewStatus.loading,
+    );
   }
 
   DashboardRepository get _repository => ref.read(dashboardRepositoryProvider);
 
   Future<void> _fetchInitialData() async {
-    if (state.status == ViewStatus.loading) return;
-    
     try {
       final activities = await _repository.fetchActivities();
       state = state.copyWith(
@@ -62,11 +72,17 @@ class HomeViewModel extends Notifier<HomeState> {
         status: ViewStatus.success,
       );
     } catch (e) {
-       // Silent error for background fetch
+      state = state.copyWith(status: ViewStatus.error, errorMessage: e.toString());
     }
   }
 
-  HomeState _calculateDynamicState(InboundState inbound, InventoryState inventory) {
+  void _updateDynamicStats() {
+    final inbound = ref.read(inboundViewModelProvider);
+    final inventory = ref.read(inventoryViewModelProvider);
+    state = state.copyWith(stats: _computeStats(inbound, inventory));
+  }
+
+  DashboardStats _computeStats(InboundState inbound, InventoryState inventory) {
     // Calculate stats based on Inbound POs
     int pending = inbound.purchaseOrders.where((po) => po.status == "Pending").length;
     int partial = inbound.purchaseOrders.where((po) => po.status == "Partial").length;
@@ -75,17 +91,11 @@ class HomeViewModel extends Notifier<HomeState> {
     // Alerts could be low stock or overdue POs (mock logic)
     int alerts = inventory.items.where((i) => i.units < 10).length;
 
-    final dynamicStats = DashboardStats(
+    return DashboardStats(
       pendingCount: pending,
       completedCount: completed,
       inProgressCount: partial,
       alertsCount: alerts,
-    );
-
-    return HomeState(
-      stats: dynamicStats,
-      recentActivities: state.recentActivities,
-      status: state.status,
     );
   }
 

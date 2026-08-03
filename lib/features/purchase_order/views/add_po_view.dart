@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../../inward/viewmodels/inbound_view_model.dart';
+import '../../inventory/viewmodels/inventory_view_model.dart';
 import '../models/purchase_order_model.dart';
+import '../models/purchase_order_item_model.dart';
 import '../../../core/enums/view_status.dart';
 import '../../authentication/widgets/auth_widgets.dart';
 
@@ -18,7 +20,7 @@ class AddPOView extends ConsumerStatefulWidget {
 class _AddPOViewState extends ConsumerState<AddPOView> {
   final _formKey = GlobalKey<FormState>();
   final _supplierController = TextEditingController();
-  final _itemsController = TextEditingController();
+  final List<PurchaseOrderItemModel> _selectedItems = [];
   late String _generatedPONumber;
   DateTime _selectedDate = DateTime.now();
 
@@ -37,7 +39,6 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
   @override
   void dispose() {
     _supplierController.dispose();
-    _itemsController.dispose();
     super.dispose();
   }
 
@@ -57,13 +58,23 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      if (_selectedItems.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please add at least one product")),
+        );
+        return;
+      }
+
+      int totalExpected = _selectedItems.fold(0, (sum, item) => sum + item.expectedQty);
+
       final po = PurchaseOrderModel(
         poNumber: _generatedPONumber,
         supplier: _supplierController.text,
-        items: "0/${_itemsController.text}",
+        items: "0/$totalExpected",
         date: DateFormat('d/M/yyyy').format(_selectedDate),
         status: "Pending",
         progress: 0.0,
+        itemsList: _selectedItems,
       );
 
       final success = await ref.read(inboundViewModelProvider.notifier).addPO(po);
@@ -145,19 +156,15 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
                         
                         const SizedBox(height: 24),
                         
-                        _buildSectionLabel("QUANTITY & LOGISTICS"),
+                        _buildSectionLabel("PRODUCTS"),
                         const SizedBox(height: 12),
-                        _buildModernTextField(
-                          controller: _itemsController,
-                          hint: "Total Expected Items",
-                          icon: Icons.inventory_2_outlined,
-                          isDark: isDark,
-                          primaryColor: primaryColor,
-                          keyboardType: TextInputType.number,
-                          validator: (value) => value?.isEmpty ?? true ? "Please enter quantity" : null,
-                        ),
+                        _buildProductList(primaryColor, isDark),
+                        const SizedBox(height: 12),
+                        _buildAddProductButton(primaryColor, isDark),
                         
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
+                        _buildSectionLabel("LOGISTICS"),
+                        const SizedBox(height: 12),
                         _buildModernDatePicker(context, primaryColor, isDark),
                         
                         const SizedBox(height: 48),
@@ -172,6 +179,199 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductList(Color primaryColor, bool isDark) {
+    if (_selectedItems.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 30),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E26) : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.withValues(alpha: 0.2), style: BorderStyle.solid),
+        ),
+        child: Column(
+          children: [
+            Icon(Icons.inventory_2_outlined, color: Colors.grey.shade400, size: 40),
+            const SizedBox(height: 12),
+            Text("No products added yet", style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: _selectedItems.map((item) => _buildProductTile(item, primaryColor, isDark)).toList(),
+    );
+  }
+
+  Widget _buildProductTile(PurchaseOrderItemModel item, Color primaryColor, bool isDark) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E26) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.shopping_bag_outlined, color: primaryColor, size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                Text("SKU: ${item.sku}", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+              ],
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text("${item.expectedQty} Units", style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              GestureDetector(
+                onTap: () => setState(() => _selectedItems.remove(item)),
+                child: const Text("Remove", style: TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddProductButton(Color primaryColor, bool isDark) {
+    return InkWell(
+      onTap: _showAddProductSheet,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: primaryColor.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: primaryColor.withValues(alpha: 0.3), style: BorderStyle.solid),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.add_circle_outline_rounded, color: primaryColor, size: 20),
+            const SizedBox(width: 8),
+            Text("Add Product", style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddProductSheet() {
+    final inventoryState = ref.read(inventoryViewModelProvider);
+    final themeVM = ref.read(themeViewModelProvider);
+    final primaryColor = themeVM.currentThemeColor;
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.5,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: themeVM.isDarkMode ? const Color(0xFF12121A) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+              const SizedBox(height: 20),
+              const Text("Select Product", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: inventoryState.items.length,
+                  itemBuilder: (context, index) {
+                    final item = inventoryState.items[index];
+                    return ListTile(
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text("SKU: ${item.sku}"),
+                      trailing: Icon(Icons.add_circle_outline, color: primaryColor),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _showQuantityDialog(item);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showQuantityDialog(dynamic item) {
+    final qtyController = TextEditingController(text: "1");
+    final themeVM = ref.read(themeViewModelProvider);
+    final primaryColor = themeVM.currentThemeColor;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Enter Quantity for ${item.name}"),
+        content: TextField(
+          controller: qtyController,
+          autofocus: true,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(
+            labelText: "Expected Units",
+            hintText: "Enter number of units",
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          ElevatedButton(
+            onPressed: () {
+              final qty = int.tryParse(qtyController.text) ?? 0;
+              if (qty > 0) {
+                setState(() {
+                  _selectedItems.add(PurchaseOrderItemModel(
+                    sku: item.sku,
+                    name: item.name,
+                    expectedQty: qty,
+                  ));
+                });
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: primaryColor, foregroundColor: Colors.white),
+            child: const Text("Add"),
           ),
         ],
       ),

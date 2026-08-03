@@ -10,6 +10,7 @@ class PurchaseOrderItemModel {
   String? batchNumber;
   DateTime? expiryDate;
   String? damageReason;
+  String? damageImagePath;
 
   PurchaseOrderItemModel({
     required this.sku,
@@ -21,6 +22,7 @@ class PurchaseOrderItemModel {
     this.batchNumber,
     this.expiryDate,
     this.damageReason,
+    this.damageImagePath,
   });
 
   double get progress => expectedQty == 0 ? 0 : (receivedQty + damagedQty + qcHoldQty) / expectedQty;
@@ -34,6 +36,7 @@ class PurchaseOrderItemModel {
     String? batchNumber,
     DateTime? expiryDate,
     String? damageReason,
+    String? damageImagePath,
   }) {
     return PurchaseOrderItemModel(
       sku: sku,
@@ -45,6 +48,7 @@ class PurchaseOrderItemModel {
       batchNumber: batchNumber ?? this.batchNumber,
       expiryDate: expiryDate ?? this.expiryDate,
       damageReason: damageReason ?? this.damageReason,
+      damageImagePath: damageImagePath ?? this.damageImagePath,
     );
   }
 
@@ -59,6 +63,7 @@ class PurchaseOrderItemModel {
       batchNumber: json['batchNumber'],
       expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate']) : null,
       damageReason: json['damageReason'],
+      damageImagePath: json['damageImagePath'],
     );
   }
 
@@ -73,6 +78,7 @@ class PurchaseOrderItemModel {
       'batchNumber': batchNumber,
       'expiryDate': expiryDate?.toIso8601String(),
       'damageReason': damageReason,
+      'damageImagePath': damageImagePath,
     };
   }
 }

@@ -77,7 +77,7 @@ class InboundViewModel extends Notifier<InboundState> {
     }
   }
 
-  Future<void> updateItemQuantity(String poNumber, String sku, {int received = 0, int damaged = 0, String? reason}) async {
+  Future<void> updateItemQuantity(String poNumber, String sku, {int received = 0, int damaged = 0, String? reason, String? imagePath}) async {
     final pos = List<PurchaseOrderModel>.from(state.purchaseOrders);
     final poIndex = pos.indexWhere((p) => p.poNumber == poNumber);
     if (poIndex == -1) return;
@@ -92,6 +92,7 @@ class InboundViewModel extends Notifier<InboundState> {
       receivedQty: item.receivedQty + received,
       damagedQty: item.damagedQty + damaged,
       damageReason: reason ?? item.damageReason,
+      damageImagePath: imagePath ?? item.damageImagePath,
     );
 
     // Recalculate PO progress and summary

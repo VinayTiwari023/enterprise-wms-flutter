@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/inbound_view_model.dart';
 
@@ -23,6 +25,56 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
   final _qtyController = TextEditingController();
   String _selectedType = "Crushed";
   final List<String> _damageTypes = ["Crushed", "Wet", "Torn", "Expired", "Other"];
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take a Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                _getImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _getImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 70,
+      );
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error picking image: $e")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,21 +145,58 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
             const SizedBox(height: 24),
             const Text("Add Photo (Optional)", style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            Container(
-              height: 150,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.3), style: BorderStyle.solid),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey.shade400),
-                  const SizedBox(height: 8),
-                  Text("Tap to capture evidence", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
-                ],
+            InkWell(
+              onTap: _pickImage,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                height: 150,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _selectedImage != null ? primaryColor : Colors.grey.withValues(alpha: 0.3),
+                    width: _selectedImage != null ? 2 : 1,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: _selectedImage != null
+                    ? Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.file(
+                              _selectedImage!,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: GestureDetector(
+                              onTap: () => setState(() => _selectedImage = null),
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.black54,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.close, size: 16, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey.shade400),
+                          const SizedBox(height: 8),
+                          Text("Tap to capture evidence", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                        ],
+                      ),
               ),
             ),
             const SizedBox(height: 40),
@@ -123,6 +212,7 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                       widget.sku,
                       damaged: qty,
                       reason: _selectedType,
+                      imagePath: _selectedImage?.path,
                     );
                     Navigator.pop(context);
                   }
