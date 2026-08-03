@@ -1,39 +1,50 @@
-class OutboundOrderModel {
+import 'outbound_order_item_model.dart';
+import 'package:equatable/equatable.dart';
+
+class OutboundOrderModel extends Equatable {
   final String orderNumber;
   final String customer;
-  final String progressText;
   final String date;
   final String status;
-  final double progress;
+  final List<OutboundOrderItemModel> items;
 
-  OutboundOrderModel({
+  const OutboundOrderModel({
     required this.orderNumber,
     required this.customer,
-    required this.progressText,
     required this.date,
     required this.status,
-    required this.progress,
+    required this.items,
   });
 
-  factory OutboundOrderModel.fromJson(Map<String, dynamic> json) {
+  double get progress {
+    if (items.isEmpty) return 0.0;
+    int totalOrdered = items.fold(0, (sum, item) => sum + item.orderedQty);
+    int totalPicked = items.fold(0, (sum, item) => sum + item.pickedQty);
+    return totalOrdered == 0 ? 0.0 : totalPicked / totalOrdered;
+  }
+
+  String get progressText {
+    int totalOrdered = items.fold(0, (sum, item) => sum + item.orderedQty);
+    int totalPicked = items.fold(0, (sum, item) => sum + item.pickedQty);
+    return "$totalPicked/$totalOrdered";
+  }
+
+  OutboundOrderModel copyWith({
+    String? orderNumber,
+    String? customer,
+    String? date,
+    String? status,
+    List<OutboundOrderItemModel>? items,
+  }) {
     return OutboundOrderModel(
-      orderNumber: json['orderNumber'] ?? '',
-      customer: json['customer'] ?? '',
-      progressText: json['progressText'] ?? '',
-      date: json['date'] ?? '',
-      status: json['status'] ?? '',
-      progress: (json['progress'] ?? 0.0).toDouble(),
+      orderNumber: orderNumber ?? this.orderNumber,
+      customer: customer ?? this.customer,
+      date: date ?? this.date,
+      status: status ?? this.status,
+      items: items ?? this.items,
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'orderNumber': orderNumber,
-      'customer': customer,
-      'progressText': progressText,
-      'date': date,
-      'status': status,
-      'progress': progress,
-    };
-  }
+  @override
+  List<Object?> get props => [orderNumber, customer, date, status, items];
 }

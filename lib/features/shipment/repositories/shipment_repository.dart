@@ -14,4 +14,8 @@ class ShipmentRepository {
   Future<List<OutboundOrderModel>> fetchOutboundOrders() async {
     return await _mockService.getOutboundOrders();
   }
+
+  Future<void> updateOrder(OutboundOrderModel order) async {
+    await _mockService.updateOrder(order);
+  }
 }
