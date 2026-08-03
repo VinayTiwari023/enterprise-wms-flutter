@@ -25,7 +25,7 @@ class AuditDetailsView extends ConsumerWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(20),
-            color: primaryColor.withOpacity(0.05),
+            color: primaryColor.withValues(alpha: 0.05),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
