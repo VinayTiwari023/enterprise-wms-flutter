@@ -17,6 +17,7 @@ import '../../inventory/views/inventory_view.dart';
 import '../../settings/views/profile_view.dart';
 import '../../purchase_order/views/add_po_view.dart';
 import '../../barcode/views/po_scan_view.dart';
+import '../../audit/views/audit_list_view.dart';
 import 'reports_view.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -71,23 +72,23 @@ class _HomeViewState extends ConsumerState<HomeView> {
             elevation: 0,
             items: [
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.grid_view_rounded, 0, primaryColor), 
+                icon: _buildNavIcon(Icons.grid_view_rounded, 0, primaryColor),
                 label: AppLocalizations.of(context)!.dashboard,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.login_rounded, 1, primaryColor), 
+                icon: _buildNavIcon(Icons.login_rounded, 1, primaryColor),
                 label: AppLocalizations.of(context)!.inbound,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.logout_rounded, 2, primaryColor), 
+                icon: _buildNavIcon(Icons.logout_rounded, 2, primaryColor),
                 label: AppLocalizations.of(context)!.outbound,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.inventory_2_outlined, 3, primaryColor), 
+                icon: _buildNavIcon(Icons.inventory_2_outlined, 3, primaryColor),
                 label: AppLocalizations.of(context)!.inventory,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.person_outline_rounded, 4, primaryColor), 
+                icon: _buildNavIcon(Icons.person_outline_rounded, 4, primaryColor),
                 label: AppLocalizations.of(context)!.profile,
               ),
             ],
@@ -124,7 +125,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Icon(
-        icon, 
+        icon,
         color: isSelected ? primaryColor : Colors.grey.shade600,
         size: 24,
       ),
@@ -168,12 +169,12 @@ class DashboardView extends ConsumerWidget {
                 Text(
                   AppLocalizations.of(context)!.hello(userVM.user?.name ?? 'Vinay'),
                   style: const TextStyle(
-                    fontSize: 28, 
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
                   ),
                 ),
-                Text(AppLocalizations.of(context)!.todayStatus, 
+                Text(AppLocalizations.of(context)!.todayStatus,
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -187,7 +188,7 @@ class DashboardView extends ConsumerWidget {
             ),
           ),
         ),
-        
+
         // Summary Cards Grid
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -213,7 +214,7 @@ class DashboardView extends ConsumerWidget {
               children: [
                 const Divider(),
                 const SizedBox(height: 25),
-                const Text("Performance Overview", 
+                const Text("Performance Overview",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),
                 const SizedBox(height: 15),
@@ -223,7 +224,7 @@ class DashboardView extends ConsumerWidget {
                 const SizedBox(height: 25),
                 const Divider(),
                 const SizedBox(height: 25),
-                const Text("Recent Activities", 
+                const Text("Recent Activities",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),
                 const SizedBox(height: 15),
@@ -254,7 +255,7 @@ class DashboardView extends ConsumerWidget {
               children: [
                 const Divider(),
                 const SizedBox(height: 25),
-                const Text("Quick Actions", 
+                const Text("Quick Actions",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
                 ),
                 const SizedBox(height: 15),
@@ -280,7 +281,9 @@ class DashboardView extends ConsumerWidget {
               QuickActionItem(icon: Icons.add_box_outlined, label: "Add", color: primaryColor, onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPOView()));
               }),
-              QuickActionItem(icon: Icons.local_shipping_outlined, label: "Ship", color: primaryColor, onTap: () {}),
+              QuickActionItem(icon: Icons.checklist_rounded, label: "Audit", color: primaryColor, onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AuditListView()));
+              }),
               QuickActionItem(icon: Icons.inventory_2_outlined, label: "Inventory", color: primaryColor, onTap: () {
                 onInventoryTap?.call();
               }),

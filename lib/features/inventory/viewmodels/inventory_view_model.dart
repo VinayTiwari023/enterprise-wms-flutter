@@ -56,6 +56,34 @@ class InventoryViewModel extends Notifier<InventoryState> {
       );
     }
   }
+
+  void addOrUpdateStock(String sku, String name, String location, int quantity) {
+    final currentItems = List<InventoryItemModel>.from(state.items);
+    final index = currentItems.indexWhere((i) => i.sku == sku && i.location == location);
+
+    if (index != -1) {
+      // Update existing stock at this location
+      final existing = currentItems[index];
+      currentItems[index] = InventoryItemModel(
+        sku: existing.sku,
+        name: existing.name,
+        location: existing.location,
+        units: existing.units + quantity,
+        status: "Available",
+      );
+    } else {
+      // Add new stock entry
+      currentItems.insert(0, InventoryItemModel(
+        sku: sku,
+        name: name,
+        location: location,
+        units: quantity,
+        status: "Available",
+      ));
+    }
+
+    state = state.copyWith(items: currentItems);
+  }
 }
 
 /// Provider for the InventoryViewModel.

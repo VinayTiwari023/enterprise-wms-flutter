@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/enums/view_status.dart';
-import '../../../core/error/exceptions.dart';
-import '../../authentication/viewmodels/user_view_model.dart';
+import '../../inward/viewmodels/inbound_view_model.dart';
+import '../../inventory/viewmodels/inventory_view_model.dart';
 import '../repositories/dashboard_repository.dart';
 import '../models/dashboard_stats.dart';
 import '../models/activity_model.dart';
@@ -37,46 +37,71 @@ class HomeState {
 }
 
 /// Notifier-based ViewModel for the Home Dashboard.
-/// We use Notifier instead of AutoDisposeNotifier because this is a primary landing screen.
 class HomeViewModel extends Notifier<HomeState> {
   @override
   HomeState build() {
-    // Trigger initial data fetch on initialization
-    Future.microtask(() => refreshData());
-    return const HomeState();
+    // Watch relevant providers to trigger re-calculation when data changes
+    final inboundState = ref.watch(inboundViewModelProvider);
+    final inventoryState = ref.watch(inventoryViewModelProvider);
+
+    // Initial load of repository data
+    Future.microtask(() => _fetchInitialData());
+
+    return _calculateDynamicState(inboundState, inventoryState);
   }
 
   DashboardRepository get _repository => ref.read(dashboardRepositoryProvider);
 
-  Future<void> refreshData() async {
-    state = state.copyWith(status: ViewStatus.loading, clearError: true);
+  Future<void> _fetchInitialData() async {
+    if (state.status == ViewStatus.loading) return;
     
     try {
-      // Parallel fetch for better performance
-      final results = await Future.wait([
-        _repository.fetchStats(),
-        _repository.fetchActivities(),
-      ]);
-
+      final activities = await _repository.fetchActivities();
       state = state.copyWith(
-        stats: results[0] as DashboardStats,
-        recentActivities: results[1] as List<ActivityModel>,
+        recentActivities: activities,
         status: ViewStatus.success,
       );
-    } on UnauthorizedException {
-      // Auto-logout on session expiry
-      ref.read(userViewModelProvider.notifier).logout();
     } catch (e) {
-      final errorMsg = e.toString();
-      if (errorMsg.contains('Unauthorized')) {
-        ref.read(userViewModelProvider.notifier).logout();
-      } else {
-        state = state.copyWith(
-          status: ViewStatus.error,
-          errorMessage: errorMsg,
-        );
-      }
+       // Silent error for background fetch
     }
+  }
+
+  HomeState _calculateDynamicState(InboundState inbound, InventoryState inventory) {
+    // Calculate stats based on Inbound POs
+    int pending = inbound.purchaseOrders.where((po) => po.status == "Pending").length;
+    int partial = inbound.purchaseOrders.where((po) => po.status == "Partial").length;
+    int completed = inbound.purchaseOrders.where((po) => po.status == "Completed").length;
+    
+    // Alerts could be low stock or overdue POs (mock logic)
+    int alerts = inventory.items.where((i) => i.units < 10).length;
+
+    final dynamicStats = DashboardStats(
+      pendingCount: pending,
+      completedCount: completed,
+      inProgressCount: partial,
+      alertsCount: alerts,
+    );
+
+    return HomeState(
+      stats: dynamicStats,
+      recentActivities: state.recentActivities,
+      status: state.status,
+    );
+  }
+
+  void addActivity(String title) {
+    final now = DateTime.now();
+    final timeStr = "${now.hour}:${now.minute.toString().padLeft(2, '0')}";
+    
+    final newActivity = ActivityModel(title: title, time: timeStr);
+    final updatedActivities = [newActivity, ...state.recentActivities];
+    
+    state = state.copyWith(recentActivities: updatedActivities.take(10).toList());
+  }
+
+  Future<void> refreshData() async {
+    state = state.copyWith(status: ViewStatus.loading);
+    await _fetchInitialData();
   }
 }
 
