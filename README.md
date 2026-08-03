@@ -32,37 +32,46 @@ A **Feature-First** structure, wired together with **MVVM** and the **Repository
 ```text
 lib/
 │
-├── core/                 # The skeleton — shared across every feature
-│   ├── api/
-│   ├── constants/
-│   ├── di/
-│   ├── services/
-│   ├── storage/
-│   └── utils/
+├── app/                  # Application-wide setup
+│   ├── config/           # Environment and global configs
+│   ├── router/           # Navigation logic (GoRouter)
+│   └── theme/            # Styling and theme definitions
 │
-├── features/             # The muscles — each one self-contained
+├── core/                 # Shared infrastructure and utilities
+│   ├── di/               # Dependency Injection (GetIt)
+│   ├── network/          # API services and networking
+│   ├── storage/          # Local and secure storage
+│   ├── services/         # Global services
+│   ├── constants/        # Global constants
+│   └── utils/            # Helper functions and extensions
+│
+├── features/             # Business logic modules (Self-contained)
 │   ├── authentication/
 │   ├── dashboard/
 │   ├── inventory/
 │   ├── inward/
-│   ├── outbound/
-│   └── settings/
+│   ├── shipment/
+│   ├── purchase_order/
+│   ├── picklist/
+│   └── ... (others)
 │
-└── shared/               # The connective tissue — reusable, opinion-free
+├── l10n/                 # Localization files
+└── shared/               # Reusable UI components and models
 ```
 
 ---
 
 ## 🛠 Tech Stack
 
-| Layer            | Choice                              |
-|------------------|-------------------------------------|
-| Framework        | Flutter / Dart                      |
-| State Management | Riverpod                            |
-| Service Locator  | GetIt                               |
-| Architecture     | MVVM + Repository Pattern           |
-| Storage          | Flutter Secure Storage (abstracted) |
-| Networking       | REST APIs                           |
+| Layer            | Choice                               |
+|------------------|--------------------------------------|
+| Framework        | Flutter / Dart                       |
+| State Management | Riverpod                             |
+| Service Locator  | GetIt                                |
+| Navigation       | GoRouter                             |
+| Architecture     | MVVM + Repository Pattern            |
+| Local Storage    | Hive & Secure Storage (abstracted)   |
+| Networking       | REST APIs (Dio/Http)                 |
 
 ---
 
@@ -137,16 +146,20 @@ Every milestone is a checkpoint, not a checkbox.
 
 ## 🚧 Roadmap
 
-- [ ] Authentication
-- [ ] Dashboard
-- [ ] Inward Management
-- [ ] Outward Management
-- [ ] Inventory Management
-- [ ] Barcode Scanning
-- [ ] Offline Support
+- [x] Authentication
+- [x] Dashboard
+- [x] Inward Management
+- [x] Inventory Management
+- [x] Barcode Scanning
+- [x] Settings
+- [/] Outward Management (Shipment)
+- [/] Purchase Order
+- [/] Picklist & Tasks
+- [/] Audit & Returns
+- [ ] Offline Support (Hive Integration)
+- [ ] Bluetooth Printing
 - [ ] Sync Engine
 - [ ] User Roles & Permissions
-- [ ] Settings
 - [ ] Reports
 - [ ] Notifications
 
