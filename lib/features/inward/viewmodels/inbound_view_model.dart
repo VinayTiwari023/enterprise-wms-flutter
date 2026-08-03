@@ -3,6 +3,7 @@ import '../repositories/inward_repository.dart';
 import '../../../core/enums/view_status.dart';
 import '../../purchase_order/models/purchase_order_model.dart';
 import '../../purchase_order/models/purchase_order_item_model.dart';
+import '../../dashboard/viewmodels/home_view_model.dart';
 
 /// Immutable state for Inbound operations.
 class InboundState {
@@ -110,6 +111,11 @@ class InboundViewModel extends Notifier<InboundState> {
     );
 
     state = state.copyWith(purchaseOrders: pos);
+
+    // Log Activity to Dashboard
+    ref.read(homeViewModelProvider.notifier).addActivity(
+      "Received $received units of $sku for $poNumber"
+    );
   }
 
   Future<void> receiveByLPN(String poNumber, String lpn) async {

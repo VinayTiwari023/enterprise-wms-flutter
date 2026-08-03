@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/inbound_view_model.dart';
+import '../../../core/services/printing_service.dart';
 import 'directed_putaway_view.dart';
 
 class GRNSummaryView extends ConsumerWidget {
@@ -31,6 +32,13 @@ class GRNSummaryView extends ConsumerWidget {
         title: const Text("GRN Summary"),
         centerTitle: true,
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.print_rounded),
+            onPressed: () => PrintingService.printGRN(po),
+            tooltip: "Print GRN",
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -52,19 +60,35 @@ class GRNSummaryView extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               height: 55,
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (_) => DirectedPutawayView(poNumber: poNumber))
                   );
                 },
+                icon: const Icon(Icons.move_to_inbox_rounded),
+                label: const Text("Proceed to Putaway", style: TextStyle(fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text("Proceed to Putaway", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: OutlinedButton.icon(
+                onPressed: () => PrintingService.printGRN(po),
+                icon: const Icon(Icons.print_rounded),
+                label: const Text("Print GRN Summary", style: TextStyle(fontWeight: FontWeight.bold)),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: primaryColor,
+                  side: BorderSide(color: primaryColor),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
               ),
             ),
             const SizedBox(height: 12),
