@@ -14,8 +14,9 @@ class AuditDetailsView extends ConsumerWidget {
     final themeVM = ref.watch(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
 
-    if (audit == null)
+    if (audit == null) {
       return const Scaffold(body: Center(child: Text("Audit not found")));
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(audit.id), centerTitle: true),

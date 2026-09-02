@@ -446,8 +446,9 @@ class BarChartSample extends StatelessWidget {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                if (value.toInt() < 0 || value.toInt() >= days.length)
+                if (value.toInt() < 0 || value.toInt() >= days.length) {
                   return const SizedBox();
+                }
                 return Padding(
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Text(
