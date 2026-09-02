@@ -16,9 +16,7 @@ void main() {
     setUp(() {
       mockRepo = MockAuthRepository();
       container = ProviderContainer(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
       );
     });
 
@@ -26,32 +24,44 @@ void main() {
       container.dispose();
     });
 
-    test('Initial state should have no user and isCheckingAuth true (default state)', () {
-      final state = container.read(userViewModelProvider);
-      expect(state.user, isNull);
-      expect(state.isCheckingAuth, isTrue);
-    });
+    test(
+      'Initial state should have no user and isCheckingAuth true (default state)',
+      () {
+        final state = container.read(userViewModelProvider);
+        expect(state.user, isNull);
+        expect(state.isCheckingAuth, isTrue);
+      },
+    );
 
-    test('checkAuthStatus updates state with user when session exists', () async {
-      final notifier = container.read(userViewModelProvider.notifier);
-      final user = UserModel(token: 'token', name: 'Vinay Admin', email: 'admin@wms.com');
+    test(
+      'checkAuthStatus updates state with user when session exists',
+      () async {
+        final notifier = container.read(userViewModelProvider.notifier);
+        final user = UserModel(
+          token: 'token',
+          name: 'Vinay Admin',
+          email: 'admin@wms.com',
+        );
 
-      when(() => mockRepo.checkAuthStatus())
-          .thenAnswer((_) async => Result.success(user));
+        when(
+          () => mockRepo.checkAuthStatus(),
+        ).thenAnswer((_) async => Result.success(user));
 
-      await notifier.checkAuthStatus();
+        await notifier.checkAuthStatus();
 
-      final state = container.read(userViewModelProvider);
-      expect(state.user, isNotNull);
-      expect(state.user!.name, 'Vinay Admin');
-      expect(state.isCheckingAuth, isFalse);
-    });
+        final state = container.read(userViewModelProvider);
+        expect(state.user, isNotNull);
+        expect(state.user!.name, 'Vinay Admin');
+        expect(state.isCheckingAuth, isFalse);
+      },
+    );
 
     test('checkAuthStatus clears user when no session exists', () async {
       final notifier = container.read(userViewModelProvider.notifier);
 
-      when(() => mockRepo.checkAuthStatus())
-          .thenAnswer((_) async => Result.success(null));
+      when(
+        () => mockRepo.checkAuthStatus(),
+      ).thenAnswer((_) async => Result.success(null));
 
       await notifier.checkAuthStatus();
 
@@ -62,13 +72,14 @@ void main() {
 
     test('logout clears user state', () async {
       final notifier = container.read(userViewModelProvider.notifier);
-      
+
       // Manually set user first
       notifier.setUser(UserModel(token: 'token', name: 'User', email: 'email'));
       expect(container.read(userViewModelProvider).user, isNotNull);
 
-      when(() => mockRepo.logout())
-          .thenAnswer((_) async => Result.success(null));
+      when(
+        () => mockRepo.logout(),
+      ).thenAnswer((_) async => Result.success(null));
 
       await notifier.logout();
 

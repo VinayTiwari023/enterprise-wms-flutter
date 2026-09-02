@@ -17,15 +17,15 @@ class AppTheme {
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),
-        bodyMedium: TextStyle(
-          fontSize: 16,
-          color: AppColors.textSecondary,
-        ),
+        bodyMedium: TextStyle(fontSize: 16, color: AppColors.textSecondary),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -50,10 +50,7 @@ class AppTheme {
             borderRadius: BorderRadius.circular(16),
           ),
           elevation: 2,
-          textStyle: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );

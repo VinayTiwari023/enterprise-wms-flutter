@@ -45,7 +45,7 @@ dependencies:
   fl_chart: ^1.2.0
 
   # Barcode Scanning
-  mobile_scanner: ^5.1.0
+  mobile_scanner: ^7.4.0
 
   # PDF and Printing
   pdf: ^3.11.1

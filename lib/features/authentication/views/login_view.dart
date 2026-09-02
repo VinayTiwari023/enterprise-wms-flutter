@@ -31,177 +31,240 @@ class _LoginViewState extends ConsumerState<LoginView> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
-                // Top Left Circle
-                Positioned(
-                  top: -ResponsiveHelper.responsiveSize(context, 80, 100, 120),
-                  left: -ResponsiveHelper.responsiveSize(context, 80, 100, 120),
-                  child: BackgroundCircle(
-                      size: ResponsiveHelper.responsiveSize(context, 250, 350, 450),
-                      color: primaryColor),
-                ),
-                // Bottom Right Circle
-                Positioned(
-                  bottom: -ResponsiveHelper.responsiveSize(context, 100, 150, 200),
-                  right: -ResponsiveHelper.responsiveSize(context, 80, 100, 120),
-                  child: BackgroundCircle(
-                      size: ResponsiveHelper.responsiveSize(context, 300, 450, 550),
-                      color: primaryColor),
-                ),
-                
-                SafeArea(
-                  child: Center(
-                    child: SingleChildScrollView(
-                      padding: ResponsiveHelper.responsiveHorizontalPadding(context).add(
-                        const EdgeInsets.symmetric(horizontal: 20)
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Lock Icon
-                          Icon(
-                            Icons.lock_person_rounded,
-                            size: ResponsiveHelper.responsiveSize(context, 60, 80, 100),
-                            color: primaryColor,
-                          ),
-                          
-                          SizedBox(height: ResponsiveHelper.responsiveSpacing(context) * 2),
-                          
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              "Welcome Back",
-                              style: TextStyle(
-                                fontSize: ResponsiveHelper.responsiveFontSize(context, 26, 32, 40),
-                                fontWeight: FontWeight.w800,
-                                color: isDark ? Colors.white : const Color(0xFF2D2D2D),
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                          ),
-                          
-                          SizedBox(height: ResponsiveHelper.responsiveSpacing(context)),
-                          
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: const Text(
-                              "Enter your credentials to continue",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                          
-                          SizedBox(height: ResponsiveHelper.responsiveSpacing(context) * 4),
-                          
-                          // Email Field
-                          AuthTextField(
-                            controller: _emailController,
-                            hint: "Email",
-                            icon: Icons.email_outlined,
-                            isDark: isDark,
-                            primaryColor: primaryColor,
-                          ),
-                          
-                          SizedBox(height: ResponsiveHelper.responsiveSpacing(context) * 2),
-                          
-                          // Password Field
-                          AuthTextField(
-                            controller: _passwordController,
-                            hint: "Password",
-                            icon: Icons.lock_outline_rounded,
-                            isPassword: true,
-                            isPasswordVisible: loginState.isPasswordVisible,
-                            onToggleVisibility: () => ref.read(loginViewModelProvider.notifier).togglePasswordVisibility(),
-                            isDark: isDark,
-                            primaryColor: primaryColor,
-                          ),
-                          
-                          SizedBox(height: ResponsiveHelper.responsiveSpacing(context) * 4),
-                          
-                          // Login Button
-                          loginState.status == ViewStatus.loading
-                            ? CircularProgressIndicator(color: primaryColor)
-                            : Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: primaryColor.withValues(alpha: 0.3),
-                                      blurRadius: 20,
-                                      offset: const Offset(0, 10),
-                                    ),
-                                  ],
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    final scaffoldMessenger = ScaffoldMessenger.of(context);
-                                    final navigator = Navigator.of(context);
+          // Top Left Circle
+          Positioned(
+            top: -ResponsiveHelper.responsiveSize(context, 80, 100, 120),
+            left: -ResponsiveHelper.responsiveSize(context, 80, 100, 120),
+            child: BackgroundCircle(
+              size: ResponsiveHelper.responsiveSize(context, 250, 350, 450),
+              color: primaryColor,
+            ),
+          ),
+          // Bottom Right Circle
+          Positioned(
+            bottom: -ResponsiveHelper.responsiveSize(context, 100, 150, 200),
+            right: -ResponsiveHelper.responsiveSize(context, 80, 100, 120),
+            child: BackgroundCircle(
+              size: ResponsiveHelper.responsiveSize(context, 300, 450, 550),
+              color: primaryColor,
+            ),
+          ),
 
-                                    UserModel? user = await ref.read(loginViewModelProvider.notifier).login(
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: ResponsiveHelper.responsiveHorizontalPadding(
+                  context,
+                ).add(const EdgeInsets.symmetric(horizontal: 20)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Lock Icon
+                    Icon(
+                      Icons.lock_person_rounded,
+                      size: ResponsiveHelper.responsiveSize(
+                        context,
+                        60,
+                        80,
+                        100,
+                      ),
+                      color: primaryColor,
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.responsiveSpacing(context) * 2,
+                    ),
+
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        "Welcome Back",
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.responsiveFontSize(
+                            context,
+                            26,
+                            32,
+                            40,
+                          ),
+                          fontWeight: FontWeight.w800,
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF2D2D2D),
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.responsiveSpacing(context),
+                    ),
+
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: const Text(
+                        "Enter your credentials to continue",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.responsiveSpacing(context) * 4,
+                    ),
+
+                    // Email Field
+                    AuthTextField(
+                      controller: _emailController,
+                      hint: "Email",
+                      icon: Icons.email_outlined,
+                      isDark: isDark,
+                      primaryColor: primaryColor,
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.responsiveSpacing(context) * 2,
+                    ),
+
+                    // Password Field
+                    AuthTextField(
+                      controller: _passwordController,
+                      hint: "Password",
+                      icon: Icons.lock_outline_rounded,
+                      isPassword: true,
+                      isPasswordVisible: loginState.isPasswordVisible,
+                      onToggleVisibility: () => ref
+                          .read(loginViewModelProvider.notifier)
+                          .togglePasswordVisibility(),
+                      isDark: isDark,
+                      primaryColor: primaryColor,
+                    ),
+
+                    SizedBox(
+                      height: ResponsiveHelper.responsiveSpacing(context) * 4,
+                    ),
+
+                    // Login Button
+                    loginState.status == ViewStatus.loading
+                        ? CircularProgressIndicator(color: primaryColor)
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: primaryColor.withValues(alpha: 0.3),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                final scaffoldMessenger = ScaffoldMessenger.of(
+                                  context,
+                                );
+                                final navigator = Navigator.of(context);
+
+                                UserModel? user = await ref
+                                    .read(loginViewModelProvider.notifier)
+                                    .login(
                                       _emailController.text,
                                       _passwordController.text,
                                     );
 
-                                    if (loginState.status == ViewStatus.success && user != null) {
-                                      // Save user to session
-                                      ref.read(userViewModelProvider.notifier).setUser(user);
+                                if (loginState.status == ViewStatus.success &&
+                                    user != null) {
+                                  // Save user to session
+                                  ref
+                                      .read(userViewModelProvider.notifier)
+                                      .setUser(user);
 
-                                      scaffoldMessenger.showSnackBar(
-                                        const SnackBar(content: Text('Login Successful')),
-                                      );
-                                      navigator.pushReplacement(
-                                        MaterialPageRoute(builder: (_) => const HomeView()),
-                                      );
-                                    } else if (loginState.status == ViewStatus.error) {
-                                      scaffoldMessenger.showSnackBar(
-                                        SnackBar(
-                                          content: Text(loginState.errorMessage ?? 'Login Failed'),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: primaryColor,
-                                    foregroundColor: Colors.white,
-                                    minimumSize: Size(double.infinity, ResponsiveHelper.responsiveSize(context, 50, 60, 70)),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18),
+                                  scaffoldMessenger.showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Login Successful'),
                                     ),
-                                    elevation: 0,
-                                  ),
-                                  child: Text(
-                                    "Login",
-                                    style: TextStyle(
-                                      fontSize: ResponsiveHelper.responsiveFontSize(context, 16, 18, 20), 
-                                      fontWeight: FontWeight.bold
+                                  );
+                                  navigator.pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (_) => const HomeView(),
                                     ),
+                                  );
+                                } else if (loginState.status ==
+                                    ViewStatus.error) {
+                                  scaffoldMessenger.showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        loginState.errorMessage ??
+                                            'Login Failed',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: Colors.white,
+                                minimumSize: Size(
+                                  double.infinity,
+                                  ResponsiveHelper.responsiveSize(
+                                    context,
+                                    50,
+                                    60,
+                                    70,
                                   ),
                                 ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                elevation: 0,
                               ),
-                          
-                          SizedBox(height: ResponsiveHelper.responsiveSpacing(context) * 3),
-                          
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "Forgot Password?",
-                              style: TextStyle(
-                                color: isDark ? Colors.white70 : const Color(0xFF4A4A4A),
-                                fontWeight: FontWeight.w600,
-                                fontSize: ResponsiveHelper.responsiveFontSize(context, 13, 15, 17),
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                  fontSize: ResponsiveHelper.responsiveFontSize(
+                                    context,
+                                    16,
+                                    18,
+                                    20,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
-                        ],
+
+                    SizedBox(
+                      height: ResponsiveHelper.responsiveSpacing(context) * 3,
+                    ),
+
+                    TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        "Forgot Password?",
+                        style: TextStyle(
+                          color: isDark
+                              ? Colors.white70
+                              : const Color(0xFF4A4A4A),
+                          fontWeight: FontWeight.w600,
+                          fontSize: ResponsiveHelper.responsiveFontSize(
+                            context,
+                            13,
+                            15,
+                            17,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          );
+          ),
+        ],
+      ),
+    );
   }
 }

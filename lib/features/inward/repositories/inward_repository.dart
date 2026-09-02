@@ -9,7 +9,8 @@ final inwardRepositoryProvider = Provider<InwardRepository>((ref) {
 class InwardRepository {
   final InwardMockService _mockService;
 
-  InwardRepository({required InwardMockService mockService}) : _mockService = mockService;
+  InwardRepository({required InwardMockService mockService})
+    : _mockService = mockService;
 
   Future<List<PurchaseOrderModel>> fetchPurchaseOrders() async {
     return await _mockService.getPurchaseOrders();

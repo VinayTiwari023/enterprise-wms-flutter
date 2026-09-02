@@ -5,11 +5,17 @@ class InventoryCard extends StatelessWidget {
   final InventoryItemModel item;
   final Color primaryColor;
 
-  const InventoryCard({super.key, required this.item, required this.primaryColor});
+  const InventoryCard({
+    super.key,
+    required this.item,
+    required this.primaryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = item.status == "Low Stock" ? Colors.redAccent : Colors.green;
+    final statusColor = item.status == "Low Stock"
+        ? Colors.redAccent
+        : Colors.green;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
@@ -28,7 +34,10 @@ class InventoryCard extends StatelessWidget {
               children: [
                 Text(
                   item.name,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -41,14 +50,21 @@ class InventoryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     item.status,
-                    style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -59,7 +75,10 @@ class InventoryCard extends StatelessWidget {
             children: [
               Text(
                 "${item.units}",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const Text(
                 "units",
@@ -77,7 +96,11 @@ class AddItemButton extends StatelessWidget {
   final Color primaryColor;
   final VoidCallback onTap;
 
-  const AddItemButton({super.key, required this.primaryColor, required this.onTap});
+  const AddItemButton({
+    super.key,
+    required this.primaryColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +126,10 @@ class AddItemButton extends StatelessWidget {
             SizedBox(width: 10),
             Text(
               "Add Item",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

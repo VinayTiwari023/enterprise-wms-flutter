@@ -40,5 +40,13 @@ class PutawayItemModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [sku, itemName, suggestedBin, zone, area, quantity, isConfirmed];
+  List<Object?> get props => [
+    sku,
+    itemName,
+    suggestedBin,
+    zone,
+    area,
+    quantity,
+    isConfirmed,
+  ];
 }

@@ -48,17 +48,27 @@ class POCard extends StatelessWidget {
               children: [
                 Text(
                   po.poNumber,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     po.status,
-                    style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -77,15 +87,39 @@ class POCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Items", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
-                    Text(po.items, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text(
+                      "Items",
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      po.items,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text("Date", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
-                    Text(po.date, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text(
+                      "Date",
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      po.date,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -96,7 +130,9 @@ class POCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: po.progress,
                 backgroundColor: Colors.grey.withValues(alpha: 0.1),
-                valueColor: AlwaysStoppedAnimation<Color>(po.progress == 1.0 ? Colors.green : primaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  po.progress == 1.0 ? Colors.green : primaryColor,
+                ),
                 minHeight: 6,
               ),
             ),
@@ -111,7 +147,11 @@ class InboundScanButton extends StatelessWidget {
   final Color primaryColor;
   final VoidCallback onTap;
 
-  const InboundScanButton({super.key, required this.primaryColor, required this.onTap});
+  const InboundScanButton({
+    super.key,
+    required this.primaryColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +177,10 @@ class InboundScanButton extends StatelessWidget {
             SizedBox(width: 10),
             Text(
               "Scan PO",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -207,7 +250,9 @@ class ItemReceiveTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.outline)),
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).colorScheme.outline),
+        ),
       ),
       child: Row(
         children: [
@@ -217,7 +262,10 @@ class ItemReceiveTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -250,8 +298,8 @@ class StartReceivingButton extends StatelessWidget {
   final String text;
 
   const StartReceivingButton({
-    super.key, 
-    required this.primaryColor, 
+    super.key,
+    required this.primaryColor,
     required this.onTap,
     this.text = "Start Receiving",
   });
@@ -268,7 +316,9 @@ class StartReceivingButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor.withValues(alpha: 0.3),
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
             elevation: 0,
           ),
           child: Text(

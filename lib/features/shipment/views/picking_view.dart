@@ -59,8 +59,14 @@ class _PickingViewState extends ConsumerState<PickingView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Customer: ${order.customer}", style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(order.progressText, style: TextStyle(color: color, fontWeight: FontWeight.w900)),
+              Text(
+                "Customer: ${order.customer}",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(
+                order.progressText,
+                style: TextStyle(color: color, fontWeight: FontWeight.w900),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -78,7 +84,11 @@ class _PickingViewState extends ConsumerState<PickingView> {
     );
   }
 
-  Widget _buildPickingItemCard(BuildContext context, OutboundOrderItemModel item, Color color) {
+  Widget _buildPickingItemCard(
+    BuildContext context,
+    OutboundOrderItemModel item,
+    Color color,
+  ) {
     final isDone = item.isFullyPicked;
     return InkWell(
       onTap: isDone ? null : () => _simulatePick(item),
@@ -89,7 +99,9 @@ class _PickingViewState extends ConsumerState<PickingView> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: isDone ? Colors.green : Theme.of(context).colorScheme.outline,
+            color: isDone
+                ? Colors.green
+                : Theme.of(context).colorScheme.outline,
             width: isDone ? 2 : 1,
           ),
         ),
@@ -111,17 +123,42 @@ class _PickingViewState extends ConsumerState<PickingView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.name, style: TextStyle(fontWeight: FontWeight.bold, decoration: isDone ? TextDecoration.lineThrough : null)),
-                  Text("Location: ${item.location}", style: TextStyle(fontSize: 18, color: color, fontWeight: FontWeight.w900)),
-                  Text("SKU: ${item.sku}", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    item.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      decoration: isDone ? TextDecoration.lineThrough : null,
+                    ),
+                  ),
+                  Text(
+                    "Location: ${item.location}",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: color,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Text(
+                    "SKU: ${item.sku}",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ],
               ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text("Pick Qty", style: TextStyle(fontSize: 10, color: Colors.grey)),
-                Text("${item.pickedQty}/${item.orderedQty}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const Text(
+                  "Pick Qty",
+                  style: TextStyle(fontSize: 10, color: Colors.grey),
+                ),
+                Text(
+                  "${item.pickedQty}/${item.orderedQty}",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ],
@@ -136,7 +173,13 @@ class _PickingViewState extends ConsumerState<PickingView> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -147,9 +190,14 @@ class _PickingViewState extends ConsumerState<PickingView> {
                 backgroundColor: color,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              child: const Text("Finalize & Ship", style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text(
+                "Finalize & Ship",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ],
@@ -159,16 +207,29 @@ class _PickingViewState extends ConsumerState<PickingView> {
 
   void _simulatePick(OutboundOrderItemModel item) {
     // Simulate scanning
-    ref.read(outboundViewModelProvider.notifier).pickItem(widget.orderNumber, item.sku, item.orderedQty - item.pickedQty);
+    ref
+        .read(outboundViewModelProvider.notifier)
+        .pickItem(
+          widget.orderNumber,
+          item.sku,
+          item.orderedQty - item.pickedQty,
+        );
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Picked: ${item.name}"), backgroundColor: Colors.green, duration: const Duration(seconds: 1)),
+      SnackBar(
+        content: Text("Picked: ${item.name}"),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 1),
+      ),
     );
   }
 
   void _finalizeOrder(OutboundOrderModel order) {
     ref.read(outboundViewModelProvider.notifier).shipOrder(widget.orderNumber);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Order Shipped Successfully!"), backgroundColor: Colors.green),
+      const SnackBar(
+        content: Text("Order Shipped Successfully!"),
+        backgroundColor: Colors.green,
+      ),
     );
     Navigator.pop(context);
   }

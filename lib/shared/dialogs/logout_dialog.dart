@@ -33,10 +33,7 @@ class LogoutConfirmationDialog extends StatelessWidget {
             const SizedBox(height: 24),
             const Text(
               "Sign Out",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Text(

@@ -72,7 +72,10 @@ class HomeViewModel extends Notifier<HomeState> {
         status: ViewStatus.success,
       );
     } catch (e) {
-      state = state.copyWith(status: ViewStatus.error, errorMessage: e.toString());
+      state = state.copyWith(
+        status: ViewStatus.error,
+        errorMessage: e.toString(),
+      );
     }
   }
 
@@ -84,10 +87,16 @@ class HomeViewModel extends Notifier<HomeState> {
 
   DashboardStats _computeStats(InboundState inbound, InventoryState inventory) {
     // Calculate stats based on Inbound POs
-    int pending = inbound.purchaseOrders.where((po) => po.status == "Pending").length;
-    int partial = inbound.purchaseOrders.where((po) => po.status == "Partial").length;
-    int completed = inbound.purchaseOrders.where((po) => po.status == "Completed").length;
-    
+    int pending = inbound.purchaseOrders
+        .where((po) => po.status == "Pending")
+        .length;
+    int partial = inbound.purchaseOrders
+        .where((po) => po.status == "Partial")
+        .length;
+    int completed = inbound.purchaseOrders
+        .where((po) => po.status == "Completed")
+        .length;
+
     // Alerts could be low stock or overdue POs (mock logic)
     int alerts = inventory.items.where((i) => i.units < 10).length;
 
@@ -102,11 +111,13 @@ class HomeViewModel extends Notifier<HomeState> {
   void addActivity(String title) {
     final now = DateTime.now();
     final timeStr = "${now.hour}:${now.minute.toString().padLeft(2, '0')}";
-    
+
     final newActivity = ActivityModel(title: title, time: timeStr);
     final updatedActivities = [newActivity, ...state.recentActivities];
-    
-    state = state.copyWith(recentActivities: updatedActivities.take(10).toList());
+
+    state = state.copyWith(
+      recentActivities: updatedActivities.take(10).toList(),
+    );
   }
 
   Future<void> refreshData() async {

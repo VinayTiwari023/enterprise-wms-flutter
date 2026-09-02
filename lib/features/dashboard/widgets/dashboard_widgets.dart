@@ -36,11 +36,17 @@ class StatCard extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 28),
           const SizedBox(height: 8),
-          Text(value,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
+          Text(
+            value,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          Text(label,
-            style: const TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500)
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -76,15 +82,15 @@ class PerformanceChart extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Weekly Throughput", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                const Text(
+                  "Weekly Throughput",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
                 Icon(Icons.trending_up_rounded, color: primaryColor, size: 20),
               ],
             ),
             const SizedBox(height: 25),
-            const SizedBox(
-              height: 180,
-              child: BarChartSample(),
-            ),
+            const SizedBox(height: 180, child: BarChartSample()),
           ],
         ),
       ),
@@ -117,7 +123,10 @@ class StockDistributionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Stock Distribution", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const Text(
+              "Stock Distribution",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -163,17 +172,23 @@ class StockDistributionCard extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text("1.2k", style: TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: primaryColor,
-                                height: 1.1,
-                              )),
-                              const Text("Total", style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                              )),
+                              Text(
+                                "1.2k",
+                                style: TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryColor,
+                                  height: 1.1,
+                                ),
+                              ),
+                              const Text(
+                                "Total",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -187,11 +202,23 @@ class StockDistributionCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DistributionLegendItem(color: primaryColor.withValues(alpha: 0.85), label: "In Stock", value: "60%"),
+                      DistributionLegendItem(
+                        color: primaryColor.withValues(alpha: 0.85),
+                        label: "In Stock",
+                        value: "60%",
+                      ),
                       const SizedBox(height: 15),
-                      DistributionLegendItem(color: const Color(0xFF4A4E69), label: "Reserved", value: "25%"),
+                      DistributionLegendItem(
+                        color: const Color(0xFF4A4E69),
+                        label: "Reserved",
+                        value: "25%",
+                      ),
                       const SizedBox(height: 15),
-                      DistributionLegendItem(color: const Color(0xFF9A4C55), label: "Damaged", value: "15%"),
+                      DistributionLegendItem(
+                        color: const Color(0xFF9A4C55),
+                        label: "Damaged",
+                        value: "15%",
+                      ),
                     ],
                   ),
                 ),
@@ -202,6 +229,7 @@ class StockDistributionCard extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildBadge(String text, BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
@@ -239,19 +267,34 @@ class DistributionLegendItem extends StatelessWidget {
   final Color color;
   final String label;
   final String value;
-  const DistributionLegendItem({super.key, required this.color, required this.label, required this.value});
+  const DistributionLegendItem({
+    super.key,
+    required this.color,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-            Text(value, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
           ],
         ),
       ],
@@ -263,7 +306,11 @@ class ActivityTile extends StatelessWidget {
   final ActivityModel activity;
   final Color primaryColor;
 
-  const ActivityTile({super.key, required this.activity, required this.primaryColor});
+  const ActivityTile({
+    super.key,
+    required this.activity,
+    required this.primaryColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -290,16 +337,29 @@ class ActivityTile extends StatelessWidget {
               color: primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: Icon(Icons.inventory_2_outlined, color: primaryColor, size: 22),
+            child: Icon(
+              Icons.inventory_2_outlined,
+              color: primaryColor,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(activity.title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                Text(
+                  activity.title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(activity.time, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                Text(
+                  activity.time,
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                ),
               ],
             ),
           ),
@@ -315,7 +375,13 @@ class QuickActionItem extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onTap;
-  const QuickActionItem({super.key, required this.icon, required this.label, required this.color, required this.onTap});
+  const QuickActionItem({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +398,10 @@ class QuickActionItem extends StatelessWidget {
             child: Icon(icon, color: color, size: 28),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          ),
         ],
       ),
     );
@@ -353,12 +422,19 @@ class BarChartSample extends StatelessWidget {
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
             getTooltipColor: (group) => primaryColor.withValues(alpha: 0.15),
-            tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            tooltipPadding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 5,
+            ),
             tooltipMargin: 8,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               return BarTooltipItem(
                 '${(rod.toY / 20 * 100).round()}%',
-                TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 13),
+                TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
               );
             },
           ),
@@ -370,18 +446,32 @@ class BarChartSample extends StatelessWidget {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                if (value.toInt() < 0 || value.toInt() >= days.length) return const SizedBox();
+                if (value.toInt() < 0 || value.toInt() >= days.length)
+                  return const SizedBox();
                 return Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(days[value.toInt()], style: const TextStyle(color: Colors.grey, fontSize: 11, fontWeight: FontWeight.w500)),
+                  child: Text(
+                    days[value.toInt()],
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 );
               },
               reservedSize: 30,
             ),
           ),
-          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         gridData: const FlGridData(show: false),
         borderData: FlBorderData(show: false),

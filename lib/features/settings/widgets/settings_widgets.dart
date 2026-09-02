@@ -23,7 +23,11 @@ class ProfileInfo extends StatelessWidget {
           backgroundColor: primaryColor.withValues(alpha: 0.4),
           child: Text(
             initial,
-            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
         const SizedBox(height: 15),
@@ -31,10 +35,7 @@ class ProfileInfo extends StatelessWidget {
           name,
           style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        Text(
-          role,
-          style: const TextStyle(color: Colors.grey, fontSize: 14),
-        ),
+        Text(role, style: const TextStyle(color: Colors.grey, fontSize: 14)),
       ],
     );
   }
@@ -68,8 +69,17 @@ class InfoCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
-              Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+              Text(
+                label,
+                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+              ),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
         ],
@@ -103,7 +113,10 @@ class SettingToggle extends StatelessWidget {
           Icon(icon, color: Colors.grey.shade400, size: 24),
           const SizedBox(width: 15),
           Expanded(
-            child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
           ),
           Switch(
             value: value,
@@ -139,7 +152,13 @@ class SettingLink extends StatelessWidget {
             Icon(icon, color: Colors.grey.shade400, size: 24),
             const SizedBox(width: 15),
             Expanded(
-              child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
             const Icon(Icons.chevron_right_rounded, color: Colors.grey),
           ],
@@ -165,14 +184,19 @@ class LogoutButton extends StatelessWidget {
           backgroundColor: Colors.red.withValues(alpha: 0.3),
           foregroundColor: Colors.white,
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
         ),
         child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.logout_rounded, size: 20),
             SizedBox(width: 10),
-            Text("Logout", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              "Logout",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),

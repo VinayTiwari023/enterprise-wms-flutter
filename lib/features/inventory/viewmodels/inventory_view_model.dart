@@ -42,13 +42,10 @@ class InventoryViewModel extends Notifier<InventoryState> {
 
   Future<void> fetchItems() async {
     state = state.copyWith(status: ViewStatus.loading, clearError: true);
-    
+
     try {
       final items = await _repository.fetchInventoryItems();
-      state = state.copyWith(
-        items: items,
-        status: ViewStatus.success,
-      );
+      state = state.copyWith(items: items, status: ViewStatus.success);
     } catch (e) {
       state = state.copyWith(
         status: ViewStatus.error,
@@ -57,9 +54,16 @@ class InventoryViewModel extends Notifier<InventoryState> {
     }
   }
 
-  void addOrUpdateStock(String sku, String name, String location, int quantity) {
+  void addOrUpdateStock(
+    String sku,
+    String name,
+    String location,
+    int quantity,
+  ) {
     final currentItems = List<InventoryItemModel>.from(state.items);
-    final index = currentItems.indexWhere((i) => i.sku == sku && i.location == location);
+    final index = currentItems.indexWhere(
+      (i) => i.sku == sku && i.location == location,
+    );
 
     if (index != -1) {
       // Update existing stock at this location
@@ -73,13 +77,16 @@ class InventoryViewModel extends Notifier<InventoryState> {
       );
     } else {
       // Add new stock entry
-      currentItems.insert(0, InventoryItemModel(
-        sku: sku,
-        name: name,
-        location: location,
-        units: quantity,
-        status: "Available",
-      ));
+      currentItems.insert(
+        0,
+        InventoryItemModel(
+          sku: sku,
+          name: name,
+          location: location,
+          units: quantity,
+          status: "Available",
+        ),
+      );
     }
 
     state = state.copyWith(items: currentItems);
@@ -87,9 +94,10 @@ class InventoryViewModel extends Notifier<InventoryState> {
 }
 
 /// Provider for the InventoryViewModel.
-final inventoryViewModelProvider = NotifierProvider<InventoryViewModel, InventoryState>(() {
-  return InventoryViewModel();
-});
+final inventoryViewModelProvider =
+    NotifierProvider<InventoryViewModel, InventoryState>(() {
+      return InventoryViewModel();
+    });
 
 /// Provider for the search query to isolate search state.
 final inventorySearchQueryProvider = StateProvider<String>((ref) => "");
@@ -99,12 +107,12 @@ final inventorySearchQueryProvider = StateProvider<String>((ref) => "");
 final filteredInventoryProvider = Provider<List<InventoryItemModel>>((ref) {
   final query = ref.watch(inventorySearchQueryProvider).toLowerCase();
   final items = ref.watch(inventoryViewModelProvider.select((s) => s.items));
-  
+
   if (query.isEmpty) return items;
-  
+
   return items.where((item) {
-    return item.name.toLowerCase().contains(query) || 
-           item.sku.toLowerCase().contains(query) ||
-           item.location.toLowerCase().contains(query);
+    return item.name.toLowerCase().contains(query) ||
+        item.sku.toLowerCase().contains(query) ||
+        item.location.toLowerCase().contains(query);
   }).toList();
 });

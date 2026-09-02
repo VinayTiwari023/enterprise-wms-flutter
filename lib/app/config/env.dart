@@ -4,7 +4,7 @@ class AppUrls {
 
   static const String loginEndPoint = '$baseUrl/login';
   static const String registerEndPoint = '$baseUrl/register';
-  
+
   // WMS Specific Endpoints
   static const String getInventory = '$baseUrl/inventory';
   static const String getStats = '$baseUrl/stats';

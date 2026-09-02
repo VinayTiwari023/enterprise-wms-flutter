@@ -58,10 +58,7 @@ class TasksViewModel extends AutoDisposeNotifier<TasksState> {
     state = state.copyWith(status: ViewStatus.loading, clearError: true);
     try {
       final tasks = await _service.getTasks();
-      state = state.copyWith(
-        allTasks: tasks,
-        status: ViewStatus.success,
-      );
+      state = state.copyWith(allTasks: tasks, status: ViewStatus.success);
       _applyFilters();
     } catch (e) {
       state = state.copyWith(
@@ -83,9 +80,10 @@ class TasksViewModel extends AutoDisposeNotifier<TasksState> {
 
   void _applyFilters() {
     final filtered = state.allTasks.where((task) {
-      final matchesSearch = task.title.toLowerCase().contains(state.searchQuery.toLowerCase()) ||
-                            task.id.toLowerCase().contains(state.searchQuery.toLowerCase());
-      
+      final matchesSearch =
+          task.title.toLowerCase().contains(state.searchQuery.toLowerCase()) ||
+          task.id.toLowerCase().contains(state.searchQuery.toLowerCase());
+
       bool matchesFilter = true;
       if (state.selectedFilter == "High Priority") {
         matchesFilter = task.priority == TaskPriority.high;
@@ -94,7 +92,7 @@ class TasksViewModel extends AutoDisposeNotifier<TasksState> {
       } else if (state.selectedFilter == "In Progress") {
         matchesFilter = task.status == TaskStatus.inProgress;
       }
-      
+
       return matchesSearch && matchesFilter;
     }).toList();
 
@@ -103,6 +101,7 @@ class TasksViewModel extends AutoDisposeNotifier<TasksState> {
 }
 
 /// Provider for the TasksViewModel.
-final tasksViewModelProvider = AutoDisposeNotifierProvider<TasksViewModel, TasksState>(() {
-  return TasksViewModel();
-});
+final tasksViewModelProvider =
+    AutoDisposeNotifierProvider<TasksViewModel, TasksState>(() {
+      return TasksViewModel();
+    });

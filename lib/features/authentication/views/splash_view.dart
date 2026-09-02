@@ -23,7 +23,7 @@ class _SplashViewState extends ConsumerState<SplashView> {
   Widget build(BuildContext context) {
     // We don't perform navigation here.
     // The AppRouter will listen to UserViewModel and redirect automatically.
-    
+
     return const Scaffold(
       body: Center(
         child: Column(

@@ -51,30 +51,35 @@ class ProfileView extends ConsumerWidget {
                   _buildSectionTitle("Personal Information"),
                   const SizedBox(height: 10),
                   const InfoCard(
-                      icon: Icons.badge_outlined,
-                      label: "Employee ID",
-                      value: "EMP-74829"),
+                    icon: Icons.badge_outlined,
+                    label: "Employee ID",
+                    value: "EMP-74829",
+                  ),
                   InfoCard(
-                      icon: Icons.email_outlined,
-                      label: "Email",
-                      value: userVM.user?.email ?? "vinay@wms-new.com"),
+                    icon: Icons.email_outlined,
+                    label: "Email",
+                    value: userVM.user?.email ?? "vinay@wms-new.com",
+                  ),
                   const InfoCard(
-                      icon: Icons.phone_outlined,
-                      label: "Phone",
-                      value: "+91 9876543210"),
+                    icon: Icons.phone_outlined,
+                    label: "Phone",
+                    value: "+91 9876543210",
+                  ),
                   const SizedBox(height: 20),
                   const Divider(),
                   const SizedBox(height: 20),
                   _buildSectionTitle("Warehouse Details"),
                   const SizedBox(height: 10),
                   const InfoCard(
-                      icon: Icons.location_on_outlined,
-                      label: "Primary Site",
-                      value: "Bangalore Hub - WH1"),
+                    icon: Icons.location_on_outlined,
+                    label: "Primary Site",
+                    value: "Bangalore Hub - WH1",
+                  ),
                   const InfoCard(
-                      icon: Icons.grid_view_rounded,
-                      label: "Zone Assignment",
-                      value: "Zone A, Zone B"),
+                    icon: Icons.grid_view_rounded,
+                    label: "Zone Assignment",
+                    value: "Zone A, Zone B",
+                  ),
                   const SizedBox(height: 20),
                   const Divider(),
                   const SizedBox(height: 20),
@@ -84,23 +89,33 @@ class ProfileView extends ConsumerWidget {
                     icon: Icons.wb_sunny_outlined,
                     title: "Dark Mode",
                     value: themeVM.isDarkMode,
-                    onChanged: (val) => ref.read(themeViewModelProvider.notifier).toggleTheme(),
+                    onChanged: (val) =>
+                        ref.read(themeViewModelProvider.notifier).toggleTheme(),
                     primaryColor: primaryColor,
                   ),
                   SettingLink(
-                      icon: Icons.notifications_none_rounded,
-                      title: "Notification Settings",
-                      onTap: () {}),
+                    icon: Icons.notifications_none_rounded,
+                    title: "Notification Settings",
+                    onTap: () {},
+                  ),
                   SettingLink(
-                      icon: Icons.lock_outline_rounded,
-                      title: "Change Password",
-                      onTap: () {}),
+                    icon: Icons.lock_outline_rounded,
+                    title: "Change Password",
+                    onTap: () {},
+                  ),
                   ListTile(
-                    leading: Icon(Icons.language_rounded,
-                        color: Colors.grey.shade400, size: 24),
-                    title: const Text("Language",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
+                    leading: Icon(
+                      Icons.language_rounded,
+                      color: Colors.grey.shade400,
+                      size: 24,
+                    ),
+                    title: const Text(
+                      "Language",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                     trailing: DropdownButton<String>(
                       value: themeVM.currentLocale.languageCode,
                       underline: const SizedBox(),
@@ -110,18 +125,22 @@ class ProfileView extends ConsumerWidget {
                       ],
                       onChanged: (String? code) {
                         if (code != null) {
-                          ref.read(themeViewModelProvider.notifier).setLocale(Locale(code));
+                          ref
+                              .read(themeViewModelProvider.notifier)
+                              .setLocale(Locale(code));
                         }
                       },
                     ),
                   ),
                   const SizedBox(height: 30),
-                  LogoutButton(onTap: () async {
-                    final confirmed = await showLogoutDialog(context);
-                    if (confirmed == true) {
-                      ref.read(userViewModelProvider.notifier).logout();
-                    }
-                  }),
+                  LogoutButton(
+                    onTap: () async {
+                      final confirmed = await showLogoutDialog(context);
+                      if (confirmed == true) {
+                        ref.read(userViewModelProvider.notifier).logout();
+                      }
+                    },
+                  ),
                   const SizedBox(height: 100),
                 ],
               ),

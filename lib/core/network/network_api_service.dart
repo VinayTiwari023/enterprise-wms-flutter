@@ -8,7 +8,9 @@ import '../storage/storage_service.dart';
 import '../storage/storage_keys.dart';
 import '../error/exceptions.dart';
 
-final apiServiceProvider = Provider<BaseApiService>((ref) => locator<BaseApiService>());
+final apiServiceProvider = Provider<BaseApiService>(
+  (ref) => locator<BaseApiService>(),
+);
 
 class NetworkApiService extends BaseApiService {
   final StorageService _storageService;
@@ -36,11 +38,7 @@ class NetworkApiService extends BaseApiService {
     try {
       final headers = await _getHeaders();
       final response = await http
-          .post(
-            Uri.parse(url),
-            headers: headers,
-            body: jsonEncode(data),
-          )
+          .post(Uri.parse(url), headers: headers, body: jsonEncode(data))
           .timeout(const Duration(seconds: 10));
       responseJson = returnResponse(response);
     } on SocketException {
@@ -73,7 +71,8 @@ class NetworkApiService extends BaseApiService {
         throw Exception('Server Error: Please try again later');
       default:
         throw Exception(
-            'Error occurred while communicating with server: ${response.statusCode}');
+          'Error occurred while communicating with server: ${response.statusCode}',
+        );
     }
   }
 }

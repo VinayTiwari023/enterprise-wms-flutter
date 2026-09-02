@@ -8,10 +8,7 @@ class UserState {
   final UserModel? user;
   final bool isCheckingAuth;
 
-  const UserState({
-    this.user,
-    this.isCheckingAuth = true,
-  });
+  const UserState({this.user, this.isCheckingAuth = true});
 
   bool get isLoggedIn => user != null;
 
@@ -58,10 +55,7 @@ class UserViewModel extends Notifier<UserState> {
 
   /// Manually sets the user (e.g., after a successful login).
   void setUser(UserModel user) {
-    state = state.copyWith(
-      user: user,
-      isCheckingAuth: false,
-    );
+    state = state.copyWith(user: user, isCheckingAuth: false);
   }
 
   /// Logs out the user and clears the state.
@@ -69,10 +63,7 @@ class UserViewModel extends Notifier<UserState> {
     // We clear the user locally regardless of whether the remote logout succeeds,
     // as our primary concern is security on the current device.
     await _authRepo.logout();
-    state = state.copyWith(
-      clearUser: true,
-      isCheckingAuth: false,
-    );
+    state = state.copyWith(clearUser: true, isCheckingAuth: false);
   }
 }
 

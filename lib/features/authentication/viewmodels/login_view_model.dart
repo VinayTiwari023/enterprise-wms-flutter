@@ -82,6 +82,7 @@ class LoginViewModel extends AutoDisposeNotifier<LoginState> {
 }
 
 /// Provider for the LoginViewModel using AutoDisposeNotifierProvider.
-final loginViewModelProvider = AutoDisposeNotifierProvider<LoginViewModel, LoginState>(() {
-  return LoginViewModel();
-});
+final loginViewModelProvider =
+    AutoDisposeNotifierProvider<LoginViewModel, LoginState>(() {
+      return LoginViewModel();
+    });

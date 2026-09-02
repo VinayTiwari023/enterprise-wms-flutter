@@ -1,5 +1,7 @@
 enum TaskPriority { high, medium, low }
+
 enum TaskStatus { pending, inProgress, completed, cancelled }
+
 enum TaskType { pick, pack, receive, count, ship }
 
 class TaskModel {
@@ -28,9 +30,15 @@ class TaskModel {
       id: json['id'],
       title: json['title'],
       description: json['description'],
-      type: TaskType.values.firstWhere((e) => e.toString() == 'TaskType.${json['type']}'),
-      priority: TaskPriority.values.firstWhere((e) => e.toString() == 'TaskPriority.${json['priority']}'),
-      status: TaskStatus.values.firstWhere((e) => e.toString() == 'TaskStatus.${json['status']}'),
+      type: TaskType.values.firstWhere(
+        (e) => e.toString() == 'TaskType.${json['type']}',
+      ),
+      priority: TaskPriority.values.firstWhere(
+        (e) => e.toString() == 'TaskPriority.${json['priority']}',
+      ),
+      status: TaskStatus.values.firstWhere(
+        (e) => e.toString() == 'TaskStatus.${json['status']}',
+      ),
       createdAt: DateTime.parse(json['createdAt']),
       location: json['location'],
     );

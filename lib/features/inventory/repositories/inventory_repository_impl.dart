@@ -11,7 +11,8 @@ class InventoryRepositoryImpl implements InventoryRepository {
   InventoryRepositoryImpl({
     required BaseApiService apiService,
     required InventoryMockService mockService,
-  }) : _apiService = apiService, _mockService = mockService;
+  }) : _apiService = apiService,
+       _mockService = mockService;
 
   @override
   Future<dynamic> fetchInventoryApi() async {

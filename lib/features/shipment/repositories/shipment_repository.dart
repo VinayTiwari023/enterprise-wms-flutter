@@ -9,7 +9,8 @@ final shipmentRepositoryProvider = Provider<ShipmentRepository>((ref) {
 class ShipmentRepository {
   final ShipmentMockService _mockService;
 
-  ShipmentRepository({required ShipmentMockService mockService}) : _mockService = mockService;
+  ShipmentRepository({required ShipmentMockService mockService})
+    : _mockService = mockService;
 
   Future<List<OutboundOrderModel>> fetchOutboundOrders() async {
     return await _mockService.getOutboundOrders();

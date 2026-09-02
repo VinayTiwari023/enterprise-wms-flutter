@@ -10,7 +10,8 @@ final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
 class DashboardRepository {
   final DashboardMockService _mockService;
 
-  DashboardRepository({required DashboardMockService mockService}) : _mockService = mockService;
+  DashboardRepository({required DashboardMockService mockService})
+    : _mockService = mockService;
 
   Future<DashboardStats> fetchStats() async {
     return await _mockService.getDashboardStats();

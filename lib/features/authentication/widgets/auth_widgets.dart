@@ -39,7 +39,10 @@ class AuthTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         obscureText: isPassword && !isPasswordVisible,
-        style: TextStyle(fontSize: 16, color: isDark ? Colors.white : Colors.black),
+        style: TextStyle(
+          fontSize: 16,
+          color: isDark ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Color(0xFFA0A0A0), fontSize: 16),
@@ -91,10 +94,7 @@ class BackgroundCircle extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.2),
-            color.withValues(alpha: 0.05),
-          ],
+          colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.05)],
         ),
       ),
     );

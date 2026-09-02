@@ -65,7 +65,10 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
         return;
       }
 
-      int totalExpected = _selectedItems.fold(0, (sum, item) => sum + item.expectedQty);
+      int totalExpected = _selectedItems.fold(
+        0,
+        (sum, item) => sum + item.expectedQty,
+      );
 
       final po = PurchaseOrderModel(
         poNumber: _generatedPONumber,
@@ -77,7 +80,9 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
         itemsList: _selectedItems,
       );
 
-      final success = await ref.read(inboundViewModelProvider.notifier).addPO(po);
+      final success = await ref
+          .read(inboundViewModelProvider.notifier)
+          .addPO(po);
 
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -142,7 +147,7 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
                         // PO Number Display Card
                         _buildPONumberCard(primaryColor, isDark),
                         const SizedBox(height: 32),
-                        
+
                         _buildSectionLabel("SUPPLIER DETAILS"),
                         const SizedBox(height: 12),
                         _buildModernTextField(
@@ -151,27 +156,29 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
                           icon: Icons.factory_outlined,
                           isDark: isDark,
                           primaryColor: primaryColor,
-                          validator: (value) => value?.isEmpty ?? true ? "Please enter supplier name" : null,
+                          validator: (value) => value?.isEmpty ?? true
+                              ? "Please enter supplier name"
+                              : null,
                         ),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         _buildSectionLabel("PRODUCTS"),
                         const SizedBox(height: 12),
                         _buildProductList(primaryColor, isDark),
                         const SizedBox(height: 12),
                         _buildAddProductButton(primaryColor, isDark),
-                        
+
                         const SizedBox(height: 24),
                         _buildSectionLabel("LOGISTICS"),
                         const SizedBox(height: 12),
                         _buildModernDatePicker(context, primaryColor, isDark),
-                        
+
                         const SizedBox(height: 48),
-                        
+
                         _buildSubmitButton(
-                          inboundState.status == ViewStatus.loading, 
-                          primaryColor
+                          inboundState.status == ViewStatus.loading,
+                          primaryColor,
                         ),
                       ],
                     ),
@@ -193,24 +200,40 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E26) : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.withValues(alpha: 0.2), style: BorderStyle.solid),
+          border: Border.all(
+            color: Colors.grey.withValues(alpha: 0.2),
+            style: BorderStyle.solid,
+          ),
         ),
         child: Column(
           children: [
-            Icon(Icons.inventory_2_outlined, color: Colors.grey.shade400, size: 40),
+            Icon(
+              Icons.inventory_2_outlined,
+              color: Colors.grey.shade400,
+              size: 40,
+            ),
             const SizedBox(height: 12),
-            Text("No products added yet", style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+            Text(
+              "No products added yet",
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+            ),
           ],
         ),
       );
     }
 
     return Column(
-      children: _selectedItems.map((item) => _buildProductTile(item, primaryColor, isDark)).toList(),
+      children: _selectedItems
+          .map((item) => _buildProductTile(item, primaryColor, isDark))
+          .toList(),
     );
   }
 
-  Widget _buildProductTile(PurchaseOrderItemModel item, Color primaryColor, bool isDark) {
+  Widget _buildProductTile(
+    PurchaseOrderItemModel item,
+    Color primaryColor,
+    bool isDark,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -233,26 +256,52 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
               color: primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.shopping_bag_outlined, color: primaryColor, size: 20),
+            child: Icon(
+              Icons.shopping_bag_outlined,
+              color: primaryColor,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                Text("SKU: ${item.sku}", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
+                Text(
+                  item.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                Text(
+                  "SKU: ${item.sku}",
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                ),
               ],
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text("${item.expectedQty} Units", style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+              Text(
+                "${item.expectedQty} Units",
+                style: TextStyle(
+                  color: primaryColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 4),
               GestureDetector(
                 onTap: () => setState(() => _selectedItems.remove(item)),
-                child: const Text("Remove", style: TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  "Remove",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
@@ -270,14 +319,27 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
         decoration: BoxDecoration(
           color: primaryColor.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: primaryColor.withValues(alpha: 0.3), style: BorderStyle.solid),
+          border: Border.all(
+            color: primaryColor.withValues(alpha: 0.3),
+            style: BorderStyle.solid,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_circle_outline_rounded, color: primaryColor, size: 20),
+            Icon(
+              Icons.add_circle_outline_rounded,
+              color: primaryColor,
+              size: 20,
+            ),
             const SizedBox(width: 8),
-            Text("Add Product", style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+            Text(
+              "Add Product",
+              style: TextStyle(
+                color: primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),
@@ -288,7 +350,7 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
     final inventoryState = ref.read(inventoryViewModelProvider);
     final themeVM = ref.read(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -305,9 +367,19 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
           child: Column(
             children: [
               const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               const SizedBox(height: 20),
-              const Text("Select Product", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const Text(
+                "Select Product",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 16),
               Expanded(
                 child: ListView.builder(
@@ -318,9 +390,15 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
                     final item = inventoryState.items[index];
                     return ListTile(
                       contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                      title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(
+                        item.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       subtitle: Text("SKU: ${item.sku}"),
-                      trailing: Icon(Icons.add_circle_outline, color: primaryColor),
+                      trailing: Icon(
+                        Icons.add_circle_outline,
+                        color: primaryColor,
+                      ),
                       onTap: () {
                         Navigator.pop(context);
                         _showQuantityDialog(item);
@@ -355,22 +433,30 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
           ElevatedButton(
             onPressed: () {
               final qty = int.tryParse(qtyController.text) ?? 0;
               if (qty > 0) {
                 setState(() {
-                  _selectedItems.add(PurchaseOrderItemModel(
-                    sku: item.sku,
-                    name: item.name,
-                    expectedQty: qty,
-                  ));
+                  _selectedItems.add(
+                    PurchaseOrderItemModel(
+                      sku: item.sku,
+                      name: item.name,
+                      expectedQty: qty,
+                    ),
+                  );
                 });
                 Navigator.pop(context);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: primaryColor, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              foregroundColor: Colors.white,
+            ),
             child: const Text("Add"),
           ),
         ],
@@ -417,7 +503,11 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
         children: [
           const Text(
             "Assigned PO Number",
-            style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -438,7 +528,11 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
             ),
             child: const Text(
               "DRAFT STATUS",
-              style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -471,7 +565,10 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
         controller: controller,
         keyboardType: keyboardType,
         validator: validator,
-        style: TextStyle(fontSize: 16, color: isDark ? Colors.white : Colors.black),
+        style: TextStyle(
+          fontSize: 16,
+          color: isDark ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: const TextStyle(color: Color(0xFFA0A0A0), fontSize: 15),
@@ -498,7 +595,11 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
     );
   }
 
-  Widget _buildModernDatePicker(BuildContext context, Color primaryColor, bool isDark) {
+  Widget _buildModernDatePicker(
+    BuildContext context,
+    Color primaryColor,
+    bool isDark,
+  ) {
     return InkWell(
       onTap: () => _pickDate(context),
       borderRadius: BorderRadius.circular(16),
@@ -524,12 +625,19 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
               children: [
                 Text(
                   "Expected Delivery",
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   DateFormat('MMMM d, yyyy').format(_selectedDate),
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -560,14 +668,19 @@ class _AddPOViewState extends ConsumerState<AddPOView> {
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 20),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
           elevation: 0,
         ),
         child: isLoading
             ? const SizedBox(
                 height: 24,
                 width: 24,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
               )
             : const Text(
                 "Finalize Purchase Order",

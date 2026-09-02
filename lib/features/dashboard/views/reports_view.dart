@@ -26,14 +26,21 @@ class ReportsView extends ConsumerWidget {
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text("Reports & Analytics",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            title: const Text(
+              "Reports & Analytics",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             centerTitle: true,
             actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.tune_rounded)),
               IconButton(
-                  onPressed: () => ref.read(reportsViewModelProvider.notifier).fetchReports(),
-                  icon: const Icon(Icons.file_download_outlined)),
+                onPressed: () {},
+                icon: const Icon(Icons.tune_rounded),
+              ),
+              IconButton(
+                onPressed: () =>
+                    ref.read(reportsViewModelProvider.notifier).fetchReports(),
+                icon: const Icon(Icons.file_download_outlined),
+              ),
             ],
           ),
           SliverPadding(
@@ -44,13 +51,17 @@ class ReportsView extends ConsumerWidget {
                 children: [
                   _buildMonthlyOverview(context, primaryColor),
                   const SizedBox(height: 30),
-                  const Text("Inventory Turnover",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Inventory Turnover",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 15),
                   _buildTurnoverChart(context, primaryColor),
                   const SizedBox(height: 30),
-                  const Text("Key Performance Indicators",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Key Performance Indicators",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 15),
                 ],
               ),
@@ -64,10 +75,34 @@ class ReportsView extends ConsumerWidget {
               crossAxisSpacing: 15,
               childAspectRatio: 1.3,
               children: [
-                _buildKPICard(context, Icons.check_circle_outline, "99.2%", "Pick Accuracy", Colors.blue),
-                _buildKPICard(context, Icons.inventory_2_outlined, "45/hr", "Pack Rate", Colors.orange),
-                _buildKPICard(context, Icons.timer_outlined, "2.4 hrs", "Dock to Stock", Colors.purple),
-                _buildKPICard(context, Icons.sync_rounded, "1.5 days", "Order Cycle", Colors.teal),
+                _buildKPICard(
+                  context,
+                  Icons.check_circle_outline,
+                  "99.2%",
+                  "Pick Accuracy",
+                  Colors.blue,
+                ),
+                _buildKPICard(
+                  context,
+                  Icons.inventory_2_outlined,
+                  "45/hr",
+                  "Pack Rate",
+                  Colors.orange,
+                ),
+                _buildKPICard(
+                  context,
+                  Icons.timer_outlined,
+                  "2.4 hrs",
+                  "Dock to Stock",
+                  Colors.purple,
+                ),
+                _buildKPICard(
+                  context,
+                  Icons.sync_rounded,
+                  "1.5 days",
+                  "Order Cycle",
+                  Colors.teal,
+                ),
               ],
             ),
           ),
@@ -78,8 +113,10 @@ class ReportsView extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 30),
-                  const Text("Recent Reports",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Recent Reports",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 15),
                 ],
               ),
@@ -92,14 +129,14 @@ class ReportsView extends ConsumerWidget {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final report = reportsState.recentReports[index];
-                        return _buildReportTile(
-                            context, report['title']!, report['date']!);
-                      },
-                      childCount: reportsState.recentReports.length,
-                    ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final report = reportsState.recentReports[index];
+                      return _buildReportTile(
+                        context,
+                        report['title']!,
+                        report['date']!,
+                      );
+                    }, childCount: reportsState.recentReports.length),
                   ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
@@ -121,7 +158,10 @@ class ReportsView extends ConsumerWidget {
             children: [
               Icon(Icons.analytics_outlined, color: primaryColor, size: 24),
               const SizedBox(width: 10),
-              const Text("Monthly Overview", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text(
+                "Monthly Overview",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -138,35 +178,56 @@ class ReportsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildOverviewItem(String label, String value, String change, Color changeColor) {
+  Widget _buildOverviewItem(
+    String label,
+    String value,
+    String change,
+    Color changeColor,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        Text(change, style: TextStyle(color: changeColor, fontSize: 12, fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          change,
+          style: TextStyle(
+            color: changeColor,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildTurnoverChart(BuildContext context, Color primaryColor) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       height: 250,
       padding: const EdgeInsets.fromLTRB(10, 20, 20, 10),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-        boxShadow: isDark ? [] : [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.05),
+        ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: LineChart(
         LineChartData(
@@ -178,7 +239,9 @@ class ReportsView extends ConsumerWidget {
             horizontalInterval: 0.5,
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.05),
                 strokeWidth: 1,
                 dashArray: [5, 5],
               );
@@ -190,13 +253,27 @@ class ReportsView extends ConsumerWidget {
                 showTitles: true,
                 interval: 1,
                 getTitlesWidget: (value, meta) {
-                  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+                  const months = [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                  ];
                   if (value.toInt() >= 0 && value.toInt() < months.length) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        months[value.toInt()], 
-                        style: TextStyle(color: isDark ? Colors.grey : Colors.grey.shade600, fontSize: 10)
+                        months[value.toInt()],
+                        style: TextStyle(
+                          color: isDark ? Colors.grey : Colors.grey.shade600,
+                          fontSize: 10,
+                        ),
                       ),
                     );
                   }
@@ -209,10 +286,21 @@ class ReportsView extends ConsumerWidget {
                 showTitles: true,
                 interval: 0.5,
                 getTitlesWidget: (value, meta) {
-                  if (value == 2.8 || value == 3 || value == 3.5 || value == 4 || value == 4.5 || value == 5 || value == 5.5 || value == 6 || value == 6.5) {
+                  if (value == 2.8 ||
+                      value == 3 ||
+                      value == 3.5 ||
+                      value == 4 ||
+                      value == 4.5 ||
+                      value == 5 ||
+                      value == 5.5 ||
+                      value == 6 ||
+                      value == 6.5) {
                     return Text(
-                      value.toString(), 
-                      style: TextStyle(color: isDark ? Colors.grey : Colors.grey.shade600, fontSize: 10)
+                      value.toString(),
+                      style: TextStyle(
+                        color: isDark ? Colors.grey : Colors.grey.shade600,
+                        fontSize: 10,
+                      ),
                     );
                   }
                   return const SizedBox();
@@ -220,8 +308,12 @@ class ReportsView extends ConsumerWidget {
                 reservedSize: 30,
               ),
             ),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
           ),
           borderData: FlBorderData(show: false),
           lineBarsData: [
@@ -262,7 +354,13 @@ class ReportsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildKPICard(BuildContext context, IconData icon, String value, String label, Color color) {
+  Widget _buildKPICard(
+    BuildContext context,
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -274,7 +372,10 @@ class ReportsView extends ConsumerWidget {
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 8),
-          Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
         ],
       ),
@@ -290,11 +391,24 @@ class ReportsView extends ConsumerWidget {
           color: Colors.red.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Icon(Icons.picture_as_pdf_outlined, color: Colors.redAccent, size: 24),
+        child: const Icon(
+          Icons.picture_as_pdf_outlined,
+          color: Colors.redAccent,
+          size: 24,
+        ),
       ),
-      title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-      subtitle: Text("Generated on $date", style: const TextStyle(color: Colors.grey, fontSize: 12)),
-      trailing: IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert, size: 20)),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(
+        "Generated on $date",
+        style: const TextStyle(color: Colors.grey, fontSize: 12),
+      ),
+      trailing: IconButton(
+        onPressed: () {},
+        icon: const Icon(Icons.more_vert, size: 20),
+      ),
     );
   }
 }

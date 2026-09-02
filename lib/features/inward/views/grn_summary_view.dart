@@ -16,7 +16,9 @@ class GRNSummaryView extends ConsumerWidget {
     final inboundState = ref.watch(inboundViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
 
-    final po = inboundState.purchaseOrders.firstWhere((p) => p.poNumber == poNumber);
+    final po = inboundState.purchaseOrders.firstWhere(
+      (p) => p.poNumber == poNumber,
+    );
     int totalExpected = 0;
     int totalReceived = 0;
     int totalDamaged = 0;
@@ -44,7 +46,11 @@ class GRNSummaryView extends ConsumerWidget {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            const Icon(Icons.check_circle_outline_rounded, size: 80, color: Colors.green),
+            const Icon(
+              Icons.check_circle_outline_rounded,
+              size: 80,
+              color: Colors.green,
+            ),
             const SizedBox(height: 16),
             const Text(
               "Receiving Completed",
@@ -55,7 +61,13 @@ class GRNSummaryView extends ConsumerWidget {
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 40),
-            _buildSummaryCard(context, totalExpected, totalReceived, totalDamaged, primaryColor),
+            _buildSummaryCard(
+              context,
+              totalExpected,
+              totalReceived,
+              totalDamaged,
+              primaryColor,
+            ),
             const Spacer(),
             SizedBox(
               width: double.infinity,
@@ -64,15 +76,22 @@ class GRNSummaryView extends ConsumerWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (_) => DirectedPutawayView(poNumber: poNumber))
+                    MaterialPageRoute(
+                      builder: (_) => DirectedPutawayView(poNumber: poNumber),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.move_to_inbox_rounded),
-                label: const Text("Proceed to Putaway", style: TextStyle(fontWeight: FontWeight.bold)),
+                label: const Text(
+                  "Proceed to Putaway",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -83,11 +102,16 @@ class GRNSummaryView extends ConsumerWidget {
               child: OutlinedButton.icon(
                 onPressed: () => PrintingService.printGRN(po),
                 icon: const Icon(Icons.print_rounded),
-                label: const Text("Print GRN Summary", style: TextStyle(fontWeight: FontWeight.bold)),
+                label: const Text(
+                  "Print GRN Summary",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: primaryColor,
                   side: BorderSide(color: primaryColor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -102,7 +126,13 @@ class GRNSummaryView extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context, int expected, int received, int damaged, Color color) {
+  Widget _buildSummaryCard(
+    BuildContext context,
+    int expected,
+    int received,
+    int damaged,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -118,9 +148,16 @@ class GRNSummaryView extends ConsumerWidget {
           const SizedBox(height: 16),
           _summaryRow("Good Units", "$received", valueColor: Colors.green),
           const SizedBox(height: 16),
-          _summaryRow("Damaged Units", "$damaged", valueColor: Colors.redAccent),
+          _summaryRow(
+            "Damaged Units",
+            "$damaged",
+            valueColor: Colors.redAccent,
+          ),
           const Divider(height: 32),
-          _summaryRow("Accuracy", "${((received + damaged) / expected * 100).toStringAsFixed(1)}%"),
+          _summaryRow(
+            "Accuracy",
+            "${((received + damaged) / expected * 100).toStringAsFixed(1)}%",
+          ),
         ],
       ),
     );
@@ -130,8 +167,17 @@ class GRNSummaryView extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
-        Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: valueColor)),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(fontWeight: FontWeight.bold, color: valueColor),
+        ),
       ],
     );
   }

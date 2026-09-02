@@ -18,7 +18,7 @@ class FakeLoginRequest extends Fake implements LoginRequest {}
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeLoginRequest());
-  }); 
+  });
 
   group('LoginViewModel Tests -', () {
     late ProviderContainer container;
@@ -27,9 +27,7 @@ void main() {
     setUp(() {
       mockRepo = MockAuthRepository();
       container = ProviderContainer(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(mockRepo),
-        ],
+        overrides: [authRepositoryProvider.overrideWithValue(mockRepo)],
       );
     });
 
@@ -44,9 +42,9 @@ void main() {
 
     test('login with empty fields sets error', () async {
       final notifier = container.read(loginViewModelProvider.notifier);
-      
+
       final result = await notifier.login('', '');
-      
+
       final state = container.read(loginViewModelProvider);
       expect(result, isNull);
       expect(state.status, ViewStatus.error);
@@ -60,8 +58,9 @@ void main() {
         userName: 'Test User',
       );
 
-      when(() => mockRepo.mockLogin(any()))
-          .thenAnswer((_) async => Result.success(response));
+      when(
+        () => mockRepo.mockLogin(any()),
+      ).thenAnswer((_) async => Result.success(response));
 
       final result = await notifier.login('admin@wms.com', 'admin123');
 
@@ -74,8 +73,11 @@ void main() {
 
     test('failed login sets error message', () async {
       final notifier = container.read(loginViewModelProvider.notifier);
-      when(() => mockRepo.mockLogin(any()))
-          .thenAnswer((_) async => Result.failure(const UnauthorizedFailure('Invalid email or password')));
+      when(() => mockRepo.mockLogin(any())).thenAnswer(
+        (_) async => Result.failure(
+          const UnauthorizedFailure('Invalid email or password'),
+        ),
+      );
 
       final result = await notifier.login('wrong@wms.com', 'wrong');
 

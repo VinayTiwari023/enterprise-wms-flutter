@@ -38,7 +38,7 @@ class PutawayViewModel extends Notifier<PutawayState> {
 
     // Get the PO details from InboundViewModel using ref
     final po = ref.read(purchaseOrderProvider(poNumber));
-    
+
     if (po == null) {
       state = state.copyWith(
         status: ViewStatus.error,
@@ -48,13 +48,12 @@ class PutawayViewModel extends Notifier<PutawayState> {
     }
 
     // Filter items that have been received but not yet put away
-    final receivedItems = po.itemsList.where((item) => item.receivedQty > 0).toList();
+    final receivedItems = po.itemsList
+        .where((item) => item.receivedQty > 0)
+        .toList();
 
     if (receivedItems.isEmpty) {
-      state = state.copyWith(
-        status: ViewStatus.success,
-        suggestions: [],
-      );
+      state = state.copyWith(status: ViewStatus.success, suggestions: []);
       return;
     }
 
@@ -63,7 +62,7 @@ class PutawayViewModel extends Notifier<PutawayState> {
       final lastPart = item.sku.split('-').last;
       final skuNum = int.tryParse(lastPart) ?? 0;
       final isEven = skuNum % 2 == 0;
-      
+
       return PutawayItemModel(
         sku: item.sku,
         itemName: item.name,
@@ -92,30 +91,39 @@ class PutawayViewModel extends Notifier<PutawayState> {
   }
 
   void finalizePutaway() {
-    final confirmedItems = state.suggestions.where((i) => i.isConfirmed).toList();
-    
+    final confirmedItems = state.suggestions
+        .where((i) => i.isConfirmed)
+        .toList();
+
     // Update Inventory for each confirmed item
     for (var item in confirmedItems) {
-      ref.read(inventoryViewModelProvider.notifier).addOrUpdateStock(
-        item.sku,
-        item.itemName,
-        item.suggestedBin,
-        item.quantity,
-      );
-      
+      ref
+          .read(inventoryViewModelProvider.notifier)
+          .addOrUpdateStock(
+            item.sku,
+            item.itemName,
+            item.suggestedBin,
+            item.quantity,
+          );
+
       // Log to dashboard
-      ref.read(homeViewModelProvider.notifier).addActivity(
-        "Stored ${item.quantity}x ${item.sku} in ${item.suggestedBin}"
-      );
+      ref
+          .read(homeViewModelProvider.notifier)
+          .addActivity(
+            "Stored ${item.quantity}x ${item.sku} in ${item.suggestedBin}",
+          );
     }
 
     // Clear suggestions as they are done
     state = const PutawayState(status: ViewStatus.success);
   }
 
-  bool get allConfirmed => state.suggestions.isNotEmpty && state.suggestions.every((item) => item.isConfirmed);
+  bool get allConfirmed =>
+      state.suggestions.isNotEmpty &&
+      state.suggestions.every((item) => item.isConfirmed);
 }
 
-final putawayViewModelProvider = NotifierProvider<PutawayViewModel, PutawayState>(() {
-  return PutawayViewModel();
-});
+final putawayViewModelProvider =
+    NotifierProvider<PutawayViewModel, PutawayState>(() {
+      return PutawayViewModel();
+    });

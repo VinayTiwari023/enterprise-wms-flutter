@@ -23,7 +23,7 @@ final routerNotifierProvider = Provider((ref) => RouterNotifier(ref));
 
 final routerProvider = Provider<GoRouter>((ref) {
   final listenable = ref.watch(routerNotifierProvider);
-  
+
   return GoRouter(
     initialLocation: '/splash',
     refreshListenable: listenable,
@@ -31,10 +31,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       // Get the current user state
       final userState = ref.read(userViewModelProvider);
-      
+
       final isLoggedIn = userState.isLoggedIn;
       final isCheckingAuth = userState.isCheckingAuth;
-      
+
       // If we are currently checking auth status, stay on splash
       if (isCheckingAuth) return '/splash';
 

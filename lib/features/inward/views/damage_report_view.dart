@@ -24,7 +24,13 @@ class DamageReportView extends ConsumerStatefulWidget {
 class _DamageReportViewState extends ConsumerState<DamageReportView> {
   final _qtyController = TextEditingController();
   String _selectedType = "Crushed";
-  final List<String> _damageTypes = ["Crushed", "Wet", "Torn", "Expired", "Other"];
+  final List<String> _damageTypes = [
+    "Crushed",
+    "Wet",
+    "Torn",
+    "Expired",
+    "Other",
+  ];
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -69,9 +75,9 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error picking image: $e")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error picking image: $e")));
       }
     }
   }
@@ -82,10 +88,7 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
     final primaryColor = themeVM.currentThemeColor;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Report Damage"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Report Damage"), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -105,8 +108,17 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.itemName, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Text("SKU: ${widget.sku}", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                        Text(
+                          widget.itemName,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "SKU: ${widget.sku}",
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -114,7 +126,10 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
               ),
             ),
             const SizedBox(height: 30),
-            const Text("Damaged Quantity", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Damaged Quantity",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _qtyController,
@@ -123,11 +138,17 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                 hintText: "Enter number of damaged units",
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
             const SizedBox(height: 24),
-            const Text("Damage Type", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Damage Type",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
@@ -138,12 +159,17 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                   selected: isSelected,
                   onSelected: (val) => setState(() => _selectedType = type),
                   selectedColor: primaryColor.withValues(alpha: 0.2),
-                  labelStyle: TextStyle(color: isSelected ? primaryColor : Colors.grey),
+                  labelStyle: TextStyle(
+                    color: isSelected ? primaryColor : Colors.grey,
+                  ),
                 );
               }).toList(),
             ),
             const SizedBox(height: 24),
-            const Text("Add Photo (Optional)", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              "Add Photo (Optional)",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             InkWell(
               onTap: _pickImage,
@@ -155,7 +181,9 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: _selectedImage != null ? primaryColor : Colors.grey.withValues(alpha: 0.3),
+                    color: _selectedImage != null
+                        ? primaryColor
+                        : Colors.grey.withValues(alpha: 0.3),
                     width: _selectedImage != null ? 2 : 1,
                     style: BorderStyle.solid,
                   ),
@@ -176,14 +204,19 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                             right: 8,
                             top: 8,
                             child: GestureDetector(
-                              onTap: () => setState(() => _selectedImage = null),
+                              onTap: () =>
+                                  setState(() => _selectedImage = null),
                               child: Container(
                                 padding: const EdgeInsets.all(4),
                                 decoration: const BoxDecoration(
                                   color: Colors.black54,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.close, size: 16, color: Colors.white),
+                                child: const Icon(
+                                  Icons.close,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
@@ -192,9 +225,19 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey.shade400),
+                          Icon(
+                            Icons.add_a_photo_outlined,
+                            size: 40,
+                            color: Colors.grey.shade400,
+                          ),
                           const SizedBox(height: 8),
-                          Text("Tap to capture evidence", style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                          Text(
+                            "Tap to capture evidence",
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
               ),
@@ -207,22 +250,29 @@ class _DamageReportViewState extends ConsumerState<DamageReportView> {
                 onPressed: () {
                   final qty = int.tryParse(_qtyController.text) ?? 0;
                   if (qty > 0) {
-                    ref.read(inboundViewModelProvider.notifier).updateItemQuantity(
-                      widget.poNumber,
-                      widget.sku,
-                      damaged: qty,
-                      reason: _selectedType,
-                      imagePath: _selectedImage?.path,
-                    );
+                    ref
+                        .read(inboundViewModelProvider.notifier)
+                        .updateItemQuantity(
+                          widget.poNumber,
+                          widget.sku,
+                          damaged: qty,
+                          reason: _selectedType,
+                          imagePath: _selectedImage?.path,
+                        );
                     Navigator.pop(context);
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: const Text("Submit Damage Report", style: TextStyle(fontWeight: FontWeight.bold)),
+                child: const Text(
+                  "Submit Damage Report",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],

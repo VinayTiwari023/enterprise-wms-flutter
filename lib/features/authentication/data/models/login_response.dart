@@ -4,12 +4,7 @@ class LoginResponse {
   final String? userName;
   final String? role;
 
-  const LoginResponse({
-    this.token,
-    this.userId,
-    this.userName,
-    this.role,
-  });
+  const LoginResponse({this.token, this.userId, this.userName, this.role});
 
   /// Converts JSON map to LoginResponse instance
   factory LoginResponse.fromJson(Map<String, dynamic> json) {

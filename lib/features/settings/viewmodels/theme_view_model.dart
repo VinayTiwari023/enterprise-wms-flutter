@@ -29,67 +29,67 @@ class ThemeState {
   ThemeData get themeData => isDarkMode ? _darkTheme : _lightTheme;
 
   ThemeData get _lightTheme => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        primaryColor: currentThemeColor,
-        scaffoldBackgroundColor: const Color(0xFFF4F7FA),
-        colorScheme: ColorScheme.light(
-          primary: currentThemeColor,
-          secondary: currentThemeColor.withValues(alpha: 0.8),
-          surface: const Color(0xFFF4F7FA),
-          onSurface: const Color(0xFF1A1C1E),
-          outline: Colors.black.withValues(alpha: 0.05),
-        ),
-        dividerTheme: DividerThemeData(
-          color: Colors.black.withValues(alpha: 0.05),
-          thickness: 1,
-          space: 1,
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF4F7FA),
-          foregroundColor: Color(0xFF1A1C1E),
-          elevation: 0,
-          titleTextStyle: TextStyle(
-            color: Color(0xFF1A1C1E),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        cardTheme: CardThemeData(
-          color: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: Colors.black.withValues(alpha: 0.05)),
-          ),
-        ),
-      );
+    useMaterial3: true,
+    brightness: Brightness.light,
+    primaryColor: currentThemeColor,
+    scaffoldBackgroundColor: const Color(0xFFF4F7FA),
+    colorScheme: ColorScheme.light(
+      primary: currentThemeColor,
+      secondary: currentThemeColor.withValues(alpha: 0.8),
+      surface: const Color(0xFFF4F7FA),
+      onSurface: const Color(0xFF1A1C1E),
+      outline: Colors.black.withValues(alpha: 0.05),
+    ),
+    dividerTheme: DividerThemeData(
+      color: Colors.black.withValues(alpha: 0.05),
+      thickness: 1,
+      space: 1,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFFF4F7FA),
+      foregroundColor: Color(0xFF1A1C1E),
+      elevation: 0,
+      titleTextStyle: TextStyle(
+        color: Color(0xFF1A1C1E),
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    cardTheme: CardThemeData(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Colors.black.withValues(alpha: 0.05)),
+      ),
+    ),
+  );
 
   ThemeData get _darkTheme => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        primaryColor: currentThemeColor,
-        scaffoldBackgroundColor: const Color(0xFF12121A),
-        colorScheme: ColorScheme.dark(
-          primary: currentThemeColor,
-          surface: const Color(0xFF12121A),
-          onSurface: Colors.white,
-          outline: Colors.white.withValues(alpha: 0.1),
-        ),
-        dividerTheme: DividerThemeData(
-          color: Colors.white.withValues(alpha: 0.1),
-          thickness: 1,
-          space: 1,
-        ),
-        cardTheme: CardThemeData(
-          color: const Color(0xFF1E1E26),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-          ),
-        ),
-      );
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    primaryColor: currentThemeColor,
+    scaffoldBackgroundColor: const Color(0xFF12121A),
+    colorScheme: ColorScheme.dark(
+      primary: currentThemeColor,
+      surface: const Color(0xFF12121A),
+      onSurface: Colors.white,
+      outline: Colors.white.withValues(alpha: 0.1),
+    ),
+    dividerTheme: DividerThemeData(
+      color: Colors.white.withValues(alpha: 0.1),
+      thickness: 1,
+      space: 1,
+    ),
+    cardTheme: CardThemeData(
+      color: const Color(0xFF1E1E26),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+      ),
+    ),
+  );
 }
 
 /// A Notifier-based ViewModel for managing global theme and localization settings.

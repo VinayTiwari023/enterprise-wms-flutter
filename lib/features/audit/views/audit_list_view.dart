@@ -34,12 +34,21 @@ class AuditListView extends ConsumerWidget {
   }
 
   Widget _buildAuditCard(BuildContext context, audit, Color color) {
-    Color statusColor = audit.status == "Completed" ? Colors.green : Colors.orange;
-    
+    Color statusColor = audit.status == "Completed"
+        ? Colors.green
+        : Colors.orange;
+
     return InkWell(
-      onTap: audit.status == "Completed" ? null : () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => AuditDetailsView(auditId: audit.id)));
-      },
+      onTap: audit.status == "Completed"
+          ? null
+          : () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AuditDetailsView(auditId: audit.id),
+                ),
+              );
+            },
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -51,31 +60,62 @@ class AuditListView extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(audit.id, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  audit.id,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
                 ),
-                child: Text(audit.status, style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.bold)),
-              ),
-            ],
-          ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    audit.status,
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
-            Text(audit.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text("Zone: ${audit.zone}", style: TextStyle(color: color, fontWeight: FontWeight.w500)),
+            Text(
+              audit.title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "Zone: ${audit.zone}",
+              style: TextStyle(color: color, fontWeight: FontWeight.w500),
+            ),
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Due Date: ${audit.dueDate.day}/${audit.dueDate.month}", style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                Text("${audit.items.where((i) => i.isCounted).length}/${audit.items.length} Items Counted", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                Text(
+                  "Due Date: ${audit.dueDate.day}/${audit.dueDate.month}",
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                Text(
+                  "${audit.items.where((i) => i.isCounted).length}/${audit.items.length} Items Counted",
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ],

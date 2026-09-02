@@ -32,7 +32,9 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
   @override
   Widget build(BuildContext context) {
     final themeState = ref.watch(themeViewModelProvider);
-    final status = ref.watch(inventoryViewModelProvider.select((s) => s.status));
+    final status = ref.watch(
+      inventoryViewModelProvider.select((s) => s.status),
+    );
     final filteredList = ref.watch(filteredInventoryProvider);
     final primaryColor = themeState.currentThemeColor;
 
@@ -74,7 +76,10 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                   maxHeight: 70,
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     child: _buildSearchBar(context),
                   ),
                 ),
@@ -87,23 +92,23 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                         child: Center(child: CircularProgressIndicator()),
                       )
                     : filteredList.isEmpty
-                        ? const SliverToBoxAdapter(
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 100),
-                                child: Text("No items found"),
-                              ),
-                            ),
-                          )
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final item = filteredList[index];
-                                return InventoryCard(item: item, primaryColor: primaryColor);
-                              },
-                              childCount: filteredList.length,
-                            ),
+                    ? const SliverToBoxAdapter(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 100),
+                            child: Text("No items found"),
                           ),
+                        ),
+                      )
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final item = filteredList[index];
+                          return InventoryCard(
+                            item: item,
+                            primaryColor: primaryColor,
+                          );
+                        }, childCount: filteredList.length),
+                      ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
@@ -126,7 +131,8 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
       ),
       child: TextField(
         controller: _searchController,
-        onChanged: (value) => ref.read(inventorySearchQueryProvider.notifier).state = value,
+        onChanged: (value) =>
+            ref.read(inventorySearchQueryProvider.notifier).state = value,
         decoration: InputDecoration(
           hintText: "Search items, SKU, category...",
           hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),

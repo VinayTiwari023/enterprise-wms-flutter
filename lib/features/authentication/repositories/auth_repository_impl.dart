@@ -22,9 +22,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required BaseApiService apiService,
     required AuthMockService mockService,
     required StorageService storageService,
-  })  : _apiService = apiService,
-        _mockService = mockService,
-        _storageService = storageService;
+  }) : _apiService = apiService,
+       _mockService = mockService,
+       _storageService = storageService;
 
   @override
   Future<Result<LoginResponse>> login(LoginRequest request) async {
@@ -34,12 +34,14 @@ class AuthRepositoryImpl implements AuthRepository {
         request.toJson(),
       );
       final data = LoginResponse.fromJson(response as Map<String, dynamic>);
-      
+
       await _saveSession(data, request.email);
-      
+
       return Result.success(data);
     } on UnauthorizedException catch (e) {
-      return Result.failure(UnauthorizedFailure(e.message ?? 'Invalid credentials'));
+      return Result.failure(
+        UnauthorizedFailure(e.message ?? 'Invalid credentials'),
+      );
     } on SocketException {
       return Result.failure(const NetworkFailure());
     } on ServerException catch (e) {
@@ -52,14 +54,19 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<LoginResponse>> mockLogin(LoginRequest request) async {
     try {
-      final response = await _mockService.login(request.email, request.password);
+      final response = await _mockService.login(
+        request.email,
+        request.password,
+      );
       final data = LoginResponse.fromJson(response);
-      
+
       await _saveSession(data, request.email);
-      
+
       return Result.success(data);
     } catch (e) {
-      return Result.failure(UnauthorizedFailure(e.toString().replaceAll('Exception: ', '')));
+      return Result.failure(
+        UnauthorizedFailure(e.toString().replaceAll('Exception: ', '')),
+      );
     }
   }
 
@@ -74,7 +81,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Result<UserModel?>> checkAuthStatus() async {
     try {
       final token = await _storageService.read(StorageKeys.accessToken);
-      
+
       if (token == null || token.toString().isEmpty) {
         return Result.success(null);
       }
@@ -82,11 +89,13 @@ class AuthRepositoryImpl implements AuthRepository {
       final name = await _storageService.read(StorageKeys.userName);
       final email = await _storageService.read(StorageKeys.userEmail);
 
-      return Result.success(UserModel(
-        token: token.toString(),
-        name: name?.toString() ?? 'User',
-        email: email?.toString() ?? '',
-      ));
+      return Result.success(
+        UserModel(
+          token: token.toString(),
+          name: name?.toString() ?? 'User',
+          email: email?.toString() ?? '',
+        ),
+      );
     } catch (e) {
       return Result.failure(UnknownFailure(e.toString()));
     }

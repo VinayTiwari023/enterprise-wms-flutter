@@ -44,13 +44,10 @@ class OutboundViewModel extends Notifier<OutboundState> {
 
   Future<void> fetchOrders() async {
     state = state.copyWith(status: ViewStatus.loading, clearError: true);
-    
+
     try {
       final orders = await _repository.fetchOutboundOrders();
-      state = state.copyWith(
-        orders: orders,
-        status: ViewStatus.success,
-      );
+      state = state.copyWith(orders: orders, status: ViewStatus.success);
     } catch (e) {
       state = state.copyWith(
         status: ViewStatus.error,
@@ -70,32 +67,29 @@ class OutboundViewModel extends Notifier<OutboundState> {
     if (itemIndex == -1) return;
 
     final item = items[itemIndex];
-    items[itemIndex] = item.copyWith(
-      pickedQty: item.pickedQty + quantity,
-    );
+    items[itemIndex] = item.copyWith(pickedQty: item.pickedQty + quantity);
 
     double progress = order.progress;
     String newStatus = progress >= 1.0 ? "Picked" : "Picking";
 
-    orders[orderIndex] = order.copyWith(
-      items: items,
-      status: newStatus,
-    );
+    orders[orderIndex] = order.copyWith(items: items, status: newStatus);
 
     state = state.copyWith(orders: orders);
 
     // Update Inventory: Deduct stock
-    ref.read(inventoryViewModelProvider.notifier).addOrUpdateStock(
-      sku,
-      item.name,
-      item.location,
-      -quantity, // Negative to deduct
-    );
+    ref
+        .read(inventoryViewModelProvider.notifier)
+        .addOrUpdateStock(
+          sku,
+          item.name,
+          item.location,
+          -quantity, // Negative to deduct
+        );
 
     // Log activity
-    ref.read(homeViewModelProvider.notifier).addActivity(
-      "Picked $quantity units of $sku for $orderNumber"
-    );
+    ref
+        .read(homeViewModelProvider.notifier)
+        .addActivity("Picked $quantity units of $sku for $orderNumber");
   }
 
   Future<void> shipOrder(String orderNumber) async {
@@ -107,19 +101,23 @@ class OutboundViewModel extends Notifier<OutboundState> {
     state = state.copyWith(orders: orders);
 
     // Log activity
-    ref.read(homeViewModelProvider.notifier).addActivity(
-      "Order $orderNumber Shipped"
-    );
+    ref
+        .read(homeViewModelProvider.notifier)
+        .addActivity("Order $orderNumber Shipped");
   }
 }
 
 /// Provider for the OutboundViewModel.
-final outboundViewModelProvider = NotifierProvider<OutboundViewModel, OutboundState>(() {
-  return OutboundViewModel();
-});
+final outboundViewModelProvider =
+    NotifierProvider<OutboundViewModel, OutboundState>(() {
+      return OutboundViewModel();
+    });
 
 /// Provider for a specific Outbound Order.
-final outboundOrderProvider = Provider.family<OutboundOrderModel?, String>((ref, orderNumber) {
+final outboundOrderProvider = Provider.family<OutboundOrderModel?, String>((
+  ref,
+  orderNumber,
+) {
   final orders = ref.watch(outboundViewModelProvider.select((s) => s.orders));
   final index = orders.indexWhere((o) => o.orderNumber == orderNumber);
   return index != -1 ? orders[index] : null;

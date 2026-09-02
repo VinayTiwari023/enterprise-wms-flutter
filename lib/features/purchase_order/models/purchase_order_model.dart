@@ -27,7 +27,8 @@ class PurchaseOrderModel {
       date: json['date'] ?? '',
       status: json['status'] ?? '',
       progress: (json['progress'] ?? 0.0).toDouble(),
-      itemsList: (json['itemsList'] as List?)
+      itemsList:
+          (json['itemsList'] as List?)
               ?.map((e) => PurchaseOrderItemModel.fromJson(e))
               .toList() ??
           [],

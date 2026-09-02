@@ -17,13 +17,20 @@ class TaskQueueView extends ConsumerStatefulWidget {
 class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
   final TextEditingController _searchController = TextEditingController();
   int _selectedFilterIndex = 0;
-  final List<String> _filters = ["All", "High Priority", "Pending", "In Progress"];
+  final List<String> _filters = [
+    "All",
+    "High Priority",
+    "Pending",
+    "In Progress",
+  ];
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(() {
-      ref.read(tasksViewModelProvider.notifier).setSearchQuery(_searchController.text);
+      ref
+          .read(tasksViewModelProvider.notifier)
+          .setSearchQuery(_searchController.text);
     });
   }
 
@@ -58,12 +65,13 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
             centerTitle: true,
             actions: [
               IconButton(
-                onPressed: () => ref.read(tasksViewModelProvider.notifier).fetchTasks(),
+                onPressed: () =>
+                    ref.read(tasksViewModelProvider.notifier).fetchTasks(),
                 icon: const Icon(Icons.refresh_rounded),
               ),
             ],
           ),
-          
+
           // Pinned Search Bar
           SliverPersistentHeader(
             pinned: true,
@@ -72,7 +80,10 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
               maxHeight: 70,
               child: Container(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 child: _buildSearchBar(context),
               ),
             ),
@@ -86,7 +97,10 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
               maxHeight: 60,
               child: Container(
                 color: Theme.of(context).scaffoldBackgroundColor,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 child: _buildFilterChips(primaryColor),
               ),
             ),
@@ -100,27 +114,24 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 : tasksState.filteredTasks.isEmpty
-                    ? const SliverToBoxAdapter(
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 100),
-                            child: Text("No tasks found in your queue"),
-                          ),
-                        ),
-                      )
-                    : SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final task = tasksState.filteredTasks[index];
-                            return TaskCard(
-                              task: task,
-                              primaryColor: primaryColor,
-                              onTap: () {},
-                            );
-                          },
-                          childCount: tasksState.filteredTasks.length,
-                        ),
+                ? const SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 100),
+                        child: Text("No tasks found in your queue"),
                       ),
+                    ),
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final task = tasksState.filteredTasks[index];
+                      return TaskCard(
+                        task: task,
+                        primaryColor: primaryColor,
+                        onTap: () {},
+                      );
+                    }, childCount: tasksState.filteredTasks.length),
+                  ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
@@ -159,7 +170,9 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
           return GestureDetector(
             onTap: () {
               setState(() => _selectedFilterIndex = index);
-              ref.read(tasksViewModelProvider.notifier).setFilter(_filters[index]);
+              ref
+                  .read(tasksViewModelProvider.notifier)
+                  .setFilter(_filters[index]);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -167,7 +180,9 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
                 color: isSelected ? primaryColor : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? primaryColor : Colors.grey.withValues(alpha: 0.2),
+                  color: isSelected
+                      ? primaryColor
+                      : Colors.grey.withValues(alpha: 0.2),
                 ),
               ),
               alignment: Alignment.center,

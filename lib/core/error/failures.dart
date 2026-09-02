@@ -10,7 +10,7 @@
 /// data-layer implementations (like HTTP or Hive).
 ///
 /// **Why ViewModels should never know about low-level exceptions?**
-/// This maintains "Separation of Concerns". If we switch from `http` to `dio` or 
+/// This maintains "Separation of Concerns". If we switch from `http` to `dio` or
 /// from `Hive` to `Sqflite`, we only change the Repository implementation.
 /// The ViewModel continues to handle a generic `NetworkFailure` or `StorageFailure`,
 /// making the code highly maintainable and testable.
@@ -22,22 +22,30 @@ abstract class Failure {
 
 /// Represent a failure to connect to the internet.
 class NetworkFailure extends Failure {
-  const NetworkFailure([super.message = 'No internet connection. Please check your network.']);
+  const NetworkFailure([
+    super.message = 'No internet connection. Please check your network.',
+  ]);
 }
 
 /// Represents an error response from the server (e.g., 500 Internal Server Error).
 class ServerFailure extends Failure {
-  const ServerFailure([super.message = 'A server error occurred. Please try again later.']);
+  const ServerFailure([
+    super.message = 'A server error occurred. Please try again later.',
+  ]);
 }
 
 /// Represents a failure due to invalid credentials or expired tokens (401/403).
 class UnauthorizedFailure extends Failure {
-  const UnauthorizedFailure([super.message = 'Unauthorized access. Please login again.']);
+  const UnauthorizedFailure([
+    super.message = 'Unauthorized access. Please login again.',
+  ]);
 }
 
 /// Represents a request timeout.
 class TimeoutFailure extends Failure {
-  const TimeoutFailure([super.message = 'Connection timed out. Please try again.']);
+  const TimeoutFailure([
+    super.message = 'Connection timed out. Please try again.',
+  ]);
 }
 
 /// Represents a failure during local data persistence (e.g., Hive/SecureStorage error).

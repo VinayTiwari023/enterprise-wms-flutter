@@ -68,24 +68,36 @@ class TaskCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Icon(Icons.location_on_outlined, size: 16, color: primaryColor),
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 16,
+                      color: primaryColor,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       task.location,
                       style: TextStyle(
-                        fontSize: 13, 
+                        fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.white70 : Colors.black87,
                       ),
                     ),
                     const Spacer(),
-                    Icon(Icons.access_time, size: 16, color: isDark ? Colors.grey.shade400 : Colors.grey.shade500),
+                    Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade500,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       DateFormat('hh:mm a').format(task.createdAt),
                       style: TextStyle(
-                        fontSize: 13, 
-                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade500,
+                        fontSize: 13,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade500,
                       ),
                     ),
                   ],
@@ -189,7 +201,11 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusFooter(BuildContext context, TaskStatus status, Color primaryColor) {
+  Widget _buildStatusFooter(
+    BuildContext context,
+    TaskStatus status,
+    Color primaryColor,
+  ) {
     String label;
     Color color;
     IconData icon;
@@ -221,7 +237,9 @@ class TaskCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline)),
+        border: Border(
+          top: BorderSide(color: Theme.of(context).colorScheme.outline),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

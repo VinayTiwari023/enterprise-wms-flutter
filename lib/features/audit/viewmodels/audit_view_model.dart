@@ -37,7 +37,7 @@ class AuditViewModel extends Notifier<AuditState> {
 
   void fetchAudits() {
     state = state.copyWith(status: ViewStatus.loading);
-    
+
     // Mock Data
     final audits = [
       AuditModel(
@@ -47,8 +47,18 @@ class AuditViewModel extends Notifier<AuditState> {
         status: "Pending",
         dueDate: DateTime.now().add(const Duration(days: 1)),
         items: const [
-          AuditItemModel(sku: "SKU-1000", itemName: "Heavy Duty Pallet", bin: "BIN-1000-A", systemQty: 45),
-          AuditItemModel(sku: "SKU-1001", itemName: "Industrial Wrap", bin: "BIN-1001-B", systemQty: 12),
+          AuditItemModel(
+            sku: "SKU-1000",
+            itemName: "Heavy Duty Pallet",
+            bin: "BIN-1000-A",
+            systemQty: 45,
+          ),
+          AuditItemModel(
+            sku: "SKU-1001",
+            itemName: "Industrial Wrap",
+            bin: "BIN-1001-B",
+            systemQty: 12,
+          ),
         ],
       ),
       AuditModel(
@@ -58,7 +68,13 @@ class AuditViewModel extends Notifier<AuditState> {
         status: "In-Progress",
         dueDate: DateTime.now(),
         items: const [
-          AuditItemModel(sku: "SKU-5001", itemName: "Ethernet Cables", bin: "BIN-5001-A", systemQty: 150, countedQty: 148),
+          AuditItemModel(
+            sku: "SKU-5001",
+            itemName: "Ethernet Cables",
+            bin: "BIN-5001-A",
+            systemQty: 150,
+            countedQty: 148,
+          ),
         ],
       ),
     ];
@@ -77,11 +93,8 @@ class AuditViewModel extends Notifier<AuditState> {
     if (itemIndex == -1) return;
 
     items[itemIndex] = items[itemIndex].copyWith(countedQty: count);
-    
-    audits[auditIndex] = audit.copyWith(
-      items: items,
-      status: "In-Progress",
-    );
+
+    audits[auditIndex] = audit.copyWith(items: items, status: "In-Progress");
 
     state = state.copyWith(audits: audits);
   }
@@ -93,28 +106,32 @@ class AuditViewModel extends Notifier<AuditState> {
 
     final audit = audits[auditIndex];
     audits[auditIndex] = audit.copyWith(status: "Completed");
-    
+
     state = state.copyWith(audits: audits);
 
     // For each item, update inventory if there is a variance
     for (var item in audit.items) {
       if (item.isCounted && item.variance != 0) {
-        ref.read(inventoryViewModelProvider.notifier).addOrUpdateStock(
-          item.sku,
-          item.itemName,
-          item.bin,
-          item.variance, // This will adjust the inventory to match the counted qty
-        );
-        
-        ref.read(homeViewModelProvider.notifier).addActivity(
-          "Inventory adjusted for ${item.sku} in ${item.bin} (Variance: ${item.variance})"
-        );
+        ref
+            .read(inventoryViewModelProvider.notifier)
+            .addOrUpdateStock(
+              item.sku,
+              item.itemName,
+              item.bin,
+              item.variance, // This will adjust the inventory to match the counted qty
+            );
+
+        ref
+            .read(homeViewModelProvider.notifier)
+            .addActivity(
+              "Inventory adjusted for ${item.sku} in ${item.bin} (Variance: ${item.variance})",
+            );
       }
     }
 
-    ref.read(homeViewModelProvider.notifier).addActivity(
-      "Cycle Count ${audit.id} Completed"
-    );
+    ref
+        .read(homeViewModelProvider.notifier)
+        .addActivity("Cycle Count ${audit.id} Completed");
   }
 }
 

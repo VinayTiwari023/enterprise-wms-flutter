@@ -2,7 +2,9 @@ import '../models/task_model.dart';
 
 class TasksMockService {
   Future<List<TaskModel>> getTasks() async {
-    await Future.delayed(const Duration(milliseconds: 800)); // Simulate network lag
+    await Future.delayed(
+      const Duration(milliseconds: 800),
+    ); // Simulate network lag
     return [
       TaskModel(
         id: "T-1001",

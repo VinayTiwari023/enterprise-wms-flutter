@@ -14,13 +14,11 @@ class AuditDetailsView extends ConsumerWidget {
     final themeVM = ref.watch(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
 
-    if (audit == null) return const Scaffold(body: Center(child: Text("Audit not found")));
+    if (audit == null)
+      return const Scaffold(body: Center(child: Text("Audit not found")));
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(audit.id),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(audit.id), centerTitle: true),
       body: Column(
         children: [
           Container(
@@ -29,8 +27,17 @@ class AuditDetailsView extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(audit.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                Text("Zone: ${audit.zone}", style: TextStyle(color: primaryColor)),
+                Text(
+                  audit.title,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  "Zone: ${audit.zone}",
+                  style: TextStyle(color: primaryColor),
+                ),
               ],
             ),
           ),
@@ -51,14 +58,21 @@ class AuditDetailsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildCountItemCard(BuildContext context, item, Color color, WidgetRef ref) {
+  Widget _buildCountItemCard(
+    BuildContext context,
+    item,
+    Color color,
+    WidgetRef ref,
+  ) {
     final isDone = item.isCounted;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: isDone ? Colors.green : Theme.of(context).colorScheme.outline),
+        border: Border.all(
+          color: isDone ? Colors.green : Theme.of(context).colorScheme.outline,
+        ),
       ),
       child: Column(
         children: [
@@ -66,7 +80,10 @@ class AuditDetailsView extends ConsumerWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
                 child: Icon(Icons.inventory_2_outlined, color: color),
               ),
               const SizedBox(width: 16),
@@ -74,9 +91,22 @@ class AuditDetailsView extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.itemName, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text("Bin: ${item.bin}", style: TextStyle(fontSize: 16, color: color, fontWeight: FontWeight.w900)),
-                    Text("SKU: ${item.sku}", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    Text(
+                      item.itemName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Bin: ${item.bin}",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: color,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Text(
+                      "SKU: ${item.sku}",
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
@@ -84,9 +114,19 @@ class AuditDetailsView extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(item.variance == 0 ? "Perfect" : "Variance: ${item.variance}", 
-                         style: TextStyle(color: item.variance == 0 ? Colors.green : Colors.red, fontWeight: FontWeight.bold)),
-                    Text("Counted: ${item.countedQty}", style: const TextStyle(fontSize: 12)),
+                    Text(
+                      item.variance == 0
+                          ? "Perfect"
+                          : "Variance: ${item.variance}",
+                      style: TextStyle(
+                        color: item.variance == 0 ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "Counted: ${item.countedQty}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
             ],
@@ -100,11 +140,16 @@ class AuditDetailsView extends ConsumerWidget {
                   width: 100,
                   child: TextField(
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(hintText: "Qty", border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      hintText: "Qty",
+                      border: OutlineInputBorder(),
+                    ),
                     onSubmitted: (val) {
                       final count = int.tryParse(val);
                       if (count != null) {
-                        ref.read(auditViewModelProvider.notifier).updateCount(auditId, item.sku, count);
+                        ref
+                            .read(auditViewModelProvider.notifier)
+                            .updateCount(auditId, item.sku, count);
                       }
                     },
                   ),
@@ -116,7 +161,12 @@ class AuditDetailsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionFooter(BuildContext context, audit, Color color, WidgetRef ref) {
+  Widget _buildActionFooter(
+    BuildContext context,
+    audit,
+    Color color,
+    WidgetRef ref,
+  ) {
     final allCounted = audit.items.every((i) => i.isCounted);
     return Container(
       padding: const EdgeInsets.all(20),
@@ -124,17 +174,31 @@ class AuditDetailsView extends ConsumerWidget {
         width: double.infinity,
         height: 55,
         child: ElevatedButton(
-          onPressed: allCounted ? () {
-            ref.read(auditViewModelProvider.notifier).finalizeAudit(auditId);
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Audit Completed and Inventory Adjusted"), backgroundColor: Colors.green));
-            Navigator.pop(context);
-          } : null,
+          onPressed: allCounted
+              ? () {
+                  ref
+                      .read(auditViewModelProvider.notifier)
+                      .finalizeAudit(auditId);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Audit Completed and Inventory Adjusted"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
+              : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: color,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-          child: const Text("Finalize Audit", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: const Text(
+            "Finalize Audit",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );

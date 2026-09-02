@@ -10,7 +10,8 @@ class DirectedPutawayView extends ConsumerStatefulWidget {
   const DirectedPutawayView({super.key, required this.poNumber});
 
   @override
-  ConsumerState<DirectedPutawayView> createState() => _DirectedPutawayViewState();
+  ConsumerState<DirectedPutawayView> createState() =>
+      _DirectedPutawayViewState();
 }
 
 class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
@@ -19,7 +20,9 @@ class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
     super.initState();
     // Generate suggestions on load
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(putawayViewModelProvider.notifier).generateSuggestions(widget.poNumber);
+      ref
+          .read(putawayViewModelProvider.notifier)
+          .generateSuggestions(widget.poNumber);
     });
   }
 
@@ -41,95 +44,124 @@ class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
       body: putawayState.status == ViewStatus.loading
           ? const Center(child: CircularProgressIndicator())
           : putawayState.status == ViewStatus.error
-              ? Center(child: Text(putawayState.errorMessage ?? "Error"))
-              : Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          ? Center(child: Text(putawayState.errorMessage ?? "Error"))
+          : Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Recommended Storage",
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
-                          ),
-                          Text(
-                            "PO: ${widget.poNumber}",
-                            style: TextStyle(fontSize: 12, color: primaryColor, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Expanded(
-                        child: putawayState.suggestions.isEmpty
-                            ? const Center(child: Text("No items to put away"))
-                            : ListView.separated(
-                                itemCount: putawayState.suggestions.length,
-                                separatorBuilder: (context, index) => const SizedBox(height: 16),
-                                itemBuilder: (context, index) {
-                                  final item = putawayState.suggestions[index];
-                                  return _buildDirectionCard(
-                                    context,
-                                    "${item.itemName} (${item.quantity} units)",
-                                    item.suggestedBin,
-                                    "${item.zone} - ${item.area}",
-                                    primaryColor,
-                                    item.isConfirmed,
-                                    onTap: () => _simulateScan(item.sku, item.suggestedBin),
-                                  );
-                                },
-                              ),
-                      ),
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.info_outline_rounded, color: Colors.orange),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                "Tap on a card to simulate scanning the Bin barcode.",
-                                style: TextStyle(fontSize: 13, color: Colors.orange),
-                              ),
-                            ),
-                          ],
+                      const Text(
+                        "Recommended Storage",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 55,
-                        child: ElevatedButton(
-                          onPressed: ref.read(putawayViewModelProvider.notifier).allConfirmed
-                              ? () {
-                                  ref.read(putawayViewModelProvider.notifier).finalizePutaway();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Inventory Updated Successfully'),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                  Navigator.pop(context); // Return to Inbound operations list
-                                }
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: const Text("Complete Putaway", style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        "PO: ${widget.poNumber}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: putawayState.suggestions.isEmpty
+                        ? const Center(child: Text("No items to put away"))
+                        : ListView.separated(
+                            itemCount: putawayState.suggestions.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 16),
+                            itemBuilder: (context, index) {
+                              final item = putawayState.suggestions[index];
+                              return _buildDirectionCard(
+                                context,
+                                "${item.itemName} (${item.quantity} units)",
+                                item.suggestedBin,
+                                "${item.zone} - ${item.area}",
+                                primaryColor,
+                                item.isConfirmed,
+                                onTap: () =>
+                                    _simulateScan(item.sku, item.suggestedBin),
+                              );
+                            },
+                          ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.orange.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.info_outline_rounded, color: Colors.orange),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            "Tap on a card to simulate scanning the Bin barcode.",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.orange,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed:
+                          ref
+                              .read(putawayViewModelProvider.notifier)
+                              .allConfirmed
+                          ? () {
+                              ref
+                                  .read(putawayViewModelProvider.notifier)
+                                  .finalizePutaway();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Inventory Updated Successfully',
+                                  ),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                              Navigator.pop(
+                                context,
+                              ); // Return to Inbound operations list
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        "Complete Putaway",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -163,7 +195,9 @@ class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isConfirmed ? Colors.green : Theme.of(context).colorScheme.outline,
+            color: isConfirmed
+                ? Colors.green
+                : Theme.of(context).colorScheme.outline,
             width: isConfirmed ? 2 : 1,
           ),
         ),
@@ -172,11 +206,15 @@ class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (isConfirmed ? Colors.green : color).withValues(alpha: 0.1),
+                color: (isConfirmed ? Colors.green : color).withValues(
+                  alpha: 0.1,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                isConfirmed ? Icons.check_circle_outline : Icons.location_on_outlined,
+                isConfirmed
+                    ? Icons.check_circle_outline
+                    : Icons.location_on_outlined,
                 color: isConfirmed ? Colors.green : color,
               ),
             ),
@@ -189,7 +227,9 @@ class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
                     item,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      decoration: isConfirmed ? TextDecoration.lineThrough : null,
+                      decoration: isConfirmed
+                          ? TextDecoration.lineThrough
+                          : null,
                     ),
                   ),
                   Text(
@@ -200,11 +240,15 @@ class _DirectedPutawayViewState extends ConsumerState<DirectedPutawayView> {
                       color: isConfirmed ? Colors.green : color,
                     ),
                   ),
-                  Text(area, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(
+                    area,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ],
               ),
             ),
-            if (!isConfirmed) const Icon(Icons.qr_code_scanner_rounded, color: Colors.grey),
+            if (!isConfirmed)
+              const Icon(Icons.qr_code_scanner_rounded, color: Colors.grey),
           ],
         ),
       ),

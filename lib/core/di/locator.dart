@@ -24,29 +24,23 @@ void setupLocator() {
   );
 
   locator.registerLazySingleton<StorageService>(
-    () => SecureStorageService(
-      locator<FlutterSecureStorage>(),
-    ),
+    () => SecureStorageService(locator<FlutterSecureStorage>()),
   );
 
   locator.registerLazySingleton<BaseApiService>(
-    () => NetworkApiService(
-      locator<StorageService>(),
-    ),
+    () => NetworkApiService(locator<StorageService>()),
   );
 
   // Services
-  locator.registerLazySingleton<AuthMockService>(
-        () => AuthMockService(),
-  );
+  locator.registerLazySingleton<AuthMockService>(() => AuthMockService());
 
   locator.registerLazySingleton<InventoryMockService>(
-        () => InventoryMockService(),
+    () => InventoryMockService(),
   );
 
   // Repositories
   locator.registerLazySingleton<AuthRepository>(
-        () => AuthRepositoryImpl(
+    () => AuthRepositoryImpl(
       apiService: locator<BaseApiService>(),
       mockService: locator<AuthMockService>(),
       storageService: locator<StorageService>(),
@@ -54,7 +48,7 @@ void setupLocator() {
   );
 
   locator.registerLazySingleton<InventoryRepository>(
-        () => InventoryRepositoryImpl(
+    () => InventoryRepositoryImpl(
       apiService: locator<BaseApiService>(),
       mockService: locator<InventoryMockService>(),
     ),

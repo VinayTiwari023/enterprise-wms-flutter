@@ -43,13 +43,10 @@ class InboundViewModel extends Notifier<InboundState> {
 
   Future<void> fetchPOs() async {
     state = state.copyWith(status: ViewStatus.loading, clearError: true);
-    
+
     try {
       final pos = await _repository.fetchPurchaseOrders();
-      state = state.copyWith(
-        purchaseOrders: pos,
-        status: ViewStatus.success,
-      );
+      state = state.copyWith(purchaseOrders: pos, status: ViewStatus.success);
     } catch (e) {
       state = state.copyWith(
         status: ViewStatus.error,
@@ -77,7 +74,14 @@ class InboundViewModel extends Notifier<InboundState> {
     }
   }
 
-  Future<void> updateItemQuantity(String poNumber, String sku, {int received = 0, int damaged = 0, String? reason, String? imagePath}) async {
+  Future<void> updateItemQuantity(
+    String poNumber,
+    String sku, {
+    int received = 0,
+    int damaged = 0,
+    String? reason,
+    String? imagePath,
+  }) async {
     final pos = List<PurchaseOrderModel>.from(state.purchaseOrders);
     final poIndex = pos.indexWhere((p) => p.poNumber == poNumber);
     if (poIndex == -1) return;
@@ -114,9 +118,9 @@ class InboundViewModel extends Notifier<InboundState> {
     state = state.copyWith(purchaseOrders: pos);
 
     // Log Activity to Dashboard
-    ref.read(homeViewModelProvider.notifier).addActivity(
-      "Received $received units of $sku for $poNumber"
-    );
+    ref
+        .read(homeViewModelProvider.notifier)
+        .addActivity("Received $received units of $sku for $poNumber");
   }
 
   Future<void> receiveByLPN(String poNumber, String lpn) async {
@@ -148,9 +152,10 @@ class InboundViewModel extends Notifier<InboundState> {
 }
 
 /// Provider for the InboundViewModel.
-final inboundViewModelProvider = NotifierProvider<InboundViewModel, InboundState>(() {
-  return InboundViewModel();
-});
+final inboundViewModelProvider =
+    NotifierProvider<InboundViewModel, InboundState>(() {
+      return InboundViewModel();
+    });
 
 /// Provider for the search query to avoid full ViewModel rebuilds on every keystroke.
 final inboundSearchQueryProvider = StateProvider<String>((ref) => "");
@@ -160,26 +165,36 @@ final inboundFilterIndexProvider = StateProvider<int>((ref) => 0);
 
 /// Memoized provider for filtered Purchase Orders.
 /// This prevents re-filtering on every build of the UI.
-final filteredPurchaseOrdersProvider = Provider<List<PurchaseOrderModel>>((ref) {
-  final allPOs = ref.watch(inboundViewModelProvider.select((s) => s.purchaseOrders));
+final filteredPurchaseOrdersProvider = Provider<List<PurchaseOrderModel>>((
+  ref,
+) {
+  final allPOs = ref.watch(
+    inboundViewModelProvider.select((s) => s.purchaseOrders),
+  );
   final query = ref.watch(inboundSearchQueryProvider).toLowerCase();
   final filterIndex = ref.watch(inboundFilterIndexProvider);
-  
+
   const filters = ["All", "Pending", "Partial", "Completed"];
   final filter = filters[filterIndex];
 
   return allPOs.where((po) {
     bool matchesFilter = filter == "All" || po.status == filter;
-    bool matchesSearch = po.poNumber.toLowerCase().contains(query) || 
-                        po.supplier.toLowerCase().contains(query);
+    bool matchesSearch =
+        po.poNumber.toLowerCase().contains(query) ||
+        po.supplier.toLowerCase().contains(query);
     return matchesFilter && matchesSearch;
   }).toList();
 });
 
 /// Granular provider for a specific Purchase Order.
 /// This ensures PODetailsView only rebuilds when ITS specific PO changes.
-final purchaseOrderProvider = Provider.family<PurchaseOrderModel?, String>((ref, poNumber) {
-  final pos = ref.watch(inboundViewModelProvider.select((s) => s.purchaseOrders));
+final purchaseOrderProvider = Provider.family<PurchaseOrderModel?, String>((
+  ref,
+  poNumber,
+) {
+  final pos = ref.watch(
+    inboundViewModelProvider.select((s) => s.purchaseOrders),
+  );
   final index = pos.indexWhere((p) => p.poNumber == poNumber);
   return index != -1 ? pos[index] : null;
 });

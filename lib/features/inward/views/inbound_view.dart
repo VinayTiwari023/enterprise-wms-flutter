@@ -61,14 +61,22 @@ class _InboundViewState extends ConsumerState<InboundView> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AddPOView()),
+                          MaterialPageRoute(
+                            builder: (context) => const AddPOView(),
+                          ),
                         );
                       },
                       style: IconButton.styleFrom(
                         backgroundColor: primaryColor.withValues(alpha: 0.1),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      icon: Icon(Icons.add_rounded, color: primaryColor, size: 24),
+                      icon: Icon(
+                        Icons.add_rounded,
+                        color: primaryColor,
+                        size: 24,
+                      ),
                     ),
                   ),
                   IconButton(
@@ -84,7 +92,10 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   maxHeight: 70,
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     child: InboundSearchBar(controller: _searchController),
                   ),
                 ),
@@ -96,7 +107,10 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   maxHeight: 60,
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     child: const InboundFilterChips(),
                   ),
                 ),
@@ -108,34 +122,32 @@ class _InboundViewState extends ConsumerState<InboundView> {
                         child: Center(child: CircularProgressIndicator()),
                       )
                     : filteredList.isEmpty
-                        ? const SliverToBoxAdapter(
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 100),
-                                child: Text("No purchase orders found"),
-                              ),
-                            ),
-                          )
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final po = filteredList[index];
-                                return POCard(
-                                  po: po,
-                                  primaryColor: primaryColor,
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PODetailsView(poNumber: po.poNumber),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              childCount: filteredList.length,
-                            ),
+                    ? const SliverToBoxAdapter(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 100),
+                            child: Text("No purchase orders found"),
                           ),
+                        ),
+                      )
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final po = filteredList[index];
+                          return POCard(
+                            po: po,
+                            primaryColor: primaryColor,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PODetailsView(poNumber: po.poNumber),
+                                ),
+                              );
+                            },
+                          );
+                        }, childCount: filteredList.length),
+                      ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
@@ -144,7 +156,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
             bottom: 20,
             right: 20,
             child: InboundScanButton(
-              primaryColor: primaryColor, 
+              primaryColor: primaryColor,
               onTap: () {
                 Navigator.push(
                   context,
@@ -172,7 +184,8 @@ class InboundSearchBar extends ConsumerWidget {
       ),
       child: TextField(
         controller: controller,
-        onChanged: (value) => ref.read(inboundSearchQueryProvider.notifier).state = value,
+        onChanged: (value) =>
+            ref.read(inboundSearchQueryProvider.notifier).state = value,
         decoration: InputDecoration(
           hintText: "Search PO or Supplier...",
           hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
@@ -191,7 +204,9 @@ class InboundFilterChips extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedFilterIndex = ref.watch(inboundFilterIndexProvider);
-    final primaryColor = ref.watch(themeViewModelProvider.select((s) => s.currentThemeColor));
+    final primaryColor = ref.watch(
+      themeViewModelProvider.select((s) => s.currentThemeColor),
+    );
     final filters = ["All", "Pending", "Partial", "Completed"];
 
     return SizedBox(
@@ -203,14 +218,17 @@ class InboundFilterChips extends ConsumerWidget {
         itemBuilder: (context, index) {
           bool isSelected = selectedFilterIndex == index;
           return GestureDetector(
-            onTap: () => ref.read(inboundFilterIndexProvider.notifier).state = index,
+            onTap: () =>
+                ref.read(inboundFilterIndexProvider.notifier).state = index,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: isSelected ? primaryColor : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? primaryColor : Colors.grey.withValues(alpha: 0.2),
+                  color: isSelected
+                      ? primaryColor
+                      : Colors.grey.withValues(alpha: 0.2),
                 ),
               ),
               alignment: Alignment.center,

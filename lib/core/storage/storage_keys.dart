@@ -1,5 +1,5 @@
 /// A utility class that holds all the keys used for local storage.
-/// 
+///
 /// A centralized collection of keys used by the application's storage layer.
 /// Keeping storage keys in one place prevents duplication, reduces
 /// typographical errors, and makes future changes easier.

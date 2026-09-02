@@ -12,7 +12,8 @@ class POScanView extends ConsumerStatefulWidget {
   ConsumerState<POScanView> createState() => _POScanViewState();
 }
 
-class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProviderStateMixin {
+class _POScanViewState extends ConsumerState<POScanView>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
   final MobileScannerController _controller = MobileScannerController();
@@ -25,7 +26,7 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-    
+
     _animation = Tween<double>(begin: 0, end: 1).animate(_animationController);
   }
 
@@ -38,15 +39,18 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
 
   void _onScanSuccess(String poNumber) {
     if (_isScanCompleted) return;
-    
+
     final inboundState = ref.read(inboundViewModelProvider);
-    
+
     // Normalize string for fuzzy matching (remove spaces/dashes and lowercase)
-    String normalize(String input) => input.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '').toLowerCase();
-    
+    String normalize(String input) =>
+        input.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '').toLowerCase();
+
     final normalizedScan = normalize(poNumber);
-    
-    final poIndex = inboundState.purchaseOrders.indexWhere((p) => normalize(p.poNumber) == normalizedScan);
+
+    final poIndex = inboundState.purchaseOrders.indexWhere(
+      (p) => normalize(p.poNumber) == normalizedScan,
+    );
 
     if (poIndex == -1) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -91,12 +95,16 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
                 }
               }
             },
-            errorBuilder: (context, error, child) {
+            errorBuilder: (context, error) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      color: Colors.redAccent,
+                      size: 48,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       "Camera Error: ${error.errorCode}",
@@ -130,7 +138,10 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -139,7 +150,11 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.sensors_rounded, color: Colors.greenAccent, size: 16),
+                    Icon(
+                      Icons.sensors_rounded,
+                      color: Colors.greenAccent,
+                      size: 16,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       "SCANNER ACTIVE",
@@ -168,7 +183,11 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.close_rounded, color: Colors.white, size: 28),
+            icon: const Icon(
+              Icons.close_rounded,
+              color: Colors.white,
+              size: 28,
+            ),
           ),
           const Text(
             "Scan Purchase Order",
@@ -215,7 +234,7 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
                   borderRadius: BorderRadius.circular(24),
                 ),
               ),
-              
+
               // Animated Laser Line
               AnimatedBuilder(
                 animation: _animation,
@@ -278,7 +297,9 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
               top: BorderSide(color: color, width: thickness),
               left: BorderSide(color: color, width: thickness),
             ),
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(radius)),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(radius),
+            ),
           ),
         ),
       ),
@@ -294,7 +315,9 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
               top: BorderSide(color: color, width: thickness),
               right: BorderSide(color: color, width: thickness),
             ),
-            borderRadius: const BorderRadius.only(topRight: Radius.circular(radius)),
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(radius),
+            ),
           ),
         ),
       ),
@@ -310,7 +333,9 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
               bottom: BorderSide(color: color, width: thickness),
               left: BorderSide(color: color, width: thickness),
             ),
-            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(radius)),
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(radius),
+            ),
           ),
         ),
       ),
@@ -326,7 +351,9 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
               bottom: BorderSide(color: color, width: thickness),
               right: BorderSide(color: color, width: thickness),
             ),
-            borderRadius: const BorderRadius.only(bottomRight: Radius.circular(radius)),
+            borderRadius: const BorderRadius.only(
+              bottomRight: Radius.circular(radius),
+            ),
           ),
         ),
       ),
@@ -355,10 +382,18 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
                   ),
                 ],
               ),
-              child: const Icon(Icons.flip_camera_ios_rounded, color: Colors.white, size: 32),
+              child: const Icon(
+                Icons.flip_camera_ios_rounded,
+                color: Colors.white,
+                size: 32,
+              ),
             ),
           ),
-          _buildControlButton(Icons.keyboard_rounded, "Manual", () => _showManualEntryDialog()),
+          _buildControlButton(
+            Icons.keyboard_rounded,
+            "Manual",
+            () => _showManualEntryDialog(),
+          ),
         ],
       ),
     );
@@ -376,7 +411,10 @@ class _POScanViewState extends ConsumerState<POScanView> with SingleTickerProvid
           autofocus: true,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);

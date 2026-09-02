@@ -11,8 +11,16 @@ class InwardMockService {
       status: "Pending",
       progress: 0.0,
       itemsList: [
-        PurchaseOrderItemModel(sku: "SKU-1000", name: "Heavy Duty Pallet", expectedQty: 50),
-        PurchaseOrderItemModel(sku: "SKU-1001", name: "Industrial Wrap", expectedQty: 100),
+        PurchaseOrderItemModel(
+          sku: "SKU-1000",
+          name: "Heavy Duty Pallet",
+          expectedQty: 50,
+        ),
+        PurchaseOrderItemModel(
+          sku: "SKU-1001",
+          name: "Industrial Wrap",
+          expectedQty: 100,
+        ),
       ],
     ),
     PurchaseOrderModel(
@@ -23,7 +31,12 @@ class InwardMockService {
       status: "Partial",
       progress: 0.225,
       itemsList: [
-        PurchaseOrderItemModel(sku: "SKU-5001", name: "Ethernet Cables (10m)", expectedQty: 200, receivedQty: 45),
+        PurchaseOrderItemModel(
+          sku: "SKU-5001",
+          name: "Ethernet Cables (10m)",
+          expectedQty: 200,
+          receivedQty: 45,
+        ),
       ],
     ),
   ];
@@ -39,7 +52,9 @@ class InwardMockService {
   }
 
   Future<void> updatePurchaseOrder(PurchaseOrderModel updatedPo) async {
-    final index = _mockPOs.indexWhere((po) => po.poNumber == updatedPo.poNumber);
+    final index = _mockPOs.indexWhere(
+      (po) => po.poNumber == updatedPo.poNumber,
+    );
     if (index != -1) {
       _mockPOs[index] = updatedPo;
     }

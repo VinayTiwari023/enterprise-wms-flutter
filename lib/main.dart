@@ -8,9 +8,5 @@ Future<void> main() async {
 
   await AppInitializer.initialize();
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: MyApp()));
 }

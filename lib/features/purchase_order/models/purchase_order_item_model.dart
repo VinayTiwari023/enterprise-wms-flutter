@@ -25,9 +25,12 @@ class PurchaseOrderItemModel {
     this.damageImagePath,
   });
 
-  double get progress => expectedQty == 0 ? 0 : (receivedQty + damagedQty + qcHoldQty) / expectedQty;
-  
-  bool get isFullyReceived => (receivedQty + damagedQty + qcHoldQty) >= expectedQty;
+  double get progress => expectedQty == 0
+      ? 0
+      : (receivedQty + damagedQty + qcHoldQty) / expectedQty;
+
+  bool get isFullyReceived =>
+      (receivedQty + damagedQty + qcHoldQty) >= expectedQty;
 
   PurchaseOrderItemModel copyWith({
     int? receivedQty,
@@ -61,7 +64,9 @@ class PurchaseOrderItemModel {
       damagedQty: json['damagedQty'] ?? 0,
       qcHoldQty: json['qcHoldQty'] ?? 0,
       batchNumber: json['batchNumber'],
-      expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate']) : null,
+      expiryDate: json['expiryDate'] != null
+          ? DateTime.parse(json['expiryDate'])
+          : null,
       damageReason: json['damageReason'],
       damageImagePath: json['damageImagePath'],
     );

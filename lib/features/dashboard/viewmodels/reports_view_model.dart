@@ -41,7 +41,7 @@ class ReportsViewModel extends AutoDisposeNotifier<ReportsState> {
 
   Future<void> fetchReports() async {
     state = state.copyWith(status: ViewStatus.loading, clearError: true);
-    
+
     try {
       final reports = await _repository.fetchReports();
       state = state.copyWith(
@@ -58,6 +58,7 @@ class ReportsViewModel extends AutoDisposeNotifier<ReportsState> {
 }
 
 /// Provider for the ReportsViewModel.
-final reportsViewModelProvider = AutoDisposeNotifierProvider<ReportsViewModel, ReportsState>(() {
-  return ReportsViewModel();
-});
+final reportsViewModelProvider =
+    AutoDisposeNotifierProvider<ReportsViewModel, ReportsState>(() {
+      return ReportsViewModel();
+    });

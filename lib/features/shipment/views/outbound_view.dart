@@ -42,8 +42,9 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
       String query = _searchController.text.toLowerCase();
       String filter = _filters[_selectedFilterIndex];
       bool matchesFilter = filter == "All" || order.status == filter;
-      bool matchesSearch = order.orderNumber.toLowerCase().contains(query) || 
-                          order.customer.toLowerCase().contains(query);
+      bool matchesSearch =
+          order.orderNumber.toLowerCase().contains(query) ||
+          order.customer.toLowerCase().contains(query);
       return matchesFilter && matchesSearch;
     }).toList();
 
@@ -81,7 +82,10 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
                   maxHeight: 70,
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     child: _buildSearchBar(context),
                   ),
                 ),
@@ -93,38 +97,41 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
                   maxHeight: 60,
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     child: _buildFilterChips(primaryColor),
                   ),
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 sliver: outboundState.status == ViewStatus.loading
                     ? const SliverToBoxAdapter(
                         child: Center(child: CircularProgressIndicator()),
                       )
                     : filteredList.isEmpty
-                        ? const SliverToBoxAdapter(
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 100),
-                                child: Text("No orders found"),
-                              ),
-                            ),
-                          )
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final order = filteredList[index];
-                                return OrderCard(
-                                  order: order,
-                                  primaryColor: primaryColor,
-                                );
-                              },
-                              childCount: filteredList.length,
-                            ),
+                    ? const SliverToBoxAdapter(
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 100),
+                            child: Text("No orders found"),
                           ),
+                        ),
+                      )
+                    : SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final order = filteredList[index];
+                          return OrderCard(
+                            order: order,
+                            primaryColor: primaryColor,
+                          );
+                        }, childCount: filteredList.length),
+                      ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
@@ -175,7 +182,9 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
                 color: isSelected ? primaryColor : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? primaryColor : Colors.grey.withValues(alpha: 0.2),
+                  color: isSelected
+                      ? primaryColor
+                      : Colors.grey.withValues(alpha: 0.2),
                 ),
               ),
               alignment: Alignment.center,

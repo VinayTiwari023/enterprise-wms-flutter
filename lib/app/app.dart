@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/settings/viewmodels/theme_view_model.dart';
 import '../l10n/generated/app_localizations.dart';
@@ -11,7 +11,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeVM = ref.watch(themeViewModelProvider);
     final router = ref.watch(routerProvider);
-    
+
     return MaterialApp.router(
       routerConfig: router,
       title: 'WMS Modern App',

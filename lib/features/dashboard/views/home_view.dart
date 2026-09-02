@@ -9,7 +9,7 @@ import '../../authentication/viewmodels/user_view_model.dart';
 import '../../../shared/widgets/main_drawer.dart';
 import '../widgets/dashboard_widgets.dart';
 
-// IMPORTANT: Direct imports of other feature views is a temporary violation 
+// IMPORTANT: Direct imports of other feature views is a temporary violation
 // until GoRouter is fully implemented.
 import '../../inward/views/inbound_view.dart';
 import '../../shipment/views/outbound_view.dart';
@@ -51,18 +51,23 @@ class _HomeViewState extends ConsumerState<HomeView> {
             Navigator.pop(context); // Close drawer
           },
         ),
-        body: SafeArea(
-          child: _buildBody(),
-        ),
+        body: SafeArea(child: _buildBody()),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 0.5)),
+            border: Border(
+              top: BorderSide(
+                color: Colors.white.withValues(alpha: 0.05),
+                width: 0.5,
+              ),
+            ),
           ),
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) => setState(() => _currentIndex = index),
             type: BottomNavigationBarType.fixed,
-            backgroundColor: themeVM.isDarkMode ? const Color(0xFF12121A) : Colors.white,
+            backgroundColor: themeVM.isDarkMode
+                ? const Color(0xFF12121A)
+                : Colors.white,
             selectedItemColor: primaryColor,
             unselectedItemColor: Colors.grey.shade600,
             showSelectedLabels: true,
@@ -84,11 +89,19 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 label: AppLocalizations.of(context)!.outbound,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.inventory_2_outlined, 3, primaryColor),
+                icon: _buildNavIcon(
+                  Icons.inventory_2_outlined,
+                  3,
+                  primaryColor,
+                ),
                 label: AppLocalizations.of(context)!.inventory,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.person_outline_rounded, 4, primaryColor),
+                icon: _buildNavIcon(
+                  Icons.person_outline_rounded,
+                  4,
+                  primaryColor,
+                ),
                 label: AppLocalizations.of(context)!.profile,
               ),
             ],
@@ -101,7 +114,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Widget _buildBody() {
     switch (_currentIndex) {
       case 0:
-        return DashboardView(onInventoryTap: () => setState(() => _currentIndex = 3));
+        return DashboardView(
+          onInventoryTap: () => setState(() => _currentIndex = 3),
+        );
       case 1:
         return InboundView(onBack: () => setState(() => _currentIndex = 0));
       case 2:
@@ -121,7 +136,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       decoration: BoxDecoration(
-        color: isSelected ? primaryColor.withValues(alpha: 0.15) : Colors.transparent,
+        color: isSelected
+            ? primaryColor.withValues(alpha: 0.15)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Icon(
@@ -148,16 +165,26 @@ class DashboardView extends ConsumerWidget {
       slivers: [
         SliverAppBar(
           pinned: true,
-          title: Text(AppLocalizations.of(context)!.dashboard,
+          title: Text(
+            AppLocalizations.of(context)!.dashboard,
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: ResponsiveHelper.responsiveSize(context, 18, 20, 22)
-            )
+              fontSize: ResponsiveHelper.responsiveSize(context, 18, 20, 22),
+            ),
           ),
           centerTitle: true,
           actions: [
-            IconButton(onPressed: () => ref.read(themeViewModelProvider.notifier).toggleTheme(), icon: Icon(themeVM.isDarkMode ? Icons.light_mode : Icons.dark_mode)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none_rounded)),
+            IconButton(
+              onPressed: () =>
+                  ref.read(themeViewModelProvider.notifier).toggleTheme(),
+              icon: Icon(
+                themeVM.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.notifications_none_rounded),
+            ),
           ],
         ),
         SliverPadding(
@@ -167,19 +194,22 @@ class DashboardView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.hello(userVM.user?.name ?? 'Vinay'),
+                  AppLocalizations.of(
+                    context,
+                  )!.hello(userVM.user?.name ?? 'Vinay'),
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
                   ),
                 ),
-                Text(AppLocalizations.of(context)!.todayStatus,
+                Text(
+                  AppLocalizations.of(context)!.todayStatus,
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
-                  )
+                  ),
                 ),
                 const SizedBox(height: 15),
                 const Divider(),
@@ -198,10 +228,30 @@ class DashboardView extends ConsumerWidget {
             crossAxisSpacing: 15,
             childAspectRatio: 1.15,
             children: [
-              StatCard(value: "${viewModel.stats?.pendingCount ?? 0}", label: "Pending", icon: Icons.assignment_outlined, color: Colors.orange),
-              StatCard(value: "${viewModel.stats?.completedCount ?? 0}", label: "Completed", icon: Icons.check_circle_outline, color: Colors.green),
-              StatCard(value: "${viewModel.stats?.inProgressCount ?? 0}", label: "In Progress", icon: Icons.sync, color: Colors.blue),
-              StatCard(value: "${viewModel.stats?.alertsCount ?? 0}", label: "Alerts", icon: Icons.warning_amber_rounded, color: Colors.red),
+              StatCard(
+                value: "${viewModel.stats?.pendingCount ?? 0}",
+                label: "Pending",
+                icon: Icons.assignment_outlined,
+                color: Colors.orange,
+              ),
+              StatCard(
+                value: "${viewModel.stats?.completedCount ?? 0}",
+                label: "Completed",
+                icon: Icons.check_circle_outline,
+                color: Colors.green,
+              ),
+              StatCard(
+                value: "${viewModel.stats?.inProgressCount ?? 0}",
+                label: "In Progress",
+                icon: Icons.sync,
+                color: Colors.blue,
+              ),
+              StatCard(
+                value: "${viewModel.stats?.alertsCount ?? 0}",
+                label: "Alerts",
+                icon: Icons.warning_amber_rounded,
+                color: Colors.red,
+              ),
             ],
           ),
         ),
@@ -214,8 +264,9 @@ class DashboardView extends ConsumerWidget {
               children: [
                 const Divider(),
                 const SizedBox(height: 25),
-                const Text("Performance Overview",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                const Text(
+                  "Performance Overview",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 15),
                 PerformanceChart(primaryColor: primaryColor),
@@ -224,8 +275,9 @@ class DashboardView extends ConsumerWidget {
                 const SizedBox(height: 25),
                 const Divider(),
                 const SizedBox(height: 25),
-                const Text("Recent Activities",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                const Text(
+                  "Recent Activities",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 15),
               ],
@@ -237,13 +289,13 @@ class DashboardView extends ConsumerWidget {
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final activity = viewModel.recentActivities[index];
-                return ActivityTile(activity: activity, primaryColor: primaryColor);
-              },
-              childCount: viewModel.recentActivities.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final activity = viewModel.recentActivities[index];
+              return ActivityTile(
+                activity: activity,
+                primaryColor: primaryColor,
+              );
+            }, childCount: viewModel.recentActivities.length),
           ),
         ),
 
@@ -255,8 +307,9 @@ class DashboardView extends ConsumerWidget {
               children: [
                 const Divider(),
                 const SizedBox(height: 25),
-                const Text("Quick Actions",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+                const Text(
+                  "Quick Actions",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 15),
               ],
@@ -275,22 +328,68 @@ class DashboardView extends ConsumerWidget {
               childAspectRatio: 0.85,
             ),
             delegate: SliverChildListDelegate([
-              QuickActionItem(icon: Icons.qr_code_scanner_rounded, label: "Scan", color: primaryColor, onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const POScanView()));
-              }),
-              QuickActionItem(icon: Icons.add_box_outlined, label: "Add", color: primaryColor, onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPOView()));
-              }),
-              QuickActionItem(icon: Icons.checklist_rounded, label: "Audit", color: primaryColor, onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AuditListView()));
-              }),
-              QuickActionItem(icon: Icons.inventory_2_outlined, label: "Inventory", color: primaryColor, onTap: () {
-                onInventoryTap?.call();
-              }),
-              QuickActionItem(icon: Icons.bar_chart_rounded, label: "Reports", color: primaryColor, onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ReportsView()));
-              }),
-              QuickActionItem(icon: Icons.settings_outlined, label: "Config", color: primaryColor, onTap: () {}),
+              QuickActionItem(
+                icon: Icons.qr_code_scanner_rounded,
+                label: "Scan",
+                color: primaryColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const POScanView()),
+                  );
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.add_box_outlined,
+                label: "Add",
+                color: primaryColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AddPOView()),
+                  );
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.checklist_rounded,
+                label: "Audit",
+                color: primaryColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AuditListView(),
+                    ),
+                  );
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.inventory_2_outlined,
+                label: "Inventory",
+                color: primaryColor,
+                onTap: () {
+                  onInventoryTap?.call();
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.bar_chart_rounded,
+                label: "Reports",
+                color: primaryColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ReportsView(),
+                    ),
+                  );
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.settings_outlined,
+                label: "Config",
+                color: primaryColor,
+                onTap: () {},
+              ),
             ]),
           ),
         ),

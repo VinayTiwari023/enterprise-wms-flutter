@@ -6,11 +6,7 @@ class OrderCard extends StatelessWidget {
   final OutboundOrderModel order;
   final Color primaryColor;
 
-  const OrderCard({
-    super.key,
-    required this.order,
-    required this.primaryColor,
-  });
+  const OrderCard({super.key, required this.order, required this.primaryColor});
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +27,14 @@ class OrderCard extends StatelessWidget {
     }
 
     return InkWell(
-      onTap: order.status == 'Shipped' 
-          ? null 
-          : () => Navigator.push(context, MaterialPageRoute(builder: (_) => PickingView(orderNumber: order.orderNumber))),
+      onTap: order.status == 'Shipped'
+          ? null
+          : () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => PickingView(orderNumber: order.orderNumber),
+              ),
+            ),
       borderRadius: BorderRadius.circular(20),
       child: Container(
         margin: const EdgeInsets.only(bottom: 15),
@@ -51,17 +52,27 @@ class OrderCard extends StatelessWidget {
               children: [
                 Text(
                   order.orderNumber,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     order.status.toUpperCase(),
-                    style: TextStyle(color: statusColor, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -80,15 +91,39 @@ class OrderCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Picking Progress", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
-                    Text(order.progressText, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text(
+                      "Picking Progress",
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      order.progressText,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text("Ship Date", style: TextStyle(color: Colors.grey.shade500, fontSize: 12)),
-                    Text(order.date, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text(
+                      "Ship Date",
+                      style: TextStyle(
+                        color: Colors.grey.shade500,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      order.date,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -99,7 +134,9 @@ class OrderCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: order.progress,
                 backgroundColor: Colors.grey.withValues(alpha: 0.1),
-                valueColor: AlwaysStoppedAnimation<Color>(order.progress == 1.0 ? Colors.green : primaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  order.progress == 1.0 ? Colors.green : primaryColor,
+                ),
                 minHeight: 6,
               ),
             ),
@@ -114,7 +151,11 @@ class ManifestButton extends StatelessWidget {
   final Color primaryColor;
   final VoidCallback onTap;
 
-  const ManifestButton({super.key, required this.primaryColor, required this.onTap});
+  const ManifestButton({
+    super.key,
+    required this.primaryColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +181,10 @@ class ManifestButton extends StatelessWidget {
             SizedBox(width: 10),
             Text(
               "Manifest",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
