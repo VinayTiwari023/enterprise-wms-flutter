@@ -115,6 +115,40 @@ class OutboundViewModel extends Notifier<OutboundState> {
         .read(homeViewModelProvider.notifier)
         .addActivity("Order $orderNumber Shipped");
   }
+
+  Future<void> generateManifest() async {
+    state = state.copyWith(status: ViewStatus.loading);
+
+    try {
+      final List<OutboundOrderModel> newOrders = [];
+      int manifestedCount = 0;
+
+      for (final order in state.orders) {
+        if (order.status == "Shipped") {
+          final updated = order.copyWith(status: "Manifested");
+          await _repository.updateOrder(updated);
+          newOrders.add(updated);
+          manifestedCount++;
+        } else {
+          newOrders.add(order);
+        }
+      }
+
+      state = state.copyWith(orders: newOrders, status: ViewStatus.success);
+
+      if (manifestedCount > 0) {
+        ref
+            .read(homeViewModelProvider.notifier)
+            .addActivity("Generated manifest for $manifestedCount orders");
+      }
+    } catch (e) {
+      state = state.copyWith(
+        status: ViewStatus.error,
+        errorMessage: e.toString(),
+      );
+      rethrow;
+    }
+  }
 }
 
 /// Provider for the OutboundViewModel.

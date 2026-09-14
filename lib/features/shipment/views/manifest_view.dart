@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../viewmodels/outbound_view_model.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
+import '../../../core/enums/view_status.dart';
+import '../../../core/services/printing_service.dart';
 
 class ManifestView extends ConsumerWidget {
   const ManifestView({super.key});
@@ -109,17 +111,56 @@ class ManifestView extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      // TODO: Implement PDF generation or API call
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Manifest generated successfully!"),
-                        ),
-                      );
-                      context.pop();
-                    },
-                    icon: const Icon(Icons.print_rounded),
-                    label: const Text("Generate & Print Manifest"),
+                    onPressed: outboundState.status == ViewStatus.loading
+                        ? null
+                        : () async {
+                            try {
+                              // Print preview dialog first
+                              await PrintingService.printManifest(
+                                manifestableOrders,
+                              );
+
+                              // Mark as manifested
+                              await ref
+                                  .read(outboundViewModelProvider.notifier)
+                                  .generateManifest();
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Manifest generated and orders marked as Manifested!",
+                                    ),
+                                  ),
+                                );
+                                context.pop();
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Error: ${e.toString()}"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                    icon: outboundState.status == ViewStatus.loading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.print_rounded),
+                    label: Text(
+                      outboundState.status == ViewStatus.loading
+                          ? "Generating..."
+                          : "Generate & Print Manifest",
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       foregroundColor: Colors.white,
