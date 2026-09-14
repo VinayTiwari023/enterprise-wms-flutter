@@ -107,9 +107,12 @@ class _AddItemViewState extends ConsumerState<AddItemView> {
                 icon: Icons.add_chart_rounded,
                 keyboardType: TextInputType.number,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return "Enter quantity";
-                  if (int.tryParse(value) == null)
+                  if (value == null || value.isEmpty) {
+                    return "Enter quantity";
+                  }
+                  if (int.tryParse(value) == null) {
                     return "Enter a valid number";
+                  }
                   return null;
                 },
               ),
