@@ -6,7 +6,6 @@ import '../../../core/enums/view_status.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/user_view_model.dart';
 import '../../../shared/models/user_model.dart';
-import '../../dashboard/views/home_view.dart';
 import '../widgets/auth_widgets.dart';
 
 class LoginView extends ConsumerStatefulWidget {
@@ -165,7 +164,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                 final scaffoldMessenger = ScaffoldMessenger.of(
                                   context,
                                 );
-                                final navigator = Navigator.of(context);
 
                                 UserModel? user = await ref
                                     .read(loginViewModelProvider.notifier)
@@ -186,11 +184,8 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       content: Text('Login Successful'),
                                     ),
                                   );
-                                  navigator.pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (_) => const HomeView(),
-                                    ),
-                                  );
+                                  // The router will automatically redirect to /dashboard
+                                  // because userState.isLoggedIn will become true.
                                 } else if (loginState.status ==
                                     ViewStatus.error) {
                                   scaffoldMessenger.showSnackBar(

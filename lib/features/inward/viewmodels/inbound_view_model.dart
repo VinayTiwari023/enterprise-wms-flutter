@@ -117,6 +117,9 @@ class InboundViewModel extends Notifier<InboundState> {
 
     state = state.copyWith(purchaseOrders: pos);
 
+    // Persist to Hive
+    await _repository.updatePurchaseOrder(pos[poIndex]);
+
     // Log Activity to Dashboard
     ref
         .read(homeViewModelProvider.notifier)
@@ -148,6 +151,9 @@ class InboundViewModel extends Notifier<InboundState> {
       items: "$totalHandled/$totalExpected",
     );
     state = state.copyWith(purchaseOrders: pos);
+
+    // Persist to Hive
+    await _repository.updatePurchaseOrder(pos[poIndex]);
   }
 }
 

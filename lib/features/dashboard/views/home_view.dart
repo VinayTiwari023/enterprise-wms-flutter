@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/route_names.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../../core/helpers/responsive_helper.dart';
 import '../viewmodels/home_view_model.dart';
@@ -9,49 +11,41 @@ import '../../authentication/viewmodels/user_view_model.dart';
 import '../../../shared/widgets/main_drawer.dart';
 import '../widgets/dashboard_widgets.dart';
 
-// IMPORTANT: Direct imports of other feature views is a temporary violation
-// until GoRouter is fully implemented.
-import '../../inward/views/inbound_view.dart';
-import '../../shipment/views/outbound_view.dart';
-import '../../inventory/views/inventory_view.dart';
-import '../../settings/views/profile_view.dart';
-import '../../purchase_order/views/add_po_view.dart';
-import '../../barcode/views/po_scan_view.dart';
-import '../../audit/views/audit_list_view.dart';
-import 'reports_view.dart';
+class HomeView extends ConsumerWidget {
+  final StatefulNavigationShell navigationShell;
 
-class HomeView extends ConsumerStatefulWidget {
-  const HomeView({super.key});
+  const HomeView({super.key, required this.navigationShell});
+
+  void _onTap(BuildContext context, int index) {
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
+  }
 
   @override
-  ConsumerState<HomeView> createState() => _HomeViewState();
-}
-
-class _HomeViewState extends ConsumerState<HomeView> {
-  int _currentIndex = 0;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final themeVM = ref.watch(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
+    final currentIndex = navigationShell.currentIndex;
 
     return PopScope(
-      canPop: _currentIndex == 0,
+      canPop: currentIndex == 0,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-        if (_currentIndex != 0) {
-          setState(() => _currentIndex = 0);
+        if (currentIndex != 0) {
+          _onTap(context, 0);
         }
       },
       child: Scaffold(
         drawer: MainDrawer(
-          selectedIndex: _currentIndex,
+          selectedIndex: currentIndex,
           onIndexSelected: (index) {
-            setState(() => _currentIndex = index);
+            _onTap(context, index);
             Navigator.pop(context); // Close drawer
           },
         ),
-        body: SafeArea(child: _buildBody()),
+        body: SafeArea(child: navigationShell),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             border: Border(
@@ -62,8 +56,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
             ),
           ),
           child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) => setState(() => _currentIndex = index),
+            currentIndex: currentIndex,
+            onTap: (index) => _onTap(context, index),
             type: BottomNavigationBarType.fixed,
             backgroundColor: themeVM.isDarkMode
                 ? const Color(0xFF12121A)
@@ -77,15 +71,30 @@ class _HomeViewState extends ConsumerState<HomeView> {
             elevation: 0,
             items: [
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.grid_view_rounded, 0, primaryColor),
+                icon: _buildNavIcon(
+                  Icons.grid_view_rounded,
+                  0,
+                  primaryColor,
+                  currentIndex,
+                ),
                 label: AppLocalizations.of(context)!.dashboard,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.login_rounded, 1, primaryColor),
+                icon: _buildNavIcon(
+                  Icons.login_rounded,
+                  1,
+                  primaryColor,
+                  currentIndex,
+                ),
                 label: AppLocalizations.of(context)!.inbound,
               ),
               BottomNavigationBarItem(
-                icon: _buildNavIcon(Icons.logout_rounded, 2, primaryColor),
+                icon: _buildNavIcon(
+                  Icons.logout_rounded,
+                  2,
+                  primaryColor,
+                  currentIndex,
+                ),
                 label: AppLocalizations.of(context)!.outbound,
               ),
               BottomNavigationBarItem(
@@ -93,6 +102,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   Icons.inventory_2_outlined,
                   3,
                   primaryColor,
+                  currentIndex,
                 ),
                 label: AppLocalizations.of(context)!.inventory,
               ),
@@ -101,6 +111,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                   Icons.person_outline_rounded,
                   4,
                   primaryColor,
+                  currentIndex,
                 ),
                 label: AppLocalizations.of(context)!.profile,
               ),
@@ -111,27 +122,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
-  Widget _buildBody() {
-    switch (_currentIndex) {
-      case 0:
-        return DashboardView(
-          onInventoryTap: () => setState(() => _currentIndex = 3),
-        );
-      case 1:
-        return InboundView(onBack: () => setState(() => _currentIndex = 0));
-      case 2:
-        return OutboundView(onBack: () => setState(() => _currentIndex = 0));
-      case 3:
-        return InventoryView(onBack: () => setState(() => _currentIndex = 0));
-      case 4:
-        return ProfileView(onBack: () => setState(() => _currentIndex = 0));
-      default:
-        return const DashboardView();
-    }
-  }
-
-  Widget _buildNavIcon(IconData icon, int index, Color primaryColor) {
-    bool isSelected = _currentIndex == index;
+  Widget _buildNavIcon(
+    IconData icon,
+    int index,
+    Color primaryColor,
+    int currentIndex,
+  ) {
+    bool isSelected = currentIndex == index;
     return Container(
       margin: const EdgeInsets.only(bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -151,8 +148,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 }
 
 class DashboardView extends ConsumerWidget {
-  final VoidCallback? onInventoryTap;
-  const DashboardView({super.key, this.onInventoryTap});
+  const DashboardView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -332,35 +328,20 @@ class DashboardView extends ConsumerWidget {
                 icon: Icons.qr_code_scanner_rounded,
                 label: "Scan",
                 color: primaryColor,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const POScanView()),
-                  );
-                },
+                onTap: () => context.pushNamed(RouteNames.poScan),
               ),
               QuickActionItem(
                 icon: Icons.add_box_outlined,
                 label: "Add",
                 color: primaryColor,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AddPOView()),
-                  );
-                },
+                onTap: () => context.pushNamed(RouteNames.addPO),
               ),
               QuickActionItem(
                 icon: Icons.checklist_rounded,
                 label: "Audit",
                 color: primaryColor,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AuditListView(),
-                    ),
-                  );
+                  // TODO: Add Audit route if needed
                 },
               ),
               QuickActionItem(
@@ -368,7 +349,7 @@ class DashboardView extends ConsumerWidget {
                 label: "Inventory",
                 color: primaryColor,
                 onTap: () {
-                  onInventoryTap?.call();
+                  context.go('/inventory');
                 },
               ),
               QuickActionItem(
@@ -376,12 +357,7 @@ class DashboardView extends ConsumerWidget {
                 label: "Reports",
                 color: primaryColor,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ReportsView(),
-                    ),
-                  );
+                  context.go('/dashboard/reports');
                 },
               ),
               QuickActionItem(

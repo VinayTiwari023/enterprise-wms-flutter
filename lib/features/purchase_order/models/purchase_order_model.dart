@@ -1,12 +1,23 @@
+import 'package:hive/hive.dart';
 import 'purchase_order_item_model.dart';
 
+part 'purchase_order_model.g.dart';
+
+@HiveType(typeId: 1)
 class PurchaseOrderModel {
+  @HiveField(0)
   final String poNumber;
+  @HiveField(1)
   final String supplier;
+  @HiveField(2)
   final String items; // Keeping for backward compat or summary
+  @HiveField(3)
   final String date;
+  @HiveField(4)
   final String status;
+  @HiveField(5)
   final double progress;
+  @HiveField(6)
   final List<PurchaseOrderItemModel> itemsList;
 
   PurchaseOrderModel({

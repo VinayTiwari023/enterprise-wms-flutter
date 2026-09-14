@@ -4,8 +4,7 @@ import '../../../core/error/exceptions.dart';
 import '../../../core/error/failures.dart';
 import '../../../core/result/result.dart';
 import '../../../core/network/base_api_service.dart';
-import '../../../core/storage/storage_service.dart';
-import '../../../core/storage/storage_keys.dart';
+import '../../../core/session/session_manager.dart';
 import '../../../app/config/env.dart';
 import '../../../shared/models/user_model.dart';
 import '../data/models/login_request.dart';
@@ -16,15 +15,15 @@ import 'auth_repository.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final BaseApiService _apiService;
   final AuthMockService _mockService;
-  final StorageService _storageService;
+  final SessionManager _sessionManager;
 
   AuthRepositoryImpl({
     required BaseApiService apiService,
     required AuthMockService mockService,
-    required StorageService storageService,
+    required SessionManager sessionManager,
   }) : _apiService = apiService,
        _mockService = mockService,
-       _storageService = storageService;
+       _sessionManager = sessionManager;
 
   @override
   Future<Result<LoginResponse>> login(LoginRequest request) async {
@@ -35,7 +34,12 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final data = LoginResponse.fromJson(response as Map<String, dynamic>);
 
-      await _saveSession(data, request.email);
+      await _sessionManager.saveSession(
+        token: data.token ?? '',
+        userId: data.userId ?? '',
+        userName: data.userName ?? '',
+        userEmail: request.email,
+      );
 
       return Result.success(data);
     } on UnauthorizedException catch (e) {
@@ -60,7 +64,12 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final data = LoginResponse.fromJson(response);
 
-      await _saveSession(data, request.email);
+      await _sessionManager.saveSession(
+        token: data.token ?? '',
+        userId: data.userId ?? '',
+        userName: data.userName ?? '',
+        userEmail: request.email,
+      );
 
       return Result.success(data);
     } catch (e) {
@@ -70,32 +79,11 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  Future<void> _saveSession(LoginResponse data, String email) async {
-    await _storageService.save(StorageKeys.accessToken, data.token ?? '');
-    await _storageService.save(StorageKeys.userId, data.userId ?? '');
-    await _storageService.save(StorageKeys.userName, data.userName ?? '');
-    await _storageService.save(StorageKeys.userEmail, email);
-  }
-
   @override
   Future<Result<UserModel?>> checkAuthStatus() async {
     try {
-      final token = await _storageService.read(StorageKeys.accessToken);
-
-      if (token == null || token.toString().isEmpty) {
-        return Result.success(null);
-      }
-
-      final name = await _storageService.read(StorageKeys.userName);
-      final email = await _storageService.read(StorageKeys.userEmail);
-
-      return Result.success(
-        UserModel(
-          token: token.toString(),
-          name: name?.toString() ?? 'User',
-          email: email?.toString() ?? '',
-        ),
-      );
+      final user = await _sessionManager.getUser();
+      return Result.success(user);
     } catch (e) {
       return Result.failure(UnknownFailure(e.toString()));
     }
@@ -104,10 +92,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Result<void>> logout() async {
     try {
-      await _storageService.remove(StorageKeys.accessToken);
-      await _storageService.remove(StorageKeys.userId);
-      await _storageService.remove(StorageKeys.userName);
-      await _storageService.remove(StorageKeys.userEmail);
+      await _sessionManager.clearSession();
       return Result.success(null);
     } catch (e) {
       return Result.failure(UnknownFailure(e.toString()));

@@ -1,15 +1,30 @@
+import 'package:hive/hive.dart';
+
+part 'purchase_order_item_model.g.dart';
+
 enum ItemCondition { good, damaged, qcHold }
 
+@HiveType(typeId: 2)
 class PurchaseOrderItemModel {
+  @HiveField(0)
   final String sku;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final int expectedQty;
+  @HiveField(3)
   int receivedQty;
+  @HiveField(4)
   int damagedQty;
+  @HiveField(5)
   int qcHoldQty;
+  @HiveField(6)
   String? batchNumber;
+  @HiveField(7)
   DateTime? expiryDate;
+  @HiveField(8)
   String? damageReason;
+  @HiveField(9)
   String? damageImagePath;
 
   PurchaseOrderItemModel({

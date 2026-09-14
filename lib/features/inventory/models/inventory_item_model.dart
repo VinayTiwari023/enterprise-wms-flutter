@@ -1,8 +1,18 @@
+import 'package:hive/hive.dart';
+
+part 'inventory_item_model.g.dart';
+
+@HiveType(typeId: 0)
 class InventoryItemModel {
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final String sku;
+  @HiveField(2)
   final String location;
+  @HiveField(3)
   final int units;
+  @HiveField(4)
   final String status;
 
   InventoryItemModel({

@@ -1,11 +1,12 @@
-class AppUrls {
-  // Change this base URL to switch environments
-  static const String baseUrl = 'https://reqres.in/api'; // Mock API for testing
+import 'app_config.dart';
 
-  static const String loginEndPoint = '$baseUrl/login';
-  static const String registerEndPoint = '$baseUrl/register';
+class AppUrls {
+  static String get baseUrl => AppConfig.baseUrl;
+
+  static String get loginEndPoint => '$baseUrl/login';
+  static String get registerEndPoint => '$baseUrl/register';
 
   // WMS Specific Endpoints
-  static const String getInventory = '$baseUrl/inventory';
-  static const String getStats = '$baseUrl/stats';
+  static String get getInventory => '$baseUrl/inventory';
+  static String get getStats => '$baseUrl/stats';
 }

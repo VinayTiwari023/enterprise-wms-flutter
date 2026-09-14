@@ -8,4 +8,9 @@ class RouteNames {
   static const String profile = 'profile';
   static const String reports = 'reports';
   static const String poDetails = 'poDetails';
+  static const String addPO = 'addPO';
+  static const String poScan = 'poScan';
+  static const String addItem = 'addItem';
+  static const String manifest = 'manifest';
+  static const String picking = 'picking';
 }

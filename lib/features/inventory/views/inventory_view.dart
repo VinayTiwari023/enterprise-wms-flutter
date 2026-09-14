@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/route_names.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/inventory_view_model.dart';
 import '../../../core/enums/view_status.dart';
@@ -116,7 +118,10 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
           Positioned(
             bottom: 20,
             right: 20,
-            child: AddItemButton(primaryColor: primaryColor, onTap: () {}),
+            child: AddItemButton(
+              primaryColor: primaryColor,
+              onTap: () => context.pushNamed(RouteNames.addItem),
+            ),
           ),
         ],
       ),

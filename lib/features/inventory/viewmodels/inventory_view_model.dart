@@ -59,37 +59,41 @@ class InventoryViewModel extends Notifier<InventoryState> {
     String name,
     String location,
     int quantity,
-  ) {
+  ) async {
     final currentItems = List<InventoryItemModel>.from(state.items);
     final index = currentItems.indexWhere(
       (i) => i.sku == sku && i.location == location,
     );
 
+    InventoryItemModel updatedItem;
+
     if (index != -1) {
       // Update existing stock at this location
       final existing = currentItems[index];
-      currentItems[index] = InventoryItemModel(
+      updatedItem = InventoryItemModel(
         sku: existing.sku,
         name: existing.name,
         location: existing.location,
         units: existing.units + quantity,
         status: "Available",
       );
+      currentItems[index] = updatedItem;
     } else {
       // Add new stock entry
-      currentItems.insert(
-        0,
-        InventoryItemModel(
-          sku: sku,
-          name: name,
-          location: location,
-          units: quantity,
-          status: "Available",
-        ),
+      updatedItem = InventoryItemModel(
+        sku: sku,
+        name: name,
+        location: location,
+        units: quantity,
+        status: "Available",
       );
+      currentItems.insert(0, updatedItem);
     }
 
     state = state.copyWith(items: currentItems);
+
+    // Persist to Hive
+    await _repository.saveItem(updatedItem);
   }
 }
 

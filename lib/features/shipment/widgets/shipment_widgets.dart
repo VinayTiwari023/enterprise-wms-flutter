@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../../../app/router/route_names.dart';
 import '../models/outbound_order_model.dart';
-import '../views/picking_view.dart';
 
 class OrderCard extends StatelessWidget {
   final OutboundOrderModel order;
@@ -29,11 +30,9 @@ class OrderCard extends StatelessWidget {
     return InkWell(
       onTap: order.status == 'Shipped'
           ? null
-          : () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => PickingView(orderNumber: order.orderNumber),
-              ),
+          : () => context.pushNamed(
+              RouteNames.picking,
+              pathParameters: {'orderNumber': order.orderNumber},
             ),
       borderRadius: BorderRadius.circular(20),
       child: Container(

@@ -9,4 +9,5 @@ final inventoryRepositoryProvider = Provider<InventoryRepository>((ref) {
 abstract class InventoryRepository {
   Future<dynamic> fetchInventoryApi();
   Future<List<InventoryItemModel>> fetchInventoryItems();
+  Future<void> saveItem(InventoryItemModel item);
 }

@@ -69,12 +69,18 @@ class OutboundViewModel extends Notifier<OutboundState> {
     final item = items[itemIndex];
     items[itemIndex] = item.copyWith(pickedQty: item.pickedQty + quantity);
 
-    double progress = order.progress;
+    final updatedOrder = order.copyWith(items: items);
+
+    // Recalculate status based on progress
+    double progress = updatedOrder.progress;
     String newStatus = progress >= 1.0 ? "Picked" : "Picking";
 
-    orders[orderIndex] = order.copyWith(items: items, status: newStatus);
+    orders[orderIndex] = updatedOrder.copyWith(status: newStatus);
 
     state = state.copyWith(orders: orders);
+
+    // Persist to Hive
+    await _repository.updateOrder(orders[orderIndex]);
 
     // Update Inventory: Deduct stock
     ref
@@ -97,8 +103,12 @@ class OutboundViewModel extends Notifier<OutboundState> {
     final orderIndex = orders.indexWhere((o) => o.orderNumber == orderNumber);
     if (orderIndex == -1) return;
 
-    orders[orderIndex] = orders[orderIndex].copyWith(status: "Shipped");
+    final updatedOrder = orders[orderIndex].copyWith(status: "Shipped");
+    orders[orderIndex] = updatedOrder;
     state = state.copyWith(orders: orders);
+
+    // Persist to Hive
+    await _repository.updateOrder(updatedOrder);
 
     // Log activity
     ref

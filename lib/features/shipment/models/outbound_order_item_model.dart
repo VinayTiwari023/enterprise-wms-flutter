@@ -1,10 +1,19 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
+part 'outbound_order_item_model.g.dart';
+
+@HiveType(typeId: 4)
 class OutboundOrderItemModel extends Equatable {
+  @HiveField(0)
   final String sku;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final int orderedQty;
+  @HiveField(3)
   final int pickedQty;
+  @HiveField(4)
   final String location;
 
   const OutboundOrderItemModel({

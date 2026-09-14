@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/route_names.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/inbound_view_model.dart';
 import '../../../core/enums/view_status.dart';
 import '../../../shared/widgets/custom_sliver_delegate.dart';
 import '../widgets/inward_widgets.dart';
-import '../../purchase_order/views/po_details_view.dart';
-import '../../purchase_order/views/add_po_view.dart';
-import '../../barcode/views/po_scan_view.dart';
 
 class InboundView extends ConsumerStatefulWidget {
   final VoidCallback? onBack;
@@ -58,14 +57,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AddPOView(),
-                          ),
-                        );
-                      },
+                      onPressed: () => context.pushNamed(RouteNames.addPO),
                       style: IconButton.styleFrom(
                         backgroundColor: primaryColor.withValues(alpha: 0.1),
                         shape: RoundedRectangleBorder(
@@ -136,15 +128,10 @@ class _InboundViewState extends ConsumerState<InboundView> {
                           return POCard(
                             po: po,
                             primaryColor: primaryColor,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      PODetailsView(poNumber: po.poNumber),
-                                ),
-                              );
-                            },
+                            onTap: () => context.pushNamed(
+                              RouteNames.poDetails,
+                              pathParameters: {'poNumber': po.poNumber},
+                            ),
                           );
                         }, childCount: filteredList.length),
                       ),
@@ -157,12 +144,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
             right: 20,
             child: InboundScanButton(
               primaryColor: primaryColor,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const POScanView()),
-                );
-              },
+              onTap: () => context.pushNamed(RouteNames.poScan),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import '../../../core/network/base_api_service.dart';
+import '../../../core/storage/hive_service.dart';
 import '../../../app/config/env.dart';
 import '../services/inventory_mock_service.dart';
 import '../models/inventory_item_model.dart';
@@ -7,12 +8,15 @@ import 'inventory_repository.dart';
 class InventoryRepositoryImpl implements InventoryRepository {
   final BaseApiService _apiService;
   final InventoryMockService _mockService;
+  final HiveService _hiveService;
 
   InventoryRepositoryImpl({
     required BaseApiService apiService,
     required InventoryMockService mockService,
+    required HiveService hiveService,
   }) : _apiService = apiService,
-       _mockService = mockService;
+       _mockService = mockService,
+       _hiveService = hiveService;
 
   @override
   Future<dynamic> fetchInventoryApi() async {
@@ -26,6 +30,24 @@ class InventoryRepositoryImpl implements InventoryRepository {
 
   @override
   Future<List<InventoryItemModel>> fetchInventoryItems() async {
-    return await _mockService.getInventoryItems();
+    // Check local cache first
+    final cached = _hiveService.getAll<InventoryItemModel>(
+      HiveService.inventoryBox,
+    );
+    if (cached.isNotEmpty) {
+      return cached;
+    }
+
+    // If empty, get from mock/remote and save to local
+    final items = await _mockService.getInventoryItems();
+    for (var item in items) {
+      await _hiveService.putData(HiveService.inventoryBox, item.sku, item);
+    }
+    return items;
+  }
+
+  @override
+  Future<void> saveItem(InventoryItemModel item) async {
+    await _hiveService.putData(HiveService.inventoryBox, item.sku, item);
   }
 }
