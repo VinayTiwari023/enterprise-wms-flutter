@@ -24,21 +24,23 @@ class _SplashViewState extends ConsumerState<SplashView> {
     // We don't perform navigation here.
     // The AppRouter will listen to UserViewModel and redirect automatically.
 
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // In a real app, use your WMS logo here
-            Icon(
-              Icons.warehouse_rounded,
-              size: 100,
-              color: Colors.blue, // Or your theme color
+            ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: Image.asset(
+                'assets/icons/wms_icon.png',
+                width: 120,
+                height: 120,
+              ),
             ),
-            SizedBox(height: 24),
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 24),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            const Text(
               "WMS Enterprise",
               style: TextStyle(
                 fontSize: 24,

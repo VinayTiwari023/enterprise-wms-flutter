@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/audit_model.dart';
 import '../viewmodels/audit_view_model.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 
@@ -61,7 +62,7 @@ class AuditDetailsView extends ConsumerWidget {
 
   Widget _buildCountItemCard(
     BuildContext context,
-    item,
+    AuditItemModel item,
     Color color,
     WidgetRef ref,
   ) {
@@ -164,7 +165,7 @@ class AuditDetailsView extends ConsumerWidget {
 
   Widget _buildActionFooter(
     BuildContext context,
-    audit,
+    AuditModel audit,
     Color color,
     WidgetRef ref,
   ) {

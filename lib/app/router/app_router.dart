@@ -16,7 +16,16 @@ import '../../features/shipment/views/picking_view.dart';
 import '../../features/shipment/views/manifest_view.dart';
 import '../../features/inventory/views/inventory_view.dart';
 import '../../features/inventory/views/add_item_view.dart';
+import '../../features/inventory/views/stock_transfer_view.dart';
 import '../../features/settings/views/profile_view.dart';
+import '../../features/audit/views/audit_list_view.dart';
+import '../../features/audit/views/audit_details_view.dart';
+import '../../features/tasks/views/task_queue_view.dart';
+import '../../features/picklist/views/picklist_list_view.dart';
+import '../../features/picklist/views/picklist_details_view.dart';
+import '../../features/returns/views/returns_list_view.dart';
+import '../../features/returns/views/return_inspection_view.dart';
+import '../../features/returns/views/create_rma_view.dart';
 
 // Global keys for navigation
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -104,6 +113,61 @@ final routerProvider = Provider<GoRouter>((ref) {
                     name: RouteNames.reports,
                     builder: (context, state) => const ReportsView(),
                   ),
+                  GoRoute(
+                    path: 'audit',
+                    name: RouteNames.audit,
+                    builder: (context, state) => const AuditListView(),
+                    routes: [
+                      GoRoute(
+                        path: 'details/:auditId',
+                        name: RouteNames.auditDetails,
+                        builder: (context, state) {
+                          final auditId = state.pathParameters['auditId']!;
+                          return AuditDetailsView(auditId: auditId);
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'tasks',
+                    name: RouteNames.taskQueue,
+                    builder: (context, state) => const TaskQueueView(),
+                  ),
+                  GoRoute(
+                    path: 'picklist',
+                    name: RouteNames.picklist,
+                    builder: (context, state) => const PicklistListView(),
+                    routes: [
+                      GoRoute(
+                        path: 'details/:id',
+                        name: RouteNames.picklistDetails,
+                        builder: (context, state) {
+                          final id = state.pathParameters['id']!;
+                          return PicklistDetailsView(picklistId: id);
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'returns',
+                    name: RouteNames.returns,
+                    builder: (context, state) => const ReturnsListView(),
+                    routes: [
+                      GoRoute(
+                        path: 'create',
+                        name: RouteNames.createRMA,
+                        builder: (context, state) => const CreateRMAView(),
+                      ),
+                      GoRoute(
+                        path: 'details/:rmaNumber',
+                        name: RouteNames.returnDetails,
+                        builder: (context, state) {
+                          final rmaNumber = state.pathParameters['rmaNumber']!;
+                          return ReturnInspectionView(rmaNumber: rmaNumber);
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -181,6 +245,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'add-item',
                     name: RouteNames.addItem,
                     builder: (context, state) => const AddItemView(),
+                  ),
+                  GoRoute(
+                    path: 'transfer',
+                    name: RouteNames.stockTransfer,
+                    builder: (context, state) => const StockTransferView(),
                   ),
                 ],
               ),

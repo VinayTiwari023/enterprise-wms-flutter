@@ -1,4 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import '../../app/config/app_config.dart';
 import '../../core/di/locator.dart';
 import '../logger/app_logger.dart';
 import '../storage/hive_service.dart';
@@ -31,6 +32,9 @@ class AppInitializer {
 
     AppLogger.info("Hive initialized");
 
-    // TODO: Load Environment
+    // Load Environment Configuration
+    AppLogger.info(
+      "Environment: ${AppConfig.environment.name.toUpperCase()} (${AppConfig.baseUrl})",
+    );
   }
 }

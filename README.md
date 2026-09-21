@@ -1,191 +1,204 @@
 <div align="center">
 
-# 📦 Enterprise WMS Flutter
+# 📦 Enterprise Warehouse Management System (WMS)
 
-### *Where a warehouse meets clean architecture.*
+### *Production-Grade Enterprise Logistics Platform Built with Flutter*
 
-**A production-grade Warehouse Management System, built in Flutter — not to ship features fast, but to ship them right.**
+**A full-featured, scalable Warehouse Management System built using Feature-First MVVM Architecture, Riverpod State Management, and Clean Software Engineering Principles.**
 
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+[![State Management](https://img.shields.io/badge/State--Management-Riverpod-00599C?style=for-the-badge)](https://riverpod.dev)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20MVVM-8A2BE2?style=for-the-badge)]()
-[![Status](https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 </div>
 
 ---
 
-## 🧭 Why This Exists
+## 📱 Mobile Application Screenshots
 
-Most side projects prove you can *build something*.
-This one is built to prove something narrower and harder: **that I build the way enterprise teams build** — with boundaries, contracts, and code that survives contact with a second engineer.
+Experience the user interface and key features of the Enterprise WMS mobile application across core warehouse operations.
 
-Every folder, pattern, and dependency choice here is deliberate. This isn't a WMS that happens to be clean — it's a clean architecture that happens to be a WMS.
+### 🔐 Authentication & Navigation
+| Login Screen | App Drawer / Navigation | User Profile & Settings |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/login.png" width="260" alt="Login Screen"/> | <img src="assets/screenshots/naviagtion.png" width="260" alt="App Drawer Navigation"/> | <img src="assets/screenshots/profile.png" width="260" alt="User Profile Screen"/> |
+
+### 📊 Executive Dashboard & Analytics
+| Real-time Dashboard | Operations Reports | Dynamic Theme Customization |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/dash.png" width="260" alt="Dashboard Screen"/> | <img src="assets/screenshots/reports.png" width="260" alt="Reports Screen"/> | <img src="assets/screenshots/themechange.png" width="260" alt="Theme Switcher Screen"/> |
+
+### 📦 Inbound & Receiving Operations
+| Inbound Purchase Orders | Create Purchase Order | Barcode PO Scanning |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/inboundPO.png" width="260" alt="Inbound PO Processing"/> | <img src="assets/screenshots/createPO.png" width="260" alt="Create Purchase Order"/> | <img src="assets/screenshots/scanPO.png" width="260" alt="Barcode Scanner Screen"/> |
+
+### 🏢 Inventory & Stock Management
+| Inventory Catalog | Add / Receive Inventory Item | Warehouse Task Queue |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/inventory.png" width="260" alt="Inventory Search & Listing"/> | <img src="assets/screenshots/additem.png" width="260" alt="Add Item Screen"/> | <img src="assets/screenshots/mytask.png" width="260" alt="Task Queue Screen"/> |
+
+### 🚚 Outbound Shipping & PDF Document Export
+| Outbound Shipments | Daily Shipping Manifest | PDF Invoice & Label Preview |
+| :---: | :---: | :---: |
+| <img src="assets/screenshots/outbound.png" width="260" alt="Outbound Shipping Queue"/> | <img src="assets/screenshots/dailyshippingmanifest.png" width="260" alt="Shipping Manifest Screen"/> | <img src="assets/screenshots/pdfpreview.png" width="260" alt="PDF Generation Preview"/> |
 
 ---
 
-## 🏗️ The Blueprint
+## 🌟 Key Features
 
-A **Feature-First** structure, wired together with **MVVM** and the **Repository Pattern** — so each feature is an independent, testable unit, not a thread tangled into everything else.
+### 🔐 Authentication & Session Management
+* **Secure Login**: Role-based access control (Admin, Warehouse Manager, Picker, Auditor).
+* **Session Persistence**: Secure token storage backed by `flutter_secure_storage`.
+* **Dynamic Theming**: Instant light and dark mode toggling with adaptive color palettes.
+
+### 📊 Business Intelligence & Reporting
+* **Interactive KPI Dashboard**: Real-time metrics on pending inbound POs, outbound dispatches, low stock items, and picking efficiency.
+* **Graphical Analytics**: Stock movement trends and daily performance visualization using `fl_chart`.
+* **Custom Reports**: Generate actionable reports on inventory turnover, damage logs, and shipment dispatches.
+
+### 📥 Inbound Logistics & Putaway
+* **PO Receiving**: Inspect and process incoming supplier purchase orders.
+* **Directed Putaway**: Smart bin location recommendations to optimize warehouse floor space.
+* **Goods Receipt Note (GRN)**: Automatic GRN summary generation upon inbound completion.
+* **Damage Management**: Log damaged goods during receiving with photo attachments and condition reports.
+
+### 📦 Stock & Inventory Control
+* **Live Catalog Search**: Instant search and multi-criteria filter by SKU, category, bin location, or stock level.
+* **Item Stock Adjustments**: Fast stock additions, manual adjustments, and threshold stock warnings.
+* **Cycle Counting & Auditing**: Physical stock verification and variance logging.
+
+### 📤 Outbound Logistics & Fulfillment
+* **Order Picking**: Automated pick lists with optimized bin navigation routes.
+* **Packing & Shipping**: Dispatch order verification and courier manifest updates.
+* **Daily Shipping Manifest**: Complete daily shipping records with carrier dispatch timestamps.
+
+### 🖨 Document Generation & Barcode Scanning
+* **Mobile Barcode Scanner**: Hardware camera scanning via `mobile_scanner` for rapid SKU and PO verification.
+* **PDF Invoices & Shipping Labels**: On-the-fly PDF creation using `pdf` and `printing` services with thermal printer readiness.
+
+---
+
+## 🏗 System Architecture & Design Patterns
+
+The application is structured following **Clean Architecture** and **Feature-First** principles combined with **MVVM** and the **Repository Pattern**.
 
 ```text
 lib/
+├── app/                  # Application configuration, routing, and styling
+│   ├── config/           # Environment variables and app settings
+│   ├── router/           # GoRouter route definitions & navigation guards
+│   └── theme/            # Material 3 light/dark theme data & colors
 │
-├── app/                  # Application-wide setup
-│   ├── config/           # Environment and global configs
-│   ├── router/           # Navigation logic (GoRouter)
-│   └── theme/            # Styling and theme definitions
+├── core/                 # Shared infrastructure & utilities
+│   ├── di/               # Centralized Dependency Injection (GetIt)
+│   ├── error/            # Custom failures and exception handling
+│   ├── network/          # Network API service layer & HTTP client abstraction
+│   ├── services/         # Printing, PDF, and system level services
+│   ├── storage/          # Storage contracts (Hive & Secure Storage)
+│   └── utils/            # Helper utilities and extensions
 │
-├── core/                 # Shared infrastructure and utilities
-│   ├── di/               # Dependency Injection (GetIt)
-│   ├── network/          # API services and networking
-│   ├── storage/          # Local and secure storage
-│   ├── services/         # Global services
-│   ├── constants/        # Global constants
-│   └── utils/            # Helper functions and extensions
+├── features/             # Self-contained business modules
+│   ├── audit/            # Stock cycle count & physical audits
+│   ├── authentication/   # Login, splash, user profile & session
+│   ├── barcode/          # Camera scanner & barcode handling
+│   ├── dashboard/        # Home metrics, KPI cards & reporting
+│   ├── inventory/        # Stock catalog, bin tracking & item creation
+│   ├── inward/           # Inbound PO receiving, GRN & putaway
+│   ├── purchase_order/   # Purchase order creation & vendor tracking
+│   ├── returns/          # Return processing & RMA workflows
+│   ├── settings/         # Theme toggles & application settings
+│   ├── shipment/         # Outbound orders, picking & shipping manifests
+│   └── tasks/            # Worker task assignment queue
 │
-├── features/             # Business logic modules (Self-contained)
-│   ├── authentication/
-│   ├── dashboard/
-│   ├── inventory/
-│   ├── inward/
-│   ├── shipment/
-│   ├── purchase_order/
-│   ├── picklist/
-│   └── ... (others)
-│
-├── l10n/                 # Localization files
-└── shared/               # Reusable UI components and models
+└── shared/               # Reusable UI widgets, models, and dialogs
 ```
 
----
-
-## 🛠 Tech Stack
-
-| Layer            | Choice                               |
-|------------------|--------------------------------------|
-| Framework        | Flutter / Dart                       |
-| State Management | Riverpod                             |
-| Service Locator  | GetIt                                |
-| Navigation       | GoRouter                             |
-| Architecture     | MVVM + Repository Pattern            |
-| Local Storage    | Hive & Secure Storage (abstracted)   |
-| Networking       | REST APIs (Dio/Http)                 |
+### 🔑 Enterprise Patterns Applied
+1. **Feature-First Folder Layout**: Highly modular and decoupled feature folders containing their own Views, ViewModels, Repositories, Models, and Services.
+2. **MVVM Pattern**: ViewModels manage UI state and expose clean streams/notifiers to Views using Riverpod.
+3. **Repository Pattern**: Abstract domain data interfaces decouple data fetching (Network REST API / Mock Service / Local Storage) from business logic.
+4. **Dependency Injection**: Centralized service locator (`GetIt`) guarantees loose coupling, effortless mocking, and single sources of truth.
+5. **Storage Abstraction**: Storage contracts isolate local database implementations (Hive, Secure Storage) from feature consumption.
 
 ---
 
-## ✅ Enterprise Patterns in Play
+## 🛠 Tech Stack & Libraries
 
-Not a checklist for its own sake — each pattern here is solving a specific problem a real WMS runs into at scale.
-
-* Feature-First Architecture
-* MVVM
-* Repository Pattern
-* Dependency Injection (constructor-based)
-* GetIt Service Locator
-* Singleton & Lazy Singleton
-* Factory Pattern
-* Interface-Based Programming
-* Secure Storage Abstraction
-
----
-
-## 🔐 Storage, Decoupled
-
-The app never talks to a storage implementation directly — it talks to a contract.
-
-```text
-        StorageService   ← the contract
-              ▲
-              │  implements
-              │
-    SecureStorageService  ← the concrete detail
-```
-
-Swap the implementation tomorrow — encrypted storage, in-memory for tests, a different vendor entirely — and not a single feature module notices. That's the point.
+| Category | Technology / Library | Description |
+| :--- | :--- | :--- |
+| **Framework** | Flutter (Dart SDK ^3.11) | Cross-platform mobile framework |
+| **State Management** | `flutter_riverpod` (^2.6.1) | Reactive state management & dependency injection |
+| **Service Locator** | `get_it` (^8.0.0) | Centralized object registry & DI |
+| **Navigation** | `go_router` (^14.3.0) | Declarative route management & deep linking |
+| **Local Storage** | `hive_flutter` (^1.1.0) | Fast, lightweight key-value local database |
+| **Secure Storage** | `flutter_secure_storage` (^9.2.2) | Encrypted storage for sensitive session tokens |
+| **Networking** | `dio` (^5.5.0) & `http` (^1.6.0) | REST API client with interceptors and error handling |
+| **Barcode Scanning** | `mobile_scanner` (^7.4.0) | High-performance mobile camera scanner |
+| **Charts** | `fl_chart` (^1.2.0) | Customizable chart visualizations |
+| **PDF & Printing** | `pdf` (^3.11.1) & `printing` (^5.13.2) | Dynamic PDF document creation and wireless printing |
 
 ---
 
-## 📦 Dependency Injection, Centralized
+## 🚀 Getting Started
 
-Every dependency in this app is born in one place, registered through **GetIt**.
+### Prerequisites
+* [Flutter SDK](https://docs.flutter.dev/get-started/install) (`>= 3.11.5`)
+* [Dart SDK](https://dart.dev/get-started)
+* Android Studio / VS Code with Flutter extensions
+* Connected Android / iOS Device or Emulator
 
-**Why it matters:**
-* 🔗 Loose coupling between layers
-* 🧪 Trivial to mock for testing
-* 🧩 One source of truth for object creation
-* 🛠 Maintainable as the feature count grows
+### Installation & Setup
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/VinayTiwari023/enterprise-wms-flutter.git
+   cd enterprise-wms-flutter
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   flutter pub get
+   ```
+
+3. **Run Code Generation** (for JSON serialization & Hive adapters):
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
+
+4. **Launch the Application**:
+   ```bash
+   flutter run
+   ```
 
 ---
 
-## 🧪 Quality Gate
+## 🧪 Quality Control & Testing
 
-Nothing merges without clearing:
+To maintain production standards, run static analysis and unit tests prior to commits:
 
 ```bash
+# Analyze project code for lint errors and standards
 flutter analyze
+
+# Run unit and viewmodel test suites
 flutter test
 ```
 
-Every milestone is a checkpoint, not a checkbox.
-
 ---
 
-## 📈 Development Philosophy
+## 👨‍💻 Author
 
-> Build it like someone else has to maintain it in two years — because eventually, someone will.
+**Vinay Kumar**
+*Flutter & Android Developer*
 
-* Clean Code & SOLID Principles
-* Separation of Concerns
-* Testability by design, not by accident
-* Scalability over shortcuts
-* Reusability wherever it earns its keep
-
----
-
-## 🚧 Roadmap
-
-- [x] Authentication
-- [x] Dashboard
-- [x] Inward Management
-- [x] Inventory Management
-- [x] Barcode Scanning
-- [x] Settings
-- [/] Outward Management (Shipment)
-- [/] Purchase Order
-- [/] Picklist & Tasks
-- [/] Audit & Returns
-- [ ] Offline Support (Hive Integration)
-- [ ] Bluetooth Printing
-- [ ] Sync Engine
-- [ ] User Roles & Permissions
-- [ ] Reports
-- [ ] Notifications
-
----
-
-## 🤝 Contributing
-
-Got a sharper way to structure a layer, or spotted an antipattern hiding in plain sight? Open an issue or a PR — this project is as much about the conversation as the code.
+* 🐙 GitHub: [@VinayTiwari023](https://github.com/VinayTiwari023)
+* 📦 Repository: [enterprise-wms-flutter](https://github.com/VinayTiwari023/enterprise-wms-flutter)
 
 ---
 
 ## 📄 License
 
-MIT — see [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-
-## 👨‍💻 Author
-
-**Vinay Kumar**
-*Flutter Developer · Android Developer*
-
-Learning enterprise Flutter the only way that sticks — by building a production-quality application, one deliberate decision at a time.
-
-🔗 [Repository](https://github.com/VinayTiwari023/enterprise-wms-flutter) — actively under development
-
-</div>
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.

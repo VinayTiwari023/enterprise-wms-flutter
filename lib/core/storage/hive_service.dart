@@ -6,12 +6,14 @@ class HiveService {
   static const String inventoryBox = 'inventory_box';
   static const String purchaseOrderBox = 'purchase_order_box';
   static const String outboundOrderBox = 'outbound_order_box';
+  static const String stockTransferBox = 'stock_transfer_box';
 
   /// Initializes all boxes needed for the app.
   Future<void> init() async {
     await Hive.openBox(inventoryBox);
     await Hive.openBox(purchaseOrderBox);
     await Hive.openBox(outboundOrderBox);
+    await Hive.openBox(stockTransferBox);
   }
 
   /// Generic method to save data to a box.

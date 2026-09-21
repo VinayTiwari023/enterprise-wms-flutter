@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../app/router/route_names.dart';
 import '../../features/authentication/viewmodels/user_view_model.dart';
 import '../../features/settings/viewmodels/theme_view_model.dart';
-import '../../features/tasks/views/task_queue_view.dart';
-import '../../features/dashboard/views/reports_view.dart';
-import '../../features/settings/views/profile_view.dart';
 import '../dialogs/logout_dialog.dart';
 
 class MainDrawer extends ConsumerWidget {
@@ -46,10 +45,23 @@ class MainDrawer extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: primaryColor),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleAvatar(
+                      radius: 35,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, size: 40, color: primaryColor),
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.asset(
+                        'assets/icons/wms_icon.png',
+                        width: 48,
+                        height: 48,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -81,26 +93,6 @@ class MainDrawer extends ConsumerWidget {
                   onTap: () => onIndexSelected(0),
                 ),
                 _drawerItem(
-                  Icons.assignment_outlined,
-                  "My Task Queue",
-                  onTap: () {
-                    Navigator.pop(context); // Close drawer
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TaskQueueView(),
-                      ),
-                    );
-                  },
-                ),
-                _drawerItem(
-                  Icons.inventory_2_outlined,
-                  "Inventory Management",
-                  isSelected: selectedIndex == 3,
-                  color: primaryColor,
-                  onTap: () => onIndexSelected(3),
-                ),
-                _drawerItem(
                   Icons.login_rounded,
                   "Inbound / Receiving",
                   isSelected: selectedIndex == 1,
@@ -115,11 +107,35 @@ class MainDrawer extends ConsumerWidget {
                   onTap: () => onIndexSelected(2),
                 ),
                 _drawerItem(
-                  Icons.person_outline_rounded,
-                  "My Profile",
-                  isSelected: selectedIndex == 4,
+                  Icons.inventory_2_outlined,
+                  "Inventory Management",
+                  isSelected: selectedIndex == 3,
                   color: primaryColor,
-                  onTap: () => onIndexSelected(4),
+                  onTap: () => onIndexSelected(3),
+                ),
+                _drawerItem(
+                  Icons.assignment_outlined,
+                  "My Task Queue",
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    context.pushNamed(RouteNames.taskQueue);
+                  },
+                ),
+                _drawerItem(
+                  Icons.route_rounded,
+                  "Wave Picklists",
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.pushNamed(RouteNames.picklist);
+                  },
+                ),
+                _drawerItem(
+                  Icons.assignment_return_rounded,
+                  "Returns Management",
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.pushNamed(RouteNames.returns);
+                  },
                 ),
 
                 const SizedBox(height: 12),
@@ -132,12 +148,7 @@ class MainDrawer extends ConsumerWidget {
                   "Reports & Analytics",
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ReportsView(),
-                      ),
-                    );
+                    context.pushNamed(RouteNames.reports);
                   },
                 ),
 
@@ -230,15 +241,10 @@ class MainDrawer extends ConsumerWidget {
                 _drawerItem(
                   Icons.settings_outlined,
                   "Settings",
+                  isSelected: selectedIndex == 4,
+                  color: primaryColor,
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProfileView(onBack: () => Navigator.pop(context)),
-                      ),
-                    );
+                    onIndexSelected(4);
                   },
                 ),
               ],
@@ -258,7 +264,32 @@ class MainDrawer extends ConsumerWidget {
               }
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.asset(
+                    'assets/icons/wms_icon.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  "WMS Enterprise v1.0.0",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

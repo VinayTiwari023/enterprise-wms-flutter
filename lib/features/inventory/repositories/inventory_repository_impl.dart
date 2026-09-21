@@ -3,6 +3,7 @@ import '../../../core/storage/hive_service.dart';
 import '../../../app/config/env.dart';
 import '../services/inventory_mock_service.dart';
 import '../models/inventory_item_model.dart';
+import '../models/stock_transfer_model.dart';
 import 'inventory_repository.dart';
 
 class InventoryRepositoryImpl implements InventoryRepository {
@@ -49,5 +50,27 @@ class InventoryRepositoryImpl implements InventoryRepository {
   @override
   Future<void> saveItem(InventoryItemModel item) async {
     await _hiveService.putData(HiveService.inventoryBox, item.sku, item);
+  }
+
+  @override
+  Future<List<StockTransferModel>> fetchTransferHistory() async {
+    final rawList = _hiveService.getAll<dynamic>(HiveService.stockTransferBox);
+    final history = <StockTransferModel>[];
+    for (var e in rawList) {
+      if (e is Map) {
+        history.add(StockTransferModel.fromJson(Map<String, dynamic>.from(e)));
+      }
+    }
+    history.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return history;
+  }
+
+  @override
+  Future<void> saveStockTransfer(StockTransferModel transfer) async {
+    await _hiveService.putData(
+      HiveService.stockTransferBox,
+      transfer.id,
+      transfer.toJson(),
+    );
   }
 }

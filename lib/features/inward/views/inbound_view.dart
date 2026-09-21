@@ -34,19 +34,27 @@ class _InboundViewState extends ConsumerState<InboundView> {
     final primaryColor = themeState.currentThemeColor;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
-                backgroundColor: Colors.transparent,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 elevation: 0,
                 pinned: true,
                 centerTitle: true,
                 leading: IconButton(
-                  onPressed: widget.onBack ?? () {},
+                  onPressed: () {
+                    if (widget.onBack != null) {
+                      widget.onBack!();
+                    } else if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      context.go('/dashboard');
+                    }
+                  },
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                 ),
                 title: const Text(

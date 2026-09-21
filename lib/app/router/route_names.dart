@@ -13,4 +13,13 @@ class RouteNames {
   static const String addItem = 'addItem';
   static const String manifest = 'manifest';
   static const String picking = 'picking';
+  static const String audit = 'audit';
+  static const String auditDetails = 'auditDetails';
+  static const String taskQueue = 'taskQueue';
+  static const String stockTransfer = 'stockTransfer';
+  static const String picklist = 'picklist';
+  static const String picklistDetails = 'picklistDetails';
+  static const String returns = 'returns';
+  static const String returnDetails = 'returnDetails';
+  static const String createRMA = 'createRMA';
 }

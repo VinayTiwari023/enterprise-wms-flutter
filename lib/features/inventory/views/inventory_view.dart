@@ -41,18 +41,26 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
     final primaryColor = themeState.currentThemeColor;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
-                backgroundColor: Colors.transparent,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 elevation: 0,
                 pinned: true,
                 leading: IconButton(
-                  onPressed: widget.onBack ?? () {},
+                  onPressed: () {
+                    if (widget.onBack != null) {
+                      widget.onBack!();
+                    } else if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      context.go('/dashboard');
+                    }
+                  },
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                 ),
                 title: const Text(
@@ -61,6 +69,12 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                 ),
                 centerTitle: true,
                 actions: [
+                  IconButton(
+                    onPressed: () =>
+                        context.pushNamed(RouteNames.stockTransfer),
+                    icon: const Icon(Icons.swap_horiz_rounded),
+                    tooltip: "Bin-to-Bin Relocation",
+                  ),
                   IconButton(
                     onPressed: () {},
                     icon: const Icon(Icons.tune_rounded),
@@ -118,9 +132,31 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
           Positioned(
             bottom: 20,
             right: 20,
-            child: AddItemButton(
-              primaryColor: primaryColor,
-              onTap: () => context.pushNamed(RouteNames.addItem),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton.extended(
+                  heroTag: 'transferFab',
+                  backgroundColor: Colors.indigo,
+                  onPressed: () => context.pushNamed(RouteNames.stockTransfer),
+                  icon: const Icon(
+                    Icons.swap_horiz_rounded,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    "Relocate Bin",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                AddItemButton(
+                  primaryColor: primaryColor,
+                  onTap: () => context.pushNamed(RouteNames.addItem),
+                ),
+              ],
             ),
           ),
         ],

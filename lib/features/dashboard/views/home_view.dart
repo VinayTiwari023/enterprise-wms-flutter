@@ -189,23 +189,44 @@ class DashboardView extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  AppLocalizations.of(
-                    context,
-                  )!.hello(userVM.user?.name ?? 'Vinay'),
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                Text(
-                  AppLocalizations.of(context)!.todayStatus,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.hello(userVM.user?.name ?? 'Vinay'),
+                            style: const TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.todayStatus,
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        'assets/icons/wms_icon.png',
+                        width: 44,
+                        height: 44,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 15),
                 const Divider(),
@@ -340,9 +361,7 @@ class DashboardView extends ConsumerWidget {
                 icon: Icons.checklist_rounded,
                 label: "Audit",
                 color: primaryColor,
-                onTap: () {
-                  // TODO: Add Audit route if needed
-                },
+                onTap: () => context.pushNamed(RouteNames.audit),
               ),
               QuickActionItem(
                 icon: Icons.inventory_2_outlined,
@@ -350,6 +369,14 @@ class DashboardView extends ConsumerWidget {
                 color: primaryColor,
                 onTap: () {
                   context.go('/inventory');
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.swap_horiz_rounded,
+                label: "Relocate",
+                color: primaryColor,
+                onTap: () {
+                  context.pushNamed(RouteNames.stockTransfer);
                 },
               ),
               QuickActionItem(
@@ -361,10 +388,28 @@ class DashboardView extends ConsumerWidget {
                 },
               ),
               QuickActionItem(
+                icon: Icons.route_rounded,
+                label: "Picklists",
+                color: primaryColor,
+                onTap: () {
+                  context.pushNamed(RouteNames.picklist);
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.assignment_return_rounded,
+                label: "Returns",
+                color: primaryColor,
+                onTap: () {
+                  context.pushNamed(RouteNames.returns);
+                },
+              ),
+              QuickActionItem(
                 icon: Icons.settings_outlined,
                 label: "Config",
                 color: primaryColor,
-                onTap: () {},
+                onTap: () {
+                  context.go('/profile');
+                },
               ),
             ]),
           ),

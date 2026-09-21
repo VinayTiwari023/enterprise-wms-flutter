@@ -23,6 +23,9 @@ import '../../features/shipment/services/shipment_mock_service.dart';
 import '../../features/inward/repositories/inward_repository.dart';
 import '../../features/inward/services/inward_mock_service.dart';
 
+import '../../features/picklist/services/picklist_mock_service.dart';
+import '../../features/returns/services/returns_mock_service.dart';
+
 final locator = GetIt.instance;
 
 void setupLocator() {
@@ -57,6 +60,12 @@ void setupLocator() {
   );
 
   locator.registerLazySingleton<InwardMockService>(() => InwardMockService());
+
+  locator.registerLazySingleton<PicklistMockService>(
+    () => PicklistMockService(),
+  );
+
+  locator.registerLazySingleton<ReturnsMockService>(() => ReturnsMockService());
 
   // Repositories
   locator.registerLazySingleton<AuthRepository>(

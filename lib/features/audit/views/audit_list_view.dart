@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../app/router/route_names.dart';
+import '../models/audit_model.dart';
 import '../viewmodels/audit_view_model.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../../../core/enums/view_status.dart';
-import 'audit_details_view.dart';
 
 class AuditListView extends ConsumerWidget {
   const AuditListView({super.key});
@@ -33,7 +35,7 @@ class AuditListView extends ConsumerWidget {
     );
   }
 
-  Widget _buildAuditCard(BuildContext context, audit, Color color) {
+  Widget _buildAuditCard(BuildContext context, AuditModel audit, Color color) {
     Color statusColor = audit.status == "Completed"
         ? Colors.green
         : Colors.orange;
@@ -41,14 +43,10 @@ class AuditListView extends ConsumerWidget {
     return InkWell(
       onTap: audit.status == "Completed"
           ? null
-          : () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AuditDetailsView(auditId: audit.id),
-                ),
-              );
-            },
+          : () => context.pushNamed(
+              RouteNames.auditDetails,
+              pathParameters: {'auditId': audit.id},
+            ),
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.all(20),

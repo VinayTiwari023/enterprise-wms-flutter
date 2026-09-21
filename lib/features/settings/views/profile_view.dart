@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../viewmodels/theme_view_model.dart';
 import '../../authentication/viewmodels/user_view_model.dart';
 import '../widgets/settings_widgets.dart';
@@ -16,18 +17,26 @@ class ProfileView extends ConsumerWidget {
     final primaryColor = themeVM.currentThemeColor;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             elevation: 0,
             pinned: true,
             floating: true,
             snap: true,
             leading: IconButton(
-              onPressed: onBack ?? () {},
+              onPressed: () {
+                if (onBack != null) {
+                  onBack!();
+                } else if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                } else {
+                  context.go('/dashboard');
+                }
+              },
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
             ),
             title: const Text(
@@ -141,7 +150,55 @@ class ProfileView extends ConsumerWidget {
                       }
                     },
                   ),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 30),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            'assets/icons/wms_icon.png',
+                            width: 48,
+                            height: 48,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              "WMS Enterprise",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              "Version 1.0.0 (Build 100)",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),

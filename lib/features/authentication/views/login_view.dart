@@ -58,16 +58,36 @@ class _LoginViewState extends ConsumerState<LoginView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Lock Icon
-                    Icon(
-                      Icons.lock_person_rounded,
-                      size: ResponsiveHelper.responsiveSize(
-                        context,
-                        60,
-                        80,
-                        100,
+                    // App Logo / Icon
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: primaryColor.withValues(alpha: 0.25),
+                            blurRadius: 16,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
-                      color: primaryColor,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.asset(
+                          'assets/icons/wms_icon.png',
+                          width: ResponsiveHelper.responsiveSize(
+                            context,
+                            70,
+                            90,
+                            110,
+                          ),
+                          height: ResponsiveHelper.responsiveSize(
+                            context,
+                            70,
+                            90,
+                            110,
+                          ),
+                        ),
+                      ),
                     ),
 
                     SizedBox(
@@ -172,7 +192,14 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                       _passwordController.text,
                                     );
 
-                                if (loginState.status == ViewStatus.success &&
+                                if (!mounted) return;
+
+                                final currentLoginState = ref.read(
+                                  loginViewModelProvider,
+                                );
+
+                                if (currentLoginState.status ==
+                                        ViewStatus.success &&
                                     user != null) {
                                   // Save user to session
                                   ref
@@ -186,12 +213,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
                                   );
                                   // The router will automatically redirect to /dashboard
                                   // because userState.isLoggedIn will become true.
-                                } else if (loginState.status ==
+                                } else if (currentLoginState.status ==
                                     ViewStatus.error) {
                                   scaffoldMessenger.showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        loginState.errorMessage ??
+                                        currentLoginState.errorMessage ??
                                             'Login Failed',
                                       ),
                                       backgroundColor: Colors.red,
