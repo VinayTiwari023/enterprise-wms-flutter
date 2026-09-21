@@ -65,18 +65,48 @@ class _ReturnsListViewState extends ConsumerState<ReturnsListView> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: themeVM.isDarkMode
+                    ? Colors.grey.shade800
+                    : Colors.grey.shade300,
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
             child: TextField(
               controller: _searchController,
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: "Search RMA #, Order #, Customer...",
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+                hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+                prefixIcon: Container(
+                  margin: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.search_rounded,
+                    color: primaryColor,
+                    size: 20,
+                  ),
+                ),
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
                 ),
               ),
             ),
@@ -87,22 +117,47 @@ class _ReturnsListViewState extends ConsumerState<ReturnsListView> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               scrollDirection: Axis.horizontal,
               itemCount: _filters.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
               itemBuilder: (context, index) {
                 bool isSelected = _selectedFilterIndex == index;
-                return ChoiceChip(
-                  label: Text(_filters[index]),
-                  selected: isSelected,
-                  selectedColor: primaryColor,
-                  labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : null,
-                    fontWeight: FontWeight.bold,
+                return GestureDetector(
+                  onTap: () => setState(() => _selectedFilterIndex = index),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? primaryColor
+                          : Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isSelected
+                            ? primaryColor
+                            : (themeVM.isDarkMode
+                                  ? Colors.grey.shade800
+                                  : Colors.grey.shade300),
+                        width: isSelected ? 1.5 : 1.0,
+                      ),
+                      boxShadow: [
+                        if (isSelected)
+                          BoxShadow(
+                            color: primaryColor.withValues(alpha: 0.25),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      _filters[index],
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.grey.shade600,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
                   ),
-                  onSelected: (selected) {
-                    if (selected) {
-                      setState(() => _selectedFilterIndex = index);
-                    }
-                  },
                 );
               },
             ),

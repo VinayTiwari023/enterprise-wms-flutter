@@ -93,6 +93,15 @@ class MainDrawer extends ConsumerWidget {
                   onTap: () => onIndexSelected(0),
                 ),
                 _drawerItem(
+                  Icons.storage_rounded,
+                  "Master Data",
+                  color: primaryColor,
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.pushNamed(RouteNames.masters);
+                  },
+                ),
+                _drawerItem(
                   Icons.login_rounded,
                   "Inbound / Receiving",
                   isSelected: selectedIndex == 1,

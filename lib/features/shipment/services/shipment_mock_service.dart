@@ -25,7 +25,7 @@ class ShipmentMockService {
     ),
     OutboundOrderModel(
       orderNumber: "ORD-8812",
-      customer: "Zenix Electronics",
+      customer: "Delhi HyperMart",
       date: "7/7/2026",
       status: "Picking",
       items: [
@@ -40,7 +40,7 @@ class ShipmentMockService {
     ),
     OutboundOrderModel(
       orderNumber: "ORD-9905",
-      customer: "Fresh Foods Market",
+      customer: "Bengaluru Grocery Express",
       date: "8/7/2026",
       status: "Shipped",
       items: [

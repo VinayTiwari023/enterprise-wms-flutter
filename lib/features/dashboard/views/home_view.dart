@@ -8,6 +8,9 @@ import '../../../core/helpers/responsive_helper.dart';
 import '../viewmodels/home_view_model.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../../authentication/viewmodels/user_view_model.dart';
+import '../../../core/session/warehouse_session.dart';
+import '../../printing/views/label_printer_dialog.dart';
+import '../../printing/models/label_data.dart';
 import '../../../shared/widgets/main_drawer.dart';
 import '../widgets/dashboard_widgets.dart';
 
@@ -228,6 +231,74 @@ class DashboardView extends ConsumerWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 14),
+
+                // Active Warehouse Site Selector
+                Consumer(
+                  builder: (context, ref, _) {
+                    final warehouseState = ref.watch(
+                      warehouseViewModelProvider,
+                    );
+                    return InkWell(
+                      onTap: () =>
+                          _showWarehouseSitePicker(context, ref, primaryColor),
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: primaryColor.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.storefront_rounded,
+                              color: primaryColor,
+                              size: 22,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "ACTIVE WAREHOUSE SITE",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                  Text(
+                                    warehouseState.activeSite.name,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.unfold_more_rounded,
+                              color: primaryColor,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
                 const SizedBox(height: 15),
                 const Divider(),
                 const SizedBox(height: 15),
@@ -404,6 +475,32 @@ class DashboardView extends ConsumerWidget {
                 },
               ),
               QuickActionItem(
+                icon: Icons.storage_rounded,
+                label: "Masters",
+                color: primaryColor,
+                onTap: () {
+                  context.pushNamed(RouteNames.masters);
+                },
+              ),
+              QuickActionItem(
+                icon: Icons.print_rounded,
+                label: "Print Label",
+                color: primaryColor,
+                onTap: () {
+                  LabelPrinterBottomSheet.show(
+                    context,
+                    const LabelData(
+                      type: LabelType.binTag,
+                      title: "Warehouse Bin Location Tag",
+                      primaryCode: "BIN-A0-01",
+                      subTitle: "Capacity: 250 Units",
+                      zoneOrLocation: "Zone A - Aisle 1",
+                      details: "Standard Heavy Duty Storage Shelf",
+                    ),
+                  );
+                },
+              ),
+              QuickActionItem(
                 icon: Icons.settings_outlined,
                 label: "Config",
                 color: primaryColor,
@@ -416,6 +513,92 @@ class DashboardView extends ConsumerWidget {
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 20)),
       ],
+    );
+  }
+
+  void _showWarehouseSitePicker(
+    BuildContext context,
+    WidgetRef ref,
+    Color primaryColor,
+  ) {
+    final warehouseState = ref.read(warehouseViewModelProvider);
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Select Active Warehouse Site",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            ...warehouseState.availableSites.map((site) {
+              final isSelected = site.id == warehouseState.activeSite.id;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? primaryColor.withValues(alpha: 0.08)
+                      : Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isSelected ? primaryColor : Colors.grey.shade300,
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: ListTile(
+                  leading: Icon(
+                    Icons.storefront_rounded,
+                    color: isSelected ? primaryColor : Colors.grey,
+                  ),
+                  title: Text(
+                    site.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? primaryColor : null,
+                    ),
+                  ),
+                  subtitle: Text(
+                    "${site.city}, ${site.state} • ${site.totalBins} Bins",
+                  ),
+                  trailing: isSelected
+                      ? Icon(Icons.check_circle_rounded, color: primaryColor)
+                      : null,
+                  onTap: () {
+                    ref
+                        .read(warehouseViewModelProvider.notifier)
+                        .switchSite(site);
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Switched active site to ${site.name}"),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }),
+          ],
+        ),
+      ),
     );
   }
 }

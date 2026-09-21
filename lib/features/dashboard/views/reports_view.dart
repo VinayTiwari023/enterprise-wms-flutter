@@ -33,13 +33,13 @@ class ReportsView extends ConsumerWidget {
             centerTitle: true,
             actions: [
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.tune_rounded),
-              ),
-              IconButton(
-                onPressed: () =>
-                    ref.read(reportsViewModelProvider.notifier).fetchReports(),
+                onPressed: () => _showReportExportBottomSheet(
+                  context,
+                  primaryColor,
+                  "Monthly Warehouse Performance Report",
+                ),
                 icon: const Icon(Icons.file_download_outlined),
+                tooltip: "Export PDF Report",
               ),
             ],
           ),
@@ -135,6 +135,7 @@ class ReportsView extends ConsumerWidget {
                         context,
                         report['title']!,
                         report['date']!,
+                        primaryColor,
                       );
                     }, childCount: reportsState.recentReports.length),
                   ),
@@ -382,9 +383,15 @@ class ReportsView extends ConsumerWidget {
     );
   }
 
-  Widget _buildReportTile(BuildContext context, String title, String date) {
+  Widget _buildReportTile(
+    BuildContext context,
+    String title,
+    String date,
+    Color primaryColor,
+  ) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
+      onTap: () => _showReportExportBottomSheet(context, primaryColor, title),
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -399,15 +406,118 @@ class ReportsView extends ConsumerWidget {
       ),
       title: Text(
         title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
       ),
       subtitle: Text(
         "Generated on $date",
         style: const TextStyle(color: Colors.grey, fontSize: 12),
       ),
       trailing: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.more_vert, size: 20),
+        onPressed: () =>
+            _showReportExportBottomSheet(context, primaryColor, title),
+        icon: const Icon(Icons.download_rounded, color: Colors.blue, size: 22),
+      ),
+    );
+  }
+
+  void _showReportExportBottomSheet(
+    BuildContext context,
+    Color primaryColor,
+    String reportTitle,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              reportTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "Select Export Format for On-Screen Preview",
+              style: TextStyle(color: Colors.grey, fontSize: 13),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.picture_as_pdf_rounded,
+                  color: Colors.redAccent,
+                ),
+              ),
+              title: const Text(
+                "Export as PDF Document (.pdf)",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text(
+                "Formated printable report with charts & summaries",
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("PDF Report generated: $reportTitle.pdf"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.table_chart_rounded,
+                  color: Colors.green,
+                ),
+              ),
+              title: const Text(
+                "Export as Excel CSV Spreadsheet (.csv)",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text(
+                "Raw data table compatible with Excel & Sheets",
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("CSV Data exported: $reportTitle.csv"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

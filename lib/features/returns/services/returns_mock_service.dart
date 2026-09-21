@@ -8,7 +8,7 @@ class ReturnsMockService {
       ReturnOrderModel(
         rmaNumber: "RMA-9081",
         originalOrderNumber: "ORD-1002",
-        customerName: "Acme Logistics Corp",
+        customerName: "Reliance Retail Logistics",
         returnReason: "Defective Item",
         status: "Pending Inspection",
         date: DateTime.now().subtract(const Duration(hours: 4)),
@@ -34,7 +34,7 @@ class ReturnsMockService {
       ReturnOrderModel(
         rmaNumber: "RMA-9082",
         originalOrderNumber: "ORD-1005",
-        customerName: "Global Trade Inc",
+        customerName: "Tata Digital Outlets",
         returnReason: "Wrong Item Shipped",
         status: "Inspected",
         date: DateTime.now().subtract(const Duration(days: 1)),
@@ -53,7 +53,7 @@ class ReturnsMockService {
       ReturnOrderModel(
         rmaNumber: "RMA-9080",
         originalOrderNumber: "ORD-0985",
-        customerName: "Nexus Electronics",
+        customerName: "Mahindra Auto Parts India",
         returnReason: "Carrier Damage",
         status: "Processed",
         date: DateTime.now().subtract(const Duration(days: 3)),

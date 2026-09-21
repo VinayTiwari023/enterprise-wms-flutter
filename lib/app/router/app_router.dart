@@ -26,6 +26,7 @@ import '../../features/picklist/views/picklist_details_view.dart';
 import '../../features/returns/views/returns_list_view.dart';
 import '../../features/returns/views/return_inspection_view.dart';
 import '../../features/returns/views/create_rma_view.dart';
+import '../../features/masters/views/masters_view.dart';
 
 // Global keys for navigation
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -167,6 +168,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                         },
                       ),
                     ],
+                  ),
+                  GoRoute(
+                    path: 'masters',
+                    name: RouteNames.masters,
+                    builder: (context, state) => const MastersView(),
                   ),
                 ],
               ),

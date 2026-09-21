@@ -84,7 +84,7 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
                   horizontal: 20,
                   vertical: 10,
                 ),
-                child: _buildSearchBar(context),
+                child: _buildSearchBar(context, primaryColor),
               ),
             ),
           ),
@@ -139,26 +139,52 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
+  Widget _buildSearchBar(BuildContext context, Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: TextField(
         controller: _searchController,
         decoration: InputDecoration(
           hintText: "Search tasks or ID...",
-          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+          prefixIcon: Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(Icons.search_rounded, color: primaryColor, size: 20),
+          ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildFilterChips(Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SizedBox(
       height: 40,
       child: ListView.separated(
@@ -175,23 +201,32 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
                   .setFilter(_filters[index]);
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 18),
               decoration: BoxDecoration(
                 color: isSelected ? primaryColor : Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isSelected
                       ? primaryColor
-                      : Colors.grey.withValues(alpha: 0.2),
+                      : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
+                  width: isSelected ? 1.5 : 1.0,
                 ),
+                boxShadow: [
+                  if (isSelected)
+                    BoxShadow(
+                      color: primaryColor.withValues(alpha: 0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                ],
               ),
               alignment: Alignment.center,
               child: Text(
                 _filters[index],
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.grey,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  color: isSelected ? Colors.white : Colors.grey.shade600,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  fontSize: 13,
                 ),
               ),
             ),

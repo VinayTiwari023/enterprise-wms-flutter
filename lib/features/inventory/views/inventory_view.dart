@@ -96,7 +96,7 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                       horizontal: 20,
                       vertical: 10,
                     ),
-                    child: _buildSearchBar(context),
+                    child: _buildSearchBar(context, primaryColor),
                   ),
                 ),
               ),
@@ -164,11 +164,24 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
+  Widget _buildSearchBar(BuildContext context, Color primaryColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: TextField(
         controller: _searchController,
@@ -176,10 +189,21 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
             ref.read(inventorySearchQueryProvider.notifier).state = value,
         decoration: InputDecoration(
           hintText: "Search items, SKU, category...",
-          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+          prefixIcon: Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(Icons.search_rounded, color: primaryColor, size: 20),
+          ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );

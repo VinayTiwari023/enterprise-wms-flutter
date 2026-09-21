@@ -8,7 +8,7 @@ class PicklistMockService {
       PicklistModel(
         id: "PL-2024-001",
         waveNumber: "WAVE-201",
-        assignedPicker: "Vinay Kumar",
+        assignedPicker: "Rahul Sharma",
         status: "In Progress",
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
         items: const [
@@ -57,7 +57,7 @@ class PicklistMockService {
       PicklistModel(
         id: "PL-2024-002",
         waveNumber: "WAVE-202",
-        assignedPicker: "Sarah Jenkins",
+        assignedPicker: "Priya Patel",
         status: "Pending",
         createdAt: DateTime.now().subtract(const Duration(hours: 1)),
         items: const [
@@ -86,7 +86,7 @@ class PicklistMockService {
       PicklistModel(
         id: "PL-2024-003",
         waveNumber: "WAVE-200",
-        assignedPicker: "Mike Ross",
+        assignedPicker: "Amit Verma",
         status: "Completed",
         createdAt: DateTime.now().subtract(const Duration(hours: 5)),
         items: const [

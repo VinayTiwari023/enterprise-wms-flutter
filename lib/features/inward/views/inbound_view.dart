@@ -167,10 +167,25 @@ class InboundSearchBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeVM = ref.watch(themeViewModelProvider);
+    final primaryColor = themeVM.currentThemeColor;
+    final isDark = themeVM.isDarkMode;
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: TextField(
         controller: controller,
@@ -178,10 +193,21 @@ class InboundSearchBar extends ConsumerWidget {
             ref.read(inboundSearchQueryProvider.notifier).state = value,
         decoration: InputDecoration(
           hintText: "Search PO or Supplier...",
-          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
-          prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+          prefixIcon: Container(
+            margin: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(Icons.search_rounded, color: primaryColor, size: 20),
+          ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
@@ -194,9 +220,9 @@ class InboundFilterChips extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedFilterIndex = ref.watch(inboundFilterIndexProvider);
-    final primaryColor = ref.watch(
-      themeViewModelProvider.select((s) => s.currentThemeColor),
-    );
+    final themeVM = ref.watch(themeViewModelProvider);
+    final primaryColor = themeVM.currentThemeColor;
+    final isDark = themeVM.isDarkMode;
     final filters = ["All", "Pending", "Partial", "Completed"];
 
     return SizedBox(
@@ -211,23 +237,32 @@ class InboundFilterChips extends ConsumerWidget {
             onTap: () =>
                 ref.read(inboundFilterIndexProvider.notifier).state = index,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 18),
               decoration: BoxDecoration(
                 color: isSelected ? primaryColor : Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: isSelected
                       ? primaryColor
-                      : Colors.grey.withValues(alpha: 0.2),
+                      : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
+                  width: isSelected ? 1.5 : 1.0,
                 ),
+                boxShadow: [
+                  if (isSelected)
+                    BoxShadow(
+                      color: primaryColor.withValues(alpha: 0.25),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                ],
               ),
               alignment: Alignment.center,
               child: Text(
                 filters[index],
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.grey,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  color: isSelected ? Colors.white : Colors.grey.shade600,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  fontSize: 13,
                 ),
               ),
             ),

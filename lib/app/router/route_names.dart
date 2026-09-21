@@ -22,4 +22,5 @@ class RouteNames {
   static const String returns = 'returns';
   static const String returnDetails = 'returnDetails';
   static const String createRMA = 'createRMA';
+  static const String masters = 'masters';
 }
