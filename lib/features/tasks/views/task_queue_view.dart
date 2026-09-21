@@ -62,7 +62,7 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
               "My Task Queue",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            centerTitle: true,
+            centerTitle: false,
             actions: [
               IconButton(
                 onPressed: () =>

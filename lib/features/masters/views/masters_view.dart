@@ -49,7 +49,7 @@ class _MastersViewState extends ConsumerState<MastersView>
           "Master Data Management",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        centerTitle: true,
+        centerTitle: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           onPressed: () {

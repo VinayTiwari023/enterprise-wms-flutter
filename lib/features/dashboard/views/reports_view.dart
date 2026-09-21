@@ -30,7 +30,7 @@ class ReportsView extends ConsumerWidget {
               "Reports & Analytics",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            centerTitle: true,
+            centerTitle: false,
             actions: [
               IconButton(
                 onPressed: () => _showReportExportBottomSheet(

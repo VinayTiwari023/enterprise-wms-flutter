@@ -49,7 +49,7 @@ class _PicklistListViewState extends ConsumerState<PicklistListView> {
           "Wave & Batch Picklists",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           IconButton(
             onPressed: () {

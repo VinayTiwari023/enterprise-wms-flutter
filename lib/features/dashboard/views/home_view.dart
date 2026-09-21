@@ -9,8 +9,12 @@ import '../viewmodels/home_view_model.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../../authentication/viewmodels/user_view_model.dart';
 import '../../../core/session/warehouse_session.dart';
+import '../../../core/sync/sync_banner_widget.dart';
+import '../../../core/sync/sync_service.dart';
+import '../../barcode/views/gs1_scanner_modal.dart';
 import '../../printing/views/label_printer_dialog.dart';
 import '../../printing/models/label_data.dart';
+import '../widgets/showcase_tour_modal.dart';
 import '../../../shared/widgets/main_drawer.dart';
 import '../widgets/dashboard_widgets.dart';
 
@@ -48,7 +52,14 @@ class HomeView extends ConsumerWidget {
             Navigator.pop(context); // Close drawer
           },
         ),
-        body: SafeArea(child: navigationShell),
+        body: SafeArea(
+          child: Column(
+            children: [
+              const SyncBannerWidget(),
+              Expanded(child: navigationShell),
+            ],
+          ),
+        ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             border: Border(
@@ -171,18 +182,25 @@ class DashboardView extends ConsumerWidget {
               fontSize: ResponsiveHelper.responsiveSize(context, 18, 20, 22),
             ),
           ),
-          centerTitle: true,
+          centerTitle: false,
           actions: [
+            IconButton(
+              onPressed: () => ShowcaseTourModal.show(context),
+              icon: const Icon(Icons.help_outline_rounded),
+              tooltip: "Guided WMS Tour",
+            ),
+            IconButton(
+              onPressed: () =>
+                  ref.read(syncViewModelProvider.notifier).toggleOfflineMode(),
+              icon: const Icon(Icons.wifi_rounded),
+              tooltip: "Simulate Offline Mode",
+            ),
             IconButton(
               onPressed: () =>
                   ref.read(themeViewModelProvider.notifier).toggleTheme(),
               icon: Icon(
                 themeVM.isDarkMode ? Icons.light_mode : Icons.dark_mode,
               ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none_rounded),
             ),
           ],
         ),
@@ -212,10 +230,12 @@ class DashboardView extends ConsumerWidget {
                           ),
                           Text(
                             AppLocalizations.of(context)!.todayStatus,
-                            style: const TextStyle(
-                              color: Colors.grey,
+                            style: TextStyle(
+                              color: themeVM.isDarkMode
+                                  ? Colors.grey.shade400
+                                  : Colors.grey.shade700,
                               fontSize: 14,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -483,6 +503,12 @@ class DashboardView extends ConsumerWidget {
                 },
               ),
               QuickActionItem(
+                icon: Icons.qr_code_scanner_rounded,
+                label: "GS1 Scan",
+                color: primaryColor,
+                onTap: () => GS1ScannerModal.show(context),
+              ),
+              QuickActionItem(
                 icon: Icons.print_rounded,
                 label: "Print Label",
                 color: primaryColor,
@@ -499,6 +525,12 @@ class DashboardView extends ConsumerWidget {
                     ),
                   );
                 },
+              ),
+              QuickActionItem(
+                icon: Icons.help_outline_rounded,
+                label: "App Tour",
+                color: primaryColor,
+                onTap: () => ShowcaseTourModal.show(context),
               ),
               QuickActionItem(
                 icon: Icons.settings_outlined,

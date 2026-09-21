@@ -19,7 +19,7 @@ class AuditListView extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Cycle Counting / Audits"),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: auditState.status == ViewStatus.loading
           ? const Center(child: CircularProgressIndicator())

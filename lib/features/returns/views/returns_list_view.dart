@@ -54,7 +54,7 @@ class _ReturnsListViewState extends ConsumerState<ReturnsListView> {
           "Returns & RMA Logistics",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           IconButton(
             onPressed: () => context.pushNamed(RouteNames.createRMA),

@@ -77,7 +77,7 @@ class _OutboundViewState extends ConsumerState<OutboundView> {
                   "Outbound Shipping",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                centerTitle: true,
+                centerTitle: false,
                 actions: [
                   IconButton(
                     onPressed: () {},

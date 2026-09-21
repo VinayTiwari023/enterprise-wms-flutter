@@ -44,7 +44,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 elevation: 0,
                 pinned: true,
-                centerTitle: true,
+                centerTitle: false,
                 leading: IconButton(
                   onPressed: () {
                     if (widget.onBack != null) {

@@ -67,7 +67,7 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                   "Inventory",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                centerTitle: true,
+                centerTitle: false,
                 actions: [
                   IconButton(
                     onPressed: () =>
