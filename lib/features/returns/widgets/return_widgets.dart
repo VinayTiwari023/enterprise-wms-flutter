@@ -305,8 +305,9 @@ class _ReturnInspectionTileState extends State<ReturnInspectionTile> {
                         );
                       }).toList(),
                       onChanged: (val) {
-                        if (val != null)
+                        if (val != null) {
                           setState(() => _selectedCondition = val);
+                        }
                       },
                     ),
                   ],
@@ -344,8 +345,9 @@ class _ReturnInspectionTileState extends State<ReturnInspectionTile> {
                         );
                       }).toList(),
                       onChanged: (val) {
-                        if (val != null)
+                        if (val != null) {
                           setState(() => _selectedDisposition = val);
+                        }
                       },
                     ),
                   ],
