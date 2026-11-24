@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../core/services/audio_haptic_service.dart';
 import '../models/gs1_barcode_model.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 
@@ -212,6 +213,9 @@ class _GS1ScannerModalState extends ConsumerState<GS1ScannerModal>
                     ),
                     onSelected: (val) {
                       if (val) {
+                        ref
+                            .read(audioHapticServiceProvider)
+                            .playSuccessFeedback();
                         setState(() {
                           _parsedResult = GS1BarcodeModel.parse(code);
                         });

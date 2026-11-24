@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router/route_names.dart';
+import '../../dashboard/views/home_view.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/returns_view_model.dart';
 import '../widgets/return_widgets.dart';
@@ -48,153 +49,176 @@ class _ReturnsListViewState extends ConsumerState<ReturnsListView> {
       return matchesFilter && matchesSearch;
     }).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Returns & RMA Logistics",
-          style: TextStyle(fontWeight: FontWeight.bold),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(shouldOpenDrawerProvider.notifier).state = true;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              ref.read(shouldOpenDrawerProvider.notifier).state = true;
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                context.go('/dashboard');
+              }
+            },
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          ),
+          title: const Text(
+            "Returns & RMA Logistics",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: false,
+          actions: [
+            IconButton(
+              onPressed: () => context.pushNamed(RouteNames.createRMA),
+              icon: const Icon(Icons.add, size: 24),
+              tooltip: "Create RMA",
+            ),
+          ],
         ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            onPressed: () => context.pushNamed(RouteNames.createRMA),
-            icon: const Icon(Icons.add, size: 24),
-            tooltip: "Create RMA",
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: themeVM.isDarkMode
-                    ? Colors.grey.shade800
-                    : Colors.grey.shade300,
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
+        body: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: themeVM.isDarkMode
+                      ? Colors.grey.shade800
+                      : Colors.grey.shade300,
+                  width: 1.2,
                 ),
-              ],
-            ),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: "Search RMA #, Order #, Customer...",
-                hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-                prefixIcon: Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
-                  child: Icon(
-                    Icons.search_rounded,
-                    color: primaryColor,
-                    size: 20,
-                  ),
-                ),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
+                ],
               ),
-            ),
-          ),
-          SizedBox(
-            height: 40,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              scrollDirection: Axis.horizontal,
-              itemCount: _filters.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 10),
-              itemBuilder: (context, index) {
-                bool isSelected = _selectedFilterIndex == index;
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedFilterIndex = index),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                  hintText: "Search RMA #, Order #, Customer...",
+                  hintStyle: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? primaryColor
-                          : Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
+                      color: primaryColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.search_rounded,
+                      color: primaryColor,
+                      size: 20,
+                    ),
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 40,
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                scrollDirection: Axis.horizontal,
+                itemCount: _filters.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 10),
+                itemBuilder: (context, index) {
+                  bool isSelected = _selectedFilterIndex == index;
+                  return GestureDetector(
+                    onTap: () => setState(() => _selectedFilterIndex = index),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
+                      decoration: BoxDecoration(
                         color: isSelected
                             ? primaryColor
-                            : (themeVM.isDarkMode
-                                  ? Colors.grey.shade800
-                                  : Colors.grey.shade300),
-                        width: isSelected ? 1.5 : 1.0,
+                            : Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSelected
+                              ? primaryColor
+                              : (themeVM.isDarkMode
+                                    ? Colors.grey.shade800
+                                    : Colors.grey.shade300),
+                          width: isSelected ? 1.5 : 1.0,
+                        ),
+                        boxShadow: [
+                          if (isSelected)
+                            BoxShadow(
+                              color: primaryColor.withValues(alpha: 0.25),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                        ],
                       ),
-                      boxShadow: [
-                        if (isSelected)
-                          BoxShadow(
-                            color: primaryColor.withValues(alpha: 0.25),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      _filters[index],
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.grey.shade600,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.w600,
-                        fontSize: 13,
+                      alignment: Alignment.center,
+                      child: Text(
+                        _filters[index],
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.grey.shade600,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w600,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: returnsState.status == ViewStatus.loading
-                ? const Center(child: CircularProgressIndicator())
-                : filteredList.isEmpty
-                ? const Center(
-                    child: Text(
-                      "No return orders found.",
-                      style: TextStyle(color: Colors.grey),
+            const SizedBox(height: 12),
+            Expanded(
+              child: returnsState.status == ViewStatus.loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : filteredList.isEmpty
+                  ? const Center(
+                      child: Text(
+                        "No return orders found.",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: filteredList.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 14),
+                      itemBuilder: (context, index) {
+                        final returnOrder = filteredList[index];
+                        return ReturnOrderCard(
+                          returnOrder: returnOrder,
+                          primaryColor: primaryColor,
+                          onTap: () {
+                            context.pushNamed(
+                              RouteNames.returnDetails,
+                              pathParameters: {
+                                'rmaNumber': returnOrder.rmaNumber,
+                              },
+                            );
+                          },
+                        );
+                      },
                     ),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.all(20),
-                    itemCount: filteredList.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 14),
-                    itemBuilder: (context, index) {
-                      final returnOrder = filteredList[index];
-                      return ReturnOrderCard(
-                        returnOrder: returnOrder,
-                        primaryColor: primaryColor,
-                        onTap: () {
-                          context.pushNamed(
-                            RouteNames.returnDetails,
-                            pathParameters: {
-                              'rmaNumber': returnOrder.rmaNumber,
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

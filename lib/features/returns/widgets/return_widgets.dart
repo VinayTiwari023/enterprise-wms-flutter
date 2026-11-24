@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/return_order_model.dart';
 import '../models/return_item_model.dart';
+import '../../../shared/widgets/searchable_dropdown.dart';
 
 class ReturnOrderCard extends StatelessWidget {
   final ReturnOrderModel returnOrder;
@@ -286,9 +287,10 @@ class _ReturnInspectionTileState extends State<ReturnInspectionTile> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      initialValue: _selectedCondition,
+                    SearchableDropdown<String>(
+                      value: _selectedCondition,
+                      hintText: "Condition",
+                      modalTitle: "Select Item Condition",
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -298,12 +300,12 @@ class _ReturnInspectionTileState extends State<ReturnInspectionTile> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      items: _conditions.map((c) {
-                        return DropdownMenuItem(
-                          value: c,
-                          child: Text(c, style: const TextStyle(fontSize: 12)),
-                        );
-                      }).toList(),
+                      items: _conditions,
+                      itemLabel: (c) => c,
+                      itemIcon: (c) => const Icon(
+                        Icons.cleaning_services_outlined,
+                        size: 18,
+                      ),
                       onChanged: (val) {
                         if (val != null) {
                           setState(() => _selectedCondition = val);
@@ -326,9 +328,10 @@ class _ReturnInspectionTileState extends State<ReturnInspectionTile> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      initialValue: _selectedDisposition,
+                    SearchableDropdown<String>(
+                      value: _selectedDisposition,
+                      hintText: "Disposition",
+                      modalTitle: "Select Disposition Action",
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -338,12 +341,10 @@ class _ReturnInspectionTileState extends State<ReturnInspectionTile> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      items: _dispositions.map((d) {
-                        return DropdownMenuItem(
-                          value: d,
-                          child: Text(d, style: const TextStyle(fontSize: 12)),
-                        );
-                      }).toList(),
+                      items: _dispositions,
+                      itemLabel: (d) => d,
+                      itemIcon: (d) =>
+                          const Icon(Icons.swap_horiz_rounded, size: 18),
                       onChanged: (val) {
                         if (val != null) {
                           setState(() => _selectedDisposition = val);

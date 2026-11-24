@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router/route_names.dart';
+import '../../dashboard/views/home_view.dart';
 import '../models/audit_model.dart';
 import '../viewmodels/audit_view_model.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
@@ -16,22 +17,41 @@ class AuditListView extends ConsumerWidget {
     final themeVM = ref.watch(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cycle Counting / Audits"),
-        centerTitle: false,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(shouldOpenDrawerProvider.notifier).state = true;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              ref.read(shouldOpenDrawerProvider.notifier).state = true;
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                context.go('/dashboard');
+              }
+            },
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          ),
+          title: const Text("Cycle Counting / Audits"),
+          centerTitle: false,
+        ),
+        body: auditState.status == ViewStatus.loading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.separated(
+                padding: const EdgeInsets.all(20),
+                itemCount: auditState.audits.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  final audit = auditState.audits[index];
+                  return _buildAuditCard(context, audit, primaryColor);
+                },
+              ),
       ),
-      body: auditState.status == ViewStatus.loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.separated(
-              padding: const EdgeInsets.all(20),
-              itemCount: auditState.audits.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 16),
-              itemBuilder: (context, index) {
-                final audit = auditState.audits[index];
-                return _buildAuditCard(context, audit, primaryColor);
-              },
-            ),
     );
   }
 

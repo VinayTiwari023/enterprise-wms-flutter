@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:go_router/go_router.dart';
+
+import 'home_view.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/reports_view_model.dart';
 import '../../../core/enums/view_status.dart';
@@ -14,134 +17,157 @@ class ReportsView extends ConsumerWidget {
     final reportsState = ref.watch(reportsViewModelProvider);
     final primaryColor = themeState.currentThemeColor;
 
-    return Scaffold(
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            floating: true,
-            snap: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: const Text(
-              "Reports & Analytics",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            centerTitle: false,
-            actions: [
-              IconButton(
-                onPressed: () => _showReportExportBottomSheet(
-                  context,
-                  primaryColor,
-                  "Monthly Warehouse Performance Report",
-                ),
-                icon: const Icon(Icons.file_download_outlined),
-                tooltip: "Export PDF Report",
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(shouldOpenDrawerProvider.notifier).state = true;
+        }
+      },
+      child: Scaffold(
+        body: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              floating: true,
+              snap: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                onPressed: () {
+                  ref.read(shouldOpenDrawerProvider.notifier).state = true;
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    context.go('/dashboard');
+                  }
+                },
               ),
-            ],
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(20),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildMonthlyOverview(context, primaryColor),
-                  const SizedBox(height: 30),
-                  const Text(
-                    "Inventory Turnover",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 15),
-                  _buildTurnoverChart(context, primaryColor),
-                  const SizedBox(height: 30),
-                  const Text(
-                    "Key Performance Indicators",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 15),
-                ],
+              title: const Text(
+                "Reports & Analytics",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: SliverGrid.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 15,
-              crossAxisSpacing: 15,
-              childAspectRatio: 1.3,
-              children: [
-                _buildKPICard(
-                  context,
-                  Icons.check_circle_outline,
-                  "99.2%",
-                  "Pick Accuracy",
-                  Colors.blue,
-                ),
-                _buildKPICard(
-                  context,
-                  Icons.inventory_2_outlined,
-                  "45/hr",
-                  "Pack Rate",
-                  Colors.orange,
-                ),
-                _buildKPICard(
-                  context,
-                  Icons.timer_outlined,
-                  "2.4 hrs",
-                  "Dock to Stock",
-                  Colors.purple,
-                ),
-                _buildKPICard(
-                  context,
-                  Icons.sync_rounded,
-                  "1.5 days",
-                  "Order Cycle",
-                  Colors.teal,
+              centerTitle: false,
+              actions: [
+                IconButton(
+                  onPressed: () => _showReportExportBottomSheet(
+                    context,
+                    primaryColor,
+                    "Monthly Warehouse Performance Report",
+                  ),
+                  icon: const Icon(Icons.file_download_outlined),
+                  tooltip: "Export PDF Report",
                 ),
               ],
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(20),
-            sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            SliverPadding(
+              padding: const EdgeInsets.all(20),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildMonthlyOverview(context, primaryColor),
+                    const SizedBox(height: 30),
+                    const Text(
+                      "Inventory Turnover",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    _buildTurnoverChart(context, primaryColor),
+                    const SizedBox(height: 30),
+                    const Text(
+                      "Key Performance Indicators",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              sliver: SliverGrid.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 15,
+                childAspectRatio: 1.3,
                 children: [
-                  const SizedBox(height: 30),
-                  const Text(
-                    "Recent Reports",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  _buildKPICard(
+                    context,
+                    Icons.check_circle_outline,
+                    "99.2%",
+                    "Pick Accuracy",
+                    Colors.blue,
                   ),
-                  const SizedBox(height: 15),
+                  _buildKPICard(
+                    context,
+                    Icons.inventory_2_outlined,
+                    "45/hr",
+                    "Pack Rate",
+                    Colors.orange,
+                  ),
+                  _buildKPICard(
+                    context,
+                    Icons.timer_outlined,
+                    "2.4 hrs",
+                    "Dock to Stock",
+                    Colors.purple,
+                  ),
+                  _buildKPICard(
+                    context,
+                    Icons.sync_rounded,
+                    "1.5 days",
+                    "Order Cycle",
+                    Colors.teal,
+                  ),
                 ],
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            sliver: reportsState.status == ViewStatus.loading
-                ? const SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final report = reportsState.recentReports[index];
-                      return _buildReportTile(
-                        context,
-                        report['title']!,
-                        report['date']!,
-                        primaryColor,
-                      );
-                    }, childCount: reportsState.recentReports.length),
-                  ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
-        ],
+            SliverPadding(
+              padding: const EdgeInsets.all(20),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 30),
+                    const Text(
+                      "Recent Reports",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              sliver: reportsState.status == ViewStatus.loading
+                  ? const SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final report = reportsState.recentReports[index];
+                        return _buildReportTile(
+                          context,
+                          report['title']!,
+                          report['date']!,
+                          primaryColor,
+                        );
+                      }, childCount: reportsState.recentReports.length),
+                    ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          ],
+        ),
       ),
     );
   }

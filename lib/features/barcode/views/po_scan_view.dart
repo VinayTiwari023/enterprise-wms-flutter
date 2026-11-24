@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../../../core/services/audio_haptic_service.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../../purchase_order/views/po_details_view.dart';
 import '../../inward/viewmodels/inbound_view_model.dart';
@@ -53,6 +54,7 @@ class _POScanViewState extends ConsumerState<POScanView>
     );
 
     if (poIndex == -1) {
+      ref.read(audioHapticServiceProvider).playErrorFeedback();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("PO $poNumber not found in system"),
@@ -63,6 +65,7 @@ class _POScanViewState extends ConsumerState<POScanView>
       return;
     }
 
+    ref.read(audioHapticServiceProvider).playSuccessFeedback();
     final matchedPONumber = inboundState.purchaseOrders[poIndex].poNumber;
 
     _isScanCompleted = true;

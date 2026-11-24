@@ -6,6 +6,7 @@ import '../../settings/viewmodels/theme_view_model.dart';
 import '../models/lpn_item_model.dart';
 import '../viewmodels/lpn_view_model.dart';
 import '../widgets/lpn_widgets.dart';
+import '../../../shared/widgets/searchable_dropdown.dart';
 
 class CreateLpnView extends ConsumerStatefulWidget {
   const CreateLpnView({super.key});
@@ -189,17 +190,17 @@ class _CreateLpnViewState extends ConsumerState<CreateLpnView> {
               ),
               const SizedBox(height: 16),
 
-              // Container Type Dropdown
-              DropdownButtonFormField<String>(
-                initialValue: _selectedContainerType,
-                decoration: const InputDecoration(
-                  labelText: "Container / Pallet Type",
-                  prefixIcon: Icon(Icons.widgets_rounded),
-                  border: OutlineInputBorder(),
-                ),
-                items: _containerTypes.map((type) {
-                  return DropdownMenuItem(value: type, child: Text(type));
-                }).toList(),
+              // Container Type Searchable Dropdown
+              SearchableDropdown<String>(
+                value: _selectedContainerType,
+                labelText: "Container / Pallet Type",
+                hintText: "Select or search container type...",
+                modalTitle: "Select Container Type",
+                prefixIcon: const Icon(Icons.widgets_rounded),
+                items: _containerTypes,
+                itemLabel: (type) => type,
+                itemIcon: (type) =>
+                    const Icon(Icons.inventory_2_outlined, size: 20),
                 onChanged: (val) {
                   if (val != null) {
                     setState(() {

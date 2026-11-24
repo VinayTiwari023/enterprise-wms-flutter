@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/services/audio_haptic_service.dart';
+import '../../dashboard/views/home_view.dart';
 import '../viewmodels/theme_view_model.dart';
 import '../../authentication/viewmodels/user_view_model.dart';
 import '../widgets/settings_widgets.dart';
 import '../../../shared/dialogs/logout_dialog.dart';
+import '../../../shared/widgets/searchable_dropdown.dart';
 
 class ProfileView extends ConsumerWidget {
   final VoidCallback? onBack;
@@ -29,6 +32,7 @@ class ProfileView extends ConsumerWidget {
             snap: true,
             leading: IconButton(
               onPressed: () {
+                ref.read(shouldOpenDrawerProvider.notifier).state = true;
                 if (onBack != null) {
                   onBack!();
                 } else if (Navigator.canPop(context)) {
@@ -92,6 +96,80 @@ class ProfileView extends ConsumerWidget {
                   const SizedBox(height: 20),
                   const Divider(),
                   const SizedBox(height: 20),
+                  _buildSectionTitle("Hardware & Scanner Settings"),
+                  const SizedBox(height: 10),
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final audioHaptic = ref.watch(audioHapticServiceProvider);
+                      return Column(
+                        children: [
+                          SettingToggle(
+                            icon: Icons.volume_up_outlined,
+                            title: "Scan Audio Sound Beep",
+                            value: audioHaptic.isAudioEnabled,
+                            onChanged: (val) {
+                              audioHaptic.isAudioEnabled = val;
+                              if (val) audioHaptic.playSuccessFeedback();
+                            },
+                            primaryColor: primaryColor,
+                          ),
+                          SettingToggle(
+                            icon: Icons.vibration_rounded,
+                            title: "Scan Haptic Vibration",
+                            value: audioHaptic.isHapticEnabled,
+                            onChanged: (val) {
+                              audioHaptic.isHapticEnabled = val;
+                              if (val) audioHaptic.playSuccessFeedback();
+                            },
+                            primaryColor: primaryColor,
+                          ),
+                          ListTile(
+                            leading: Icon(
+                              Icons.qr_code_scanner_rounded,
+                              color: primaryColor,
+                              size: 24,
+                            ),
+                            title: const Text(
+                              "Hardware Laser Scanner",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: const Text(
+                              "Zebra DataWedge & Honeywell Intent Ready",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.green,
+                              ),
+                            ),
+                            trailing: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.green),
+                              ),
+                              child: const Text(
+                                "ACTIVE",
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  const Divider(),
+                  const SizedBox(height: 20),
                   _buildSectionTitle("Settings"),
                   const SizedBox(height: 10),
                   SettingToggle(
@@ -125,20 +203,37 @@ class ProfileView extends ConsumerWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    trailing: DropdownButton<String>(
-                      value: themeVM.currentLocale.languageCode,
-                      underline: const SizedBox(),
-                      items: const [
-                        DropdownMenuItem(value: 'en', child: Text("English")),
-                        DropdownMenuItem(value: 'hi', child: Text("हिंदी")),
-                      ],
-                      onChanged: (String? code) {
-                        if (code != null) {
-                          ref
-                              .read(themeViewModelProvider.notifier)
-                              .setLocale(Locale(code));
-                        }
-                      },
+                    trailing: SizedBox(
+                      width: 130,
+                      child: SearchableDropdown<String>(
+                        value: themeVM.currentLocale.languageCode,
+                        hintText: "Language",
+                        modalTitle: "Select Language",
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          border: OutlineInputBorder(),
+                        ),
+                        items: const ['en', 'hi'],
+                        itemLabel: (code) =>
+                            code == 'en' ? "English" : "हिंदी (Hindi)",
+                        itemIcon: (code) => Icon(
+                          code == 'en'
+                              ? Icons.language_rounded
+                              : Icons.translate_rounded,
+                          size: 18,
+                          color: primaryColor,
+                        ),
+                        onChanged: (String? code) {
+                          if (code != null) {
+                            ref
+                                .read(themeViewModelProvider.notifier)
+                                .setLocale(Locale(code));
+                          }
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 30),

@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../dashboard/views/home_view.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../models/personnel_model.dart';
 import '../models/item_master_model.dart';
 import '../models/bin_master_model.dart';
 import '../models/partner_master_model.dart';
 import '../viewmodels/masters_view_model.dart';
+import '../../../shared/widgets/searchable_dropdown.dart';
 
 class MastersView extends ConsumerStatefulWidget {
   const MastersView({super.key});
@@ -42,166 +44,177 @@ class _MastersViewState extends ConsumerState<MastersView>
     final primaryColor = themeVM.currentThemeColor;
     final isDark = themeVM.isDarkMode;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          "Master Data Management",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            } else {
-              context.go('/dashboard');
-            }
-          },
-        ),
-      ),
-      body: Column(
-        children: [
-          // Top Summary Banner
-          _buildSummaryBanner(context, primaryColor, mastersState),
-
-          // Search Bar
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.grey.shade900 : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-                width: 1.2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: "Search Personnel, SKUs, Bins, Partners...",
-                hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade500),
-                prefixIcon: Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.search_rounded,
-                    color: primaryColor,
-                    size: 20,
-                  ),
-                ),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear_rounded, size: 18),
-                        onPressed: () => _searchController.clear(),
-                      )
-                    : null,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-              ),
-            ),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(shouldOpenDrawerProvider.notifier).state = true;
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: const Text(
+            "Master Data Management",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
+          centerTitle: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+            onPressed: () {
+              ref.read(shouldOpenDrawerProvider.notifier).state = true;
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                context.go('/dashboard');
+              }
+            },
+          ),
+        ),
+        body: Column(
+          children: [
+            // Top Summary Banner
+            _buildSummaryBanner(context, primaryColor, mastersState),
 
-          // Styled TabBar Header
-          Container(
-            margin: const EdgeInsets.fromLTRB(16, 6, 16, 12),
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.grey.shade900 : Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-                width: 1.0,
-              ),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              labelColor: Colors.white,
-              unselectedLabelColor: isDark
-                  ? Colors.grey.shade400
-                  : Colors.grey.shade700,
-              indicator: BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.circular(12),
+            // Search Bar
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey.shade900 : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                  width: 1.2,
+                ),
                 boxShadow: [
                   BoxShadow(
-                    color: primaryColor.withValues(alpha: 0.3),
-                    blurRadius: 8,
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 10,
                     offset: const Offset(0, 3),
                   ),
                 ],
               ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerColor: Colors.transparent,
-              tabs: const [
-                Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      "Staff & Pickers",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: "Search Personnel, SKUs, Bins, Partners...",
+                  hintStyle: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade500,
+                  ),
+                  prefixIcon: Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: primaryColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      Icons.search_rounded,
+                      color: primaryColor,
+                      size: 20,
                     ),
                   ),
-                ),
-                Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      "Item Master",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          onPressed: () => _searchController.clear(),
+                        )
+                      : null,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
                   ),
                 ),
-                Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      "Bins & Zones",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Text(
-                      "Partners",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
 
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildPersonnelTab(primaryColor, mastersState.personnel),
-                _buildItemsTab(primaryColor, mastersState.items),
-                _buildBinsTab(primaryColor, mastersState.bins),
-                _buildPartnersTab(primaryColor, mastersState.partners),
-              ],
+            // Styled TabBar Header
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 6, 16, 12),
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.grey.shade900 : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                  width: 1.0,
+                ),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                labelColor: Colors.white,
+                unselectedLabelColor: isDark
+                    ? Colors.grey.shade400
+                    : Colors.grey.shade700,
+                indicator: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                tabs: const [
+                  Tab(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Staff & Pickers",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Item Master",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Bins & Zones",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Partners",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildPersonnelTab(primaryColor, mastersState.personnel),
+                  _buildItemsTab(primaryColor, mastersState.items),
+                  _buildBinsTab(primaryColor, mastersState.bins),
+                  _buildPartnersTab(primaryColor, mastersState.partners),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -928,17 +941,24 @@ class _MastersViewState extends ConsumerState<MastersView>
                 ),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: selectedRole,
-                decoration: const InputDecoration(
-                  labelText: "Role",
-                  prefixIcon: Icon(Icons.badge),
-                  border: OutlineInputBorder(),
-                ),
-                items: ['Picker', 'Loader', 'Manager', 'Auditor', 'Driver']
-                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                    .toList(),
-                onChanged: (val) => setState(() => selectedRole = val!),
+              SearchableDropdown<String>(
+                value: selectedRole,
+                labelText: "Role",
+                hintText: "Select or search role...",
+                modalTitle: "Select Personnel Role",
+                prefixIcon: const Icon(Icons.badge),
+                items: const [
+                  'Picker',
+                  'Loader',
+                  'Manager',
+                  'Auditor',
+                  'Driver',
+                ],
+                itemLabel: (r) => r,
+                itemIcon: (r) => const Icon(Icons.badge_outlined, size: 20),
+                onChanged: (val) {
+                  if (val != null) setState(() => selectedRole = val);
+                },
               ),
               const SizedBox(height: 12),
               TextField(
@@ -1275,17 +1295,18 @@ class _MastersViewState extends ConsumerState<MastersView>
                 ),
               ),
               const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: type,
-                decoration: const InputDecoration(
-                  labelText: "Partner Type",
-                  prefixIcon: Icon(Icons.category),
-                  border: OutlineInputBorder(),
-                ),
-                items: ['Supplier', 'Customer']
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                    .toList(),
-                onChanged: (val) => setState(() => type = val!),
+              SearchableDropdown<String>(
+                value: type,
+                labelText: "Partner Type",
+                hintText: "Select or search partner type...",
+                modalTitle: "Select Partner Type",
+                prefixIcon: const Icon(Icons.category),
+                items: const ['Supplier', 'Customer'],
+                itemLabel: (t) => t,
+                itemIcon: (t) => const Icon(Icons.business_outlined, size: 20),
+                onChanged: (val) {
+                  if (val != null) setState(() => type = val);
+                },
               ),
               const SizedBox(height: 20),
               SizedBox(

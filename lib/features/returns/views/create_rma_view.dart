@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/returns_view_model.dart';
 import '../models/return_item_model.dart';
+import '../../../shared/widgets/searchable_dropdown.dart';
 
 class CreateRMAView extends ConsumerStatefulWidget {
   const CreateRMAView({super.key});
@@ -79,16 +80,16 @@ class _CreateRMAViewState extends ConsumerState<CreateRMAView> {
                   : null,
             ),
             const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              initialValue: _selectedReason,
-              decoration: const InputDecoration(
-                labelText: "Primary Return Reason",
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.help_outline_rounded),
-              ),
-              items: _reasons.map((r) {
-                return DropdownMenuItem(value: r, child: Text(r));
-              }).toList(),
+            SearchableDropdown<String>(
+              value: _selectedReason,
+              labelText: "Primary Return Reason",
+              hintText: "Select or search return reason...",
+              modalTitle: "Select Return Reason",
+              prefixIcon: const Icon(Icons.help_outline_rounded),
+              items: _reasons,
+              itemLabel: (r) => r,
+              itemIcon: (r) =>
+                  const Icon(Icons.report_problem_outlined, size: 20),
               onChanged: (val) {
                 if (val != null) setState(() => _selectedReason = val);
               },

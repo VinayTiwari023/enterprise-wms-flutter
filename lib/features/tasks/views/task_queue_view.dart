@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../dashboard/views/home_view.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/tasks_view_model.dart';
 import '../../../core/enums/view_status.dart';
@@ -46,95 +48,109 @@ class _TaskQueueViewState extends ConsumerState<TaskQueueView> {
     final tasksState = ref.watch(tasksViewModelProvider);
     final primaryColor = themeState.currentThemeColor;
 
-    return Scaffold(
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            pinned: true,
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-            ),
-            title: const Text(
-              "My Task Queue",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            centerTitle: false,
-            actions: [
-              IconButton(
-                onPressed: () =>
-                    ref.read(tasksViewModelProvider.notifier).fetchTasks(),
-                icon: const Icon(Icons.refresh_rounded),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(shouldOpenDrawerProvider.notifier).state = true;
+        }
+      },
+      child: Scaffold(
+        body: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              pinned: true,
+              leading: IconButton(
+                onPressed: () {
+                  ref.read(shouldOpenDrawerProvider.notifier).state = true;
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    context.go('/dashboard');
+                  }
+                },
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
               ),
-            ],
-          ),
-
-          // Pinned Search Bar
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: PersistentHeaderDelegate(
-              minHeight: 70,
-              maxHeight: 70,
-              child: Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
+              title: const Text(
+                "My Task Queue",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              centerTitle: false,
+              actions: [
+                IconButton(
+                  onPressed: () =>
+                      ref.read(tasksViewModelProvider.notifier).fetchTasks(),
+                  icon: const Icon(Icons.refresh_rounded),
                 ),
-                child: _buildSearchBar(context, primaryColor),
-              ),
+              ],
             ),
-          ),
 
-          // Pinned Filter Chips
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: PersistentHeaderDelegate(
-              minHeight: 60,
-              maxHeight: 60,
-              child: Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                child: _buildFilterChips(primaryColor),
-              ),
-            ),
-          ),
-
-          // Task List
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            sliver: tasksState.status == ViewStatus.loading
-                ? const SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : tasksState.filteredTasks.isEmpty
-                ? const SliverToBoxAdapter(
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 100),
-                        child: Text("No tasks found in your queue"),
-                      ),
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final task = tasksState.filteredTasks[index];
-                      return TaskCard(
-                        task: task,
-                        primaryColor: primaryColor,
-                        onTap: () {},
-                      );
-                    }, childCount: tasksState.filteredTasks.length),
+            // Pinned Search Bar
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: PersistentHeaderDelegate(
+                minHeight: 70,
+                maxHeight: 70,
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
                   ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
-        ],
+                  child: _buildSearchBar(context, primaryColor),
+                ),
+              ),
+            ),
+
+            // Pinned Filter Chips
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: PersistentHeaderDelegate(
+                minHeight: 60,
+                maxHeight: 60,
+                child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  child: _buildFilterChips(primaryColor),
+                ),
+              ),
+            ),
+
+            // Task List
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              sliver: tasksState.status == ViewStatus.loading
+                  ? const SliverToBoxAdapter(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : tasksState.filteredTasks.isEmpty
+                  ? const SliverToBoxAdapter(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 100),
+                          child: Text("No tasks found in your queue"),
+                        ),
+                      ),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final task = tasksState.filteredTasks[index];
+                        return TaskCard(
+                          task: task,
+                          primaryColor: primaryColor,
+                          onTap: () {},
+                        );
+                      }, childCount: tasksState.filteredTasks.length),
+                    ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          ],
+        ),
       ),
     );
   }

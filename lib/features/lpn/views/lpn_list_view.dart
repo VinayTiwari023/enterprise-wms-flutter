@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router/route_names.dart';
 import '../../../core/enums/view_status.dart';
+import '../../dashboard/views/home_view.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/lpn_view_model.dart';
 import '../widgets/lpn_widgets.dart';
@@ -43,181 +44,203 @@ class _LpnListViewState extends ConsumerState<LpnListView>
       lpnViewModelProvider.select((s) => s.transfers),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Pallet & LPN Management"),
-        centerTitle: false,
-        actions: [
-          IconButton(
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(shouldOpenDrawerProvider.notifier).state = true;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
             onPressed: () {
-              ref.read(lpnViewModelProvider.notifier).fetchLpns();
+              ref.read(shouldOpenDrawerProvider.notifier).state = true;
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                context.go('/dashboard');
+              }
             },
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: "Refresh Containers",
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
           ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: primaryColor,
-          labelColor: primaryColor,
-          unselectedLabelColor: Colors.grey,
-          tabs: const [
-            Tab(text: "Active Pallets / LPNs"),
-            Tab(text: "Movement Log"),
+          title: const Text("Pallet & LPN Management"),
+          centerTitle: false,
+          actions: [
+            IconButton(
+              onPressed: () {
+                ref.read(lpnViewModelProvider.notifier).fetchLpns();
+              },
+              icon: const Icon(Icons.refresh_rounded),
+              tooltip: "Refresh Containers",
+            ),
           ],
-        ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          // Tab 1: Active Pallets / LPNs
-          Column(
-            children: [
-              // Search Bar
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) {
-                    ref.read(lpnSearchQueryProvider.notifier).state = val;
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Search LPN, SKU, Location, or Status...",
-                    prefixIcon: const Icon(Icons.search_rounded),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear_rounded),
-                            onPressed: () {
-                              _searchController.clear();
-                              ref.read(lpnSearchQueryProvider.notifier).state =
-                                  "";
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-
-              // Overview Stats Row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    _buildStatChip(
-                      context,
-                      label: "Total Pallets",
-                      value: "${filteredLpns.length}",
-                      icon: Icons.widgets_rounded,
-                      color: primaryColor,
-                    ),
-                    const SizedBox(width: 10),
-                    _buildStatChip(
-                      context,
-                      label: "Staged",
-                      value:
-                          "${filteredLpns.where((l) => l.status.toLowerCase() == 'staged').length}",
-                      icon: Icons.schedule_rounded,
-                      color: Colors.orange,
-                    ),
-                    const SizedBox(width: 10),
-                    _buildStatChip(
-                      context,
-                      label: "Putaway",
-                      value:
-                          "${filteredLpns.where((l) => l.status.toLowerCase() == 'putaway').length}",
-                      icon: Icons.check_circle_rounded,
-                      color: Colors.green,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              // List of LPN Cards
-              Expanded(
-                child: status == ViewStatus.loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : filteredLpns.isEmpty
-                    ? const Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.inventory_2_outlined,
-                              size: 64,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 12),
-                            Text(
-                              "No Pallets or LPN containers found",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: filteredLpns.length,
-                        itemBuilder: (context, index) {
-                          final lpn = filteredLpns[index];
-                          return LpnCard(
-                            lpn: lpn,
-                            primaryColor: primaryColor,
-                            onTap: () {
-                              context.pushNamed(
-                                RouteNames.lpnDetails,
-                                pathParameters: {'lpnNumber': lpn.lpnNumber},
-                              );
-                            },
-                            onTransfer: () {
-                              context.pushNamed(
-                                RouteNames.lpnTransfer,
-                                queryParameters: {'lpnNumber': lpn.lpnNumber},
-                              );
-                            },
-                          );
-                        },
-                      ),
-              ),
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: primaryColor,
+            labelColor: primaryColor,
+            unselectedLabelColor: Colors.grey,
+            tabs: const [
+              Tab(text: "Active Pallets / LPNs"),
+              Tab(text: "Movement Log"),
             ],
           ),
-
-          // Tab 2: Movement Logs
-          transfers.isEmpty
-              ? const Center(
-                  child: Text(
-                    "No LPN transfer logs recorded yet.",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-              : ListView.builder(
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            // Tab 1: Active Pallets / LPNs
+            Column(
+              children: [
+                // Search Bar
+                Padding(
                   padding: const EdgeInsets.all(16),
-                  itemCount: transfers.length,
-                  itemBuilder: (context, index) {
-                    final transfer = transfers[index];
-                    return LpnTransferHistoryCard(transfer: transfer);
-                  },
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (val) {
+                      ref.read(lpnSearchQueryProvider.notifier).state = val;
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Search LPN, SKU, Location, or Status...",
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear_rounded),
+                              onPressed: () {
+                                _searchController.clear();
+                                ref
+                                        .read(lpnSearchQueryProvider.notifier)
+                                        .state =
+                                    "";
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
                 ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: primaryColor,
-        onPressed: () {
-          _showActionMenu(context, primaryColor);
-        },
-        icon: const Icon(Icons.add_rounded, color: Colors.white),
-        label: const Text(
-          "LPN Actions",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+
+                // Overview Stats Row
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      _buildStatChip(
+                        context,
+                        label: "Total Pallets",
+                        value: "${filteredLpns.length}",
+                        icon: Icons.widgets_rounded,
+                        color: primaryColor,
+                      ),
+                      const SizedBox(width: 10),
+                      _buildStatChip(
+                        context,
+                        label: "Staged",
+                        value:
+                            "${filteredLpns.where((l) => l.status.toLowerCase() == 'staged').length}",
+                        icon: Icons.schedule_rounded,
+                        color: Colors.orange,
+                      ),
+                      const SizedBox(width: 10),
+                      _buildStatChip(
+                        context,
+                        label: "Putaway",
+                        value:
+                            "${filteredLpns.where((l) => l.status.toLowerCase() == 'putaway').length}",
+                        icon: Icons.check_circle_rounded,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // List of LPN Cards
+                Expanded(
+                  child: status == ViewStatus.loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : filteredLpns.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.inventory_2_outlined,
+                                size: 64,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                "No Pallets or LPN containers found",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: filteredLpns.length,
+                          itemBuilder: (context, index) {
+                            final lpn = filteredLpns[index];
+                            return LpnCard(
+                              lpn: lpn,
+                              primaryColor: primaryColor,
+                              onTap: () {
+                                context.pushNamed(
+                                  RouteNames.lpnDetails,
+                                  pathParameters: {'lpnNumber': lpn.lpnNumber},
+                                );
+                              },
+                              onTransfer: () {
+                                context.pushNamed(
+                                  RouteNames.lpnTransfer,
+                                  queryParameters: {'lpnNumber': lpn.lpnNumber},
+                                );
+                              },
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+
+            // Tab 2: Movement Logs
+            transfers.isEmpty
+                ? const Center(
+                    child: Text(
+                      "No LPN transfer logs recorded yet.",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: transfers.length,
+                    itemBuilder: (context, index) {
+                      final transfer = transfers[index];
+                      return LpnTransferHistoryCard(transfer: transfer);
+                    },
+                  ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: primaryColor,
+          onPressed: () {
+            _showActionMenu(context, primaryColor);
+          },
+          icon: const Icon(Icons.add_rounded, color: Colors.white),
+          label: const Text(
+            "LPN Actions",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );

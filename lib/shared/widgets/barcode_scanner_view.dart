@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../../core/services/audio_haptic_service.dart';
 import '../../features/settings/viewmodels/theme_view_model.dart';
 
 class BarcodeScannerView extends ConsumerStatefulWidget {
@@ -45,6 +46,7 @@ class _BarcodeScannerViewState extends ConsumerState<BarcodeScannerView>
   void _onScanSuccess(String code) {
     if (_isScanCompleted) return;
     _isScanCompleted = true;
+    ref.read(audioHapticServiceProvider).playSuccessFeedback();
     Navigator.pop(context, code);
   }
 

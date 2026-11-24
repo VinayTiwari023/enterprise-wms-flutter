@@ -218,7 +218,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/inbound',
                 name: RouteNames.inbound,
                 builder: (context, state) => InboundView(
-                  onBack: () => GoRouter.of(context).go('/dashboard'),
+                  onBack: () {
+                    ref.read(shouldOpenDrawerProvider.notifier).state = true;
+                    GoRouter.of(context).go('/dashboard');
+                  },
                 ),
                 routes: [
                   GoRoute(
@@ -250,7 +253,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/outbound',
                 name: RouteNames.outbound,
                 builder: (context, state) => OutboundView(
-                  onBack: () => GoRouter.of(context).go('/dashboard'),
+                  onBack: () {
+                    ref.read(shouldOpenDrawerProvider.notifier).state = true;
+                    GoRouter.of(context).go('/dashboard');
+                  },
                 ),
                 routes: [
                   GoRoute(
@@ -277,7 +283,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/inventory',
                 name: RouteNames.inventory,
                 builder: (context, state) => InventoryView(
-                  onBack: () => GoRouter.of(context).go('/dashboard'),
+                  onBack: () {
+                    ref.read(shouldOpenDrawerProvider.notifier).state = true;
+                    GoRouter.of(context).go('/dashboard');
+                  },
                 ),
                 routes: [
                   GoRoute(
@@ -301,7 +310,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/profile',
                 name: RouteNames.profile,
                 builder: (context, state) => ProfileView(
-                  onBack: () => GoRouter.of(context).go('/dashboard'),
+                  onBack: () {
+                    ref.read(shouldOpenDrawerProvider.notifier).state = true;
+                    GoRouter.of(context).go('/dashboard');
+                  },
                 ),
               ),
             ],

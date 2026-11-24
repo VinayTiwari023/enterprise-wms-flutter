@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router/route_names.dart';
+import '../../dashboard/views/home_view.dart';
 import '../../settings/viewmodels/theme_view_model.dart';
 import '../viewmodels/inbound_view_model.dart';
 import '../../../core/enums/view_status.dart';
@@ -47,6 +48,7 @@ class _InboundViewState extends ConsumerState<InboundView> {
                 centerTitle: false,
                 leading: IconButton(
                   onPressed: () {
+                    ref.read(shouldOpenDrawerProvider.notifier).state = true;
                     if (widget.onBack != null) {
                       widget.onBack!();
                     } else if (Navigator.canPop(context)) {

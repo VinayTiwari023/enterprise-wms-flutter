@@ -18,37 +18,63 @@ import '../widgets/showcase_tour_modal.dart';
 import '../../../shared/widgets/main_drawer.dart';
 import '../widgets/dashboard_widgets.dart';
 
-class HomeView extends ConsumerWidget {
+final shouldOpenDrawerProvider = StateProvider<bool>((ref) => false);
+
+class HomeView extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
 
   const HomeView({super.key, required this.navigationShell});
 
-  void _onTap(BuildContext context, int index) {
-    navigationShell.goBranch(
+  @override
+  ConsumerState<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends ConsumerState<HomeView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void _onTap(int index) {
+    widget.navigationShell.goBranch(
       index,
-      initialLocation: index == navigationShell.currentIndex,
+      initialLocation: index == widget.navigationShell.currentIndex,
     );
   }
 
+  void _openDrawer() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !(_scaffoldKey.currentState?.isDrawerOpen ?? true)) {
+        _scaffoldKey.currentState?.openDrawer();
+      }
+    });
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final themeVM = ref.watch(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
-    final currentIndex = navigationShell.currentIndex;
+    final currentIndex = widget.navigationShell.currentIndex;
+
+    ref.listen<bool>(shouldOpenDrawerProvider, (previous, next) {
+      if (next) {
+        _openDrawer();
+        ref.read(shouldOpenDrawerProvider.notifier).state = false;
+      }
+    });
 
     return PopScope(
       canPop: currentIndex == 0,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         if (currentIndex != 0) {
-          _onTap(context, 0);
+          _onTap(0);
+          _openDrawer();
         }
       },
       child: Scaffold(
+        key: _scaffoldKey,
         drawer: MainDrawer(
           selectedIndex: currentIndex,
           onIndexSelected: (index) {
-            _onTap(context, index);
+            _onTap(index);
             Navigator.pop(context); // Close drawer
           },
         ),
@@ -56,7 +82,7 @@ class HomeView extends ConsumerWidget {
           child: Column(
             children: [
               const SyncBannerWidget(),
-              Expanded(child: navigationShell),
+              Expanded(child: widget.navigationShell),
             ],
           ),
         ),
@@ -71,7 +97,7 @@ class HomeView extends ConsumerWidget {
           ),
           child: BottomNavigationBar(
             currentIndex: currentIndex,
-            onTap: (index) => _onTap(context, index),
+            onTap: (index) => _onTap(index),
             type: BottomNavigationBarType.fixed,
             backgroundColor: themeVM.isDarkMode
                 ? const Color(0xFF12121A)
@@ -161,15 +187,149 @@ class HomeView extends ConsumerWidget {
   }
 }
 
-class DashboardView extends ConsumerWidget {
+class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends ConsumerState<DashboardView> {
+  bool _isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
     final viewModel = ref.watch(homeViewModelProvider);
     final themeVM = ref.watch(themeViewModelProvider);
     final primaryColor = themeVM.currentThemeColor;
     final userVM = ref.watch(userViewModelProvider);
+
+    final allQuickActions = [
+      QuickActionItem(
+        icon: Icons.qr_code_scanner_rounded,
+        label: "Scan",
+        color: primaryColor,
+        onTap: () => context.pushNamed(RouteNames.poScan),
+      ),
+      QuickActionItem(
+        icon: Icons.add_box_outlined,
+        label: "Add",
+        color: primaryColor,
+        onTap: () => context.pushNamed(RouteNames.addPO),
+      ),
+      QuickActionItem(
+        icon: Icons.checklist_rounded,
+        label: "Audit",
+        color: primaryColor,
+        onTap: () => context.pushNamed(RouteNames.audit),
+      ),
+      QuickActionItem(
+        icon: Icons.inventory_2_outlined,
+        label: "Inventory",
+        color: primaryColor,
+        onTap: () {
+          context.go('/inventory');
+        },
+      ),
+      QuickActionItem(
+        icon: Icons.swap_horiz_rounded,
+        label: "Relocate",
+        color: primaryColor,
+        onTap: () {
+          context.pushNamed(RouteNames.stockTransfer);
+        },
+      ),
+      QuickActionItem(
+        icon: Icons.bar_chart_rounded,
+        label: "Reports",
+        color: primaryColor,
+        onTap: () {
+          context.go('/dashboard/reports');
+        },
+      ),
+      QuickActionItem(
+        icon: Icons.route_rounded,
+        label: "Picklists",
+        color: primaryColor,
+        onTap: () {
+          context.pushNamed(RouteNames.picklist);
+        },
+      ),
+      QuickActionItem(
+        icon: Icons.assignment_return_rounded,
+        label: "Returns",
+        color: primaryColor,
+        onTap: () {
+          context.pushNamed(RouteNames.returns);
+        },
+      ),
+      QuickActionItem(
+        icon: Icons.storage_rounded,
+        label: "Masters",
+        color: primaryColor,
+        onTap: () {
+          context.pushNamed(RouteNames.masters);
+        },
+      ),
+      QuickActionItem(
+        icon: Icons.qr_code_scanner_rounded,
+        label: "GS1 Scan",
+        color: primaryColor,
+        onTap: () => GS1ScannerModal.show(context),
+      ),
+      QuickActionItem(
+        icon: Icons.print_rounded,
+        label: "Print Label",
+        color: primaryColor,
+        onTap: () {
+          LabelPrinterBottomSheet.show(
+            context,
+            const LabelData(
+              type: LabelType.binTag,
+              title: "Warehouse Bin Location Tag",
+              primaryCode: "BIN-A0-01",
+              subTitle: "Capacity: 250 Units",
+              zoneOrLocation: "Zone A - Aisle 1",
+              details: "Standard Heavy Duty Storage Shelf",
+            ),
+          );
+        },
+      ),
+      QuickActionItem(
+        icon: Icons.help_outline_rounded,
+        label: "App Tour",
+        color: primaryColor,
+        onTap: () => ShowcaseTourModal.show(context),
+      ),
+      QuickActionItem(
+        icon: Icons.settings_outlined,
+        label: "Config",
+        color: primaryColor,
+        onTap: () {
+          context.go('/profile');
+        },
+      ),
+    ];
+
+    final displayedActions = _isExpanded
+        ? [
+            ...allQuickActions,
+            QuickActionItem(
+              icon: Icons.keyboard_arrow_up_rounded,
+              label: "See Less",
+              color: primaryColor,
+              onTap: () => setState(() => _isExpanded = false),
+            ),
+          ]
+        : [
+            ...allQuickActions.take(5),
+            QuickActionItem(
+              icon: Icons.grid_view_rounded,
+              label: "See More",
+              color: primaryColor,
+              onTap: () => setState(() => _isExpanded = true),
+            ),
+          ];
 
     return CustomScrollView(
       slivers: [
@@ -414,10 +574,48 @@ class DashboardView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Divider(),
-                const SizedBox(height: 25),
-                const Text(
-                  "Quick Actions",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Quick Actions",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => setState(() => _isExpanded = !_isExpanded),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              _isExpanded ? "See Less" : "See More",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              _isExpanded
+                                  ? Icons.keyboard_arrow_up_rounded
+                                  : Icons.keyboard_arrow_down_rounded,
+                              color: primaryColor,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 15),
               ],
@@ -435,112 +633,7 @@ class DashboardView extends ConsumerWidget {
               crossAxisSpacing: 10,
               childAspectRatio: 0.85,
             ),
-            delegate: SliverChildListDelegate([
-              QuickActionItem(
-                icon: Icons.qr_code_scanner_rounded,
-                label: "Scan",
-                color: primaryColor,
-                onTap: () => context.pushNamed(RouteNames.poScan),
-              ),
-              QuickActionItem(
-                icon: Icons.add_box_outlined,
-                label: "Add",
-                color: primaryColor,
-                onTap: () => context.pushNamed(RouteNames.addPO),
-              ),
-              QuickActionItem(
-                icon: Icons.checklist_rounded,
-                label: "Audit",
-                color: primaryColor,
-                onTap: () => context.pushNamed(RouteNames.audit),
-              ),
-              QuickActionItem(
-                icon: Icons.inventory_2_outlined,
-                label: "Inventory",
-                color: primaryColor,
-                onTap: () {
-                  context.go('/inventory');
-                },
-              ),
-              QuickActionItem(
-                icon: Icons.swap_horiz_rounded,
-                label: "Relocate",
-                color: primaryColor,
-                onTap: () {
-                  context.pushNamed(RouteNames.stockTransfer);
-                },
-              ),
-              QuickActionItem(
-                icon: Icons.bar_chart_rounded,
-                label: "Reports",
-                color: primaryColor,
-                onTap: () {
-                  context.go('/dashboard/reports');
-                },
-              ),
-              QuickActionItem(
-                icon: Icons.route_rounded,
-                label: "Picklists",
-                color: primaryColor,
-                onTap: () {
-                  context.pushNamed(RouteNames.picklist);
-                },
-              ),
-              QuickActionItem(
-                icon: Icons.assignment_return_rounded,
-                label: "Returns",
-                color: primaryColor,
-                onTap: () {
-                  context.pushNamed(RouteNames.returns);
-                },
-              ),
-              QuickActionItem(
-                icon: Icons.storage_rounded,
-                label: "Masters",
-                color: primaryColor,
-                onTap: () {
-                  context.pushNamed(RouteNames.masters);
-                },
-              ),
-              QuickActionItem(
-                icon: Icons.qr_code_scanner_rounded,
-                label: "GS1 Scan",
-                color: primaryColor,
-                onTap: () => GS1ScannerModal.show(context),
-              ),
-              QuickActionItem(
-                icon: Icons.print_rounded,
-                label: "Print Label",
-                color: primaryColor,
-                onTap: () {
-                  LabelPrinterBottomSheet.show(
-                    context,
-                    const LabelData(
-                      type: LabelType.binTag,
-                      title: "Warehouse Bin Location Tag",
-                      primaryCode: "BIN-A0-01",
-                      subTitle: "Capacity: 250 Units",
-                      zoneOrLocation: "Zone A - Aisle 1",
-                      details: "Standard Heavy Duty Storage Shelf",
-                    ),
-                  );
-                },
-              ),
-              QuickActionItem(
-                icon: Icons.help_outline_rounded,
-                label: "App Tour",
-                color: primaryColor,
-                onTap: () => ShowcaseTourModal.show(context),
-              ),
-              QuickActionItem(
-                icon: Icons.settings_outlined,
-                label: "Config",
-                color: primaryColor,
-                onTap: () {
-                  context.go('/profile');
-                },
-              ),
-            ]),
+            delegate: SliverChildListDelegate(displayedActions),
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 20)),

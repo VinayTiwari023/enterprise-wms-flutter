@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../features/barcode/widgets/hardware_scan_listener.dart';
 import '../features/settings/viewmodels/theme_view_model.dart';
 import '../l10n/generated/app_localizations.dart';
 import 'router/app_router.dart';
@@ -20,6 +21,9 @@ class MyApp extends ConsumerWidget {
       locale: themeVM.currentLocale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      builder: (context, child) {
+        return HardwareScanListener(child: child ?? const SizedBox.shrink());
+      },
     );
   }
 }
