@@ -96,7 +96,9 @@ class LpnViewModel extends Notifier<LpnState> {
       (l) => l.lpnNumber.toLowerCase() == lpnNumber.toLowerCase(),
     );
 
-    if (index == -1) return false;
+    if (index == -1) {
+      return false;
+    }
 
     final currentLpn = state.lpns[index];
     final fromLoc = currentLpn.location;
@@ -134,7 +136,9 @@ class LpnViewModel extends Notifier<LpnState> {
   /// Add an item SKU to an existing LPN Pallet
   void addItemToLpn(String lpnNumber, LpnItemModel newItem) {
     final index = state.lpns.indexWhere((l) => l.lpnNumber == lpnNumber);
-    if (index == -1) return;
+    if (index == -1) {
+      return;
+    }
 
     final currentLpn = state.lpns[index];
     final currentItems = List<LpnItemModel>.from(currentLpn.items);
@@ -159,7 +163,9 @@ class LpnViewModel extends Notifier<LpnState> {
   /// Remove an item SKU from an LPN Pallet
   void removeItemFromLpn(String lpnNumber, String sku) {
     final index = state.lpns.indexWhere((l) => l.lpnNumber == lpnNumber);
-    if (index == -1) return;
+    if (index == -1) {
+      return;
+    }
 
     final currentLpn = state.lpns[index];
     final updatedItems = currentLpn.items.where((i) => i.sku != sku).toList();
@@ -182,7 +188,9 @@ final filteredLpnProvider = Provider<List<LpnModel>>((ref) {
   final query = ref.watch(lpnSearchQueryProvider).toLowerCase();
   final lpns = ref.watch(lpnViewModelProvider.select((s) => s.lpns));
 
-  if (query.isEmpty) return lpns;
+  if (query.isEmpty) {
+    return lpns;
+  }
 
   return lpns.where((lpn) {
     final matchLpn = lpn.lpnNumber.toLowerCase().contains(query);

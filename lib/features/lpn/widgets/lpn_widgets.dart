@@ -34,9 +34,15 @@ class LpnCard extends StatelessWidget {
   }
 
   IconData _getContainerIcon(String containerType) {
-    if (containerType.contains("Wire")) return Icons.grid_on_rounded;
-    if (containerType.contains("Box")) return Icons.inventory_2_outlined;
-    if (containerType.contains("Crate")) return Icons.all_inbox_rounded;
+    if (containerType.contains("Wire")) {
+      return Icons.grid_on_rounded;
+    }
+    if (containerType.contains("Box")) {
+      return Icons.inventory_2_outlined;
+    }
+    if (containerType.contains("Crate")) {
+      return Icons.all_inbox_rounded;
+    }
     return Icons.widgets_rounded; // Default Pallet
   }
 
@@ -316,7 +322,7 @@ class LpnItemTile extends StatelessWidget {
                   "SKU: ${item.sku} ${item.batchNumber != null ? '| Batch: ${item.batchNumber}' : ''}",
                   style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
-                if (item.expiryDate != null)
+                if (item.expiryDate != null) ...[
                   Text(
                     "Exp: ${DateFormat('dd MMM yyyy').format(item.expiryDate!)}",
                     style: const TextStyle(
@@ -325,6 +331,7 @@ class LpnItemTile extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                ],
               ],
             ),
           ),

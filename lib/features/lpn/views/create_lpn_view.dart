@@ -181,8 +181,9 @@ class _CreateLpnViewState extends ConsumerState<CreateLpnView> {
                   border: const OutlineInputBorder(),
                 ),
                 validator: (val) {
-                  if (val == null || val.trim().isEmpty)
+                  if (val == null || val.trim().isEmpty) {
                     return "Please enter LPN barcode";
+                  }
                   return null;
                 },
               ),
@@ -218,8 +219,9 @@ class _CreateLpnViewState extends ConsumerState<CreateLpnView> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (val) {
-                  if (val == null || val.trim().isEmpty)
+                  if (val == null || val.trim().isEmpty) {
                     return "Please enter location";
+                  }
                   return null;
                 },
               ),
