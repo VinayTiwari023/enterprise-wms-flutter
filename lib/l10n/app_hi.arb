@@ -9,5 +9,13 @@
   "pending": "लंबित",
   "completed": "पूरा हुआ",
   "inProgress": "प्रगति पर है",
-  "alerts": "अलर्ट"
+  "alerts": "अलर्ट",
+  "palletManagement": "पैलेट और एलपीएन प्रबंधन",
+  "buildNewPallet": "नया पैलेट बनाएं (LPN)",
+  "relocatePallet": "पैलेट स्थानांतरित करें",
+  "activePallets": "सक्रिय पैलेट",
+  "movementLog": "स्थानांतरण लॉग",
+  "palletContents": "पैलेट सामग्री",
+  "containerType": "कंटेनर का प्रकार",
+  "weightCapacity": "वजन क्षमता"
 }

@@ -16,5 +16,13 @@
   "pending": "Pending",
   "completed": "Completed",
   "inProgress": "In Progress",
-  "alerts": "Alerts"
+  "alerts": "Alerts",
+  "palletManagement": "Pallet & LPN Management",
+  "buildNewPallet": "Build New Pallet (LPN)",
+  "relocatePallet": "Relocate Pallet",
+  "activePallets": "Active Pallets",
+  "movementLog": "Movement Log",
+  "palletContents": "Pallet Contents",
+  "containerType": "Container Type",
+  "weightCapacity": "Weight Capacity"
 }

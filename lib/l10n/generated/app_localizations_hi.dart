@@ -42,4 +42,28 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get alerts => 'अलर्ट';
+
+  @override
+  String get palletManagement => 'पैलेट और एलपीएन प्रबंधन';
+
+  @override
+  String get buildNewPallet => 'नया पैलेट बनाएं (LPN)';
+
+  @override
+  String get relocatePallet => 'पैलेट स्थानांतरित करें';
+
+  @override
+  String get activePallets => 'सक्रिय पैलेट';
+
+  @override
+  String get movementLog => 'स्थानांतरण लॉग';
+
+  @override
+  String get palletContents => 'पैलेट सामग्री';
+
+  @override
+  String get containerType => 'कंटेनर का प्रकार';
+
+  @override
+  String get weightCapacity => 'वजन क्षमता';
 }

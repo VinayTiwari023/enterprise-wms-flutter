@@ -163,6 +163,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Alerts'**
   String get alerts;
+
+  /// No description provided for @palletManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Pallet & LPN Management'**
+  String get palletManagement;
+
+  /// No description provided for @buildNewPallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Build New Pallet (LPN)'**
+  String get buildNewPallet;
+
+  /// No description provided for @relocatePallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Relocate Pallet'**
+  String get relocatePallet;
+
+  /// No description provided for @activePallets.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Pallets'**
+  String get activePallets;
+
+  /// No description provided for @movementLog.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement Log'**
+  String get movementLog;
+
+  /// No description provided for @palletContents.
+  ///
+  /// In en, this message translates to:
+  /// **'Pallet Contents'**
+  String get palletContents;
+
+  /// No description provided for @containerType.
+  ///
+  /// In en, this message translates to:
+  /// **'Container Type'**
+  String get containerType;
+
+  /// No description provided for @weightCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Capacity'**
+  String get weightCapacity;
 }
 
 class _AppLocalizationsDelegate

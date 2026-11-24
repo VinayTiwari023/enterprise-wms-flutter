@@ -42,4 +42,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alerts => 'Alerts';
+
+  @override
+  String get palletManagement => 'Pallet & LPN Management';
+
+  @override
+  String get buildNewPallet => 'Build New Pallet (LPN)';
+
+  @override
+  String get relocatePallet => 'Relocate Pallet';
+
+  @override
+  String get activePallets => 'Active Pallets';
+
+  @override
+  String get movementLog => 'Movement Log';
+
+  @override
+  String get palletContents => 'Pallet Contents';
+
+  @override
+  String get containerType => 'Container Type';
+
+  @override
+  String get weightCapacity => 'Weight Capacity';
 }
