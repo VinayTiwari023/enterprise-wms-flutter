@@ -26,6 +26,10 @@ import '../../features/inward/services/inward_mock_service.dart';
 import '../../features/picklist/services/picklist_mock_service.dart';
 import '../../features/returns/services/returns_mock_service.dart';
 
+import '../../features/lpn/services/lpn_mock_service.dart';
+import '../../features/lpn/repositories/lpn_repository.dart';
+import '../../features/lpn/repositories/lpn_repository_impl.dart';
+
 final locator = GetIt.instance;
 
 void setupLocator() {
@@ -67,7 +71,13 @@ void setupLocator() {
 
   locator.registerLazySingleton<ReturnsMockService>(() => ReturnsMockService());
 
+  locator.registerLazySingleton<LpnMockService>(() => LpnMockService());
+
   // Repositories
+  locator.registerLazySingleton<LpnRepository>(
+    () => LpnRepositoryImpl(mockService: locator<LpnMockService>()),
+  );
+
   locator.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       apiService: locator<BaseApiService>(),

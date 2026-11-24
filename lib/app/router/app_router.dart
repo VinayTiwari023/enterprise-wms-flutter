@@ -27,6 +27,10 @@ import '../../features/returns/views/returns_list_view.dart';
 import '../../features/returns/views/return_inspection_view.dart';
 import '../../features/returns/views/create_rma_view.dart';
 import '../../features/masters/views/masters_view.dart';
+import '../../features/lpn/views/lpn_list_view.dart';
+import '../../features/lpn/views/lpn_details_view.dart';
+import '../../features/lpn/views/create_lpn_view.dart';
+import '../../features/lpn/views/lpn_transfer_view.dart';
 
 // Global keys for navigation
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -173,6 +177,35 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'masters',
                     name: RouteNames.masters,
                     builder: (context, state) => const MastersView(),
+                  ),
+                  GoRoute(
+                    path: 'lpn',
+                    name: RouteNames.lpnList,
+                    builder: (context, state) => const LpnListView(),
+                    routes: [
+                      GoRoute(
+                        path: 'create',
+                        name: RouteNames.createLpn,
+                        builder: (context, state) => const CreateLpnView(),
+                      ),
+                      GoRoute(
+                        path: 'transfer',
+                        name: RouteNames.lpnTransfer,
+                        builder: (context, state) {
+                          final lpnNumber =
+                              state.uri.queryParameters['lpnNumber'];
+                          return LpnTransferView(initialLpnNumber: lpnNumber);
+                        },
+                      ),
+                      GoRoute(
+                        path: 'details/:lpnNumber',
+                        name: RouteNames.lpnDetails,
+                        builder: (context, state) {
+                          final lpnNumber = state.pathParameters['lpnNumber']!;
+                          return LpnDetailsView(lpnNumber: lpnNumber);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),

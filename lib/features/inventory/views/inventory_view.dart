@@ -70,6 +70,11 @@ class _InventoryViewState extends ConsumerState<InventoryView> {
                 centerTitle: false,
                 actions: [
                   IconButton(
+                    onPressed: () => context.pushNamed(RouteNames.lpnList),
+                    icon: const Icon(Icons.widgets_rounded),
+                    tooltip: "Pallets & LPN Containers",
+                  ),
+                  IconButton(
                     onPressed: () =>
                         context.pushNamed(RouteNames.stockTransfer),
                     icon: const Icon(Icons.swap_horiz_rounded),

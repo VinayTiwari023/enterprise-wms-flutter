@@ -23,4 +23,8 @@ class RouteNames {
   static const String returnDetails = 'returnDetails';
   static const String createRMA = 'createRMA';
   static const String masters = 'masters';
+  static const String lpnList = 'lpnList';
+  static const String lpnDetails = 'lpnDetails';
+  static const String createLpn = 'createLpn';
+  static const String lpnTransfer = 'lpnTransfer';
 }

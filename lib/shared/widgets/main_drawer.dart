@@ -146,6 +146,14 @@ class MainDrawer extends ConsumerWidget {
                     context.pushNamed(RouteNames.returns);
                   },
                 ),
+                _drawerItem(
+                  Icons.widgets_rounded,
+                  "Pallets & LPN Management",
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.pushNamed(RouteNames.lpnList);
+                  },
+                ),
 
                 const SizedBox(height: 12),
                 const Divider(),
